@@ -78,29 +78,34 @@ export default async function ArchivePage({
   let hof: HofMember[] | null = null;
   let events: ArchiveEvent[] | null = null;
 
-  if (supabase) {
+  if (!supabase) {
+    console.error("[archive] Supabase env(NEXT_PUBLIC_SUPABASE_URL/ANON_KEY) 미설정");
+  } else {
     if (tab === "awards") {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("season_awards")
         .select("id, season, award_type, player_name, player_name_en, player_number")
         .order("season", { ascending: false });
+      if (error) console.error("[archive] season_awards 조회 실패:", error.message);
       awards = (data as SeasonAward[]) ?? null;
     } else if (tab === "hof") {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("hall_of_fame")
         .select(
           "id, name_ko, name_en, number, active_period, roles, achievements, hof_points, hof_category, inducted_year, photo_url, sort_order"
         )
         .order("inducted_year", { ascending: false })
         .order("sort_order", { ascending: true });
+      if (error) console.error("[archive] hall_of_fame 조회 실패:", error.message);
       hof = (data as HofMember[]) ?? null;
     } else {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("archive_events")
         .select(
           "id, title, category, event_date, description, photo_urls, external_link, is_featured"
         )
         .order("event_date", { ascending: false, nullsFirst: false });
+      if (error) console.error("[archive] archive_events 조회 실패:", error.message);
       events = (data as ArchiveEvent[]) ?? null;
     }
   }
@@ -153,15 +158,12 @@ export default async function ArchivePage({
       </div>
 
       {!supabase ? (
-        <div className="notice">
-          아카이브를 불러오지 못했습니다. <strong>Supabase 환경변수</strong>가
-          설정되어 있는지 확인해 주세요.
-        </div>
+        <div className="notice">아카이브 데이터를 준비 중입니다.</div>
       ) : tab === "awards" ? (
         awardsBySeason.size === 0 ? (
           <div className="notice">
-            아직 등록된 시즌 어워즈가 없습니다. 시즌이 끝나면 6개 부문 수상자가
-            이곳에 기록됩니다.
+            시즌 어워즈는 시즌 종료 후 공개됩니다. 시즌이 끝나면 6개 부문
+            수상자가 이곳에 기록됩니다.
           </div>
         ) : (
           Array.from(awardsBySeason.entries()).map(([season, list]) => (

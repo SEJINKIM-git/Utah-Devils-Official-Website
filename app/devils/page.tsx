@@ -15,14 +15,20 @@ type TimelineEvent = {
 
 async function fetchTimeline(): Promise<TimelineEvent[] | null> {
   const supabase = getSupabase();
-  if (!supabase) return null;
+  if (!supabase) {
+    console.error("[devils] Supabase env(NEXT_PUBLIC_SUPABASE_URL/ANON_KEY) 미설정");
+    return null;
+  }
   const { data, error } = await supabase
     .from("timeline_events")
     .select("id, year, season, month, title, sort_order")
     .order("year", { ascending: true })
     .order("sort_order", { ascending: true })
     .order("month", { ascending: true });
-  if (error) return null;
+  if (error) {
+    console.error("[devils] timeline_events 조회 실패:", error.message);
+    return null;
+  }
   return data as TimelineEvent[];
 }
 
@@ -56,10 +62,7 @@ export default async function DevilsPage() {
         </div>
 
         {events === null ? (
-          <div className="notice">
-            연혁을 불러오지 못했습니다. <strong>Supabase 환경변수</strong>가
-            설정되어 있는지 확인해 주세요.
-          </div>
+          <div className="notice">연혁 데이터를 준비 중입니다.</div>
         ) : events.length === 0 ? (
           <div className="notice">
             아직 등록된 연혁이 없습니다. 관리자 페이지에서 연혁을 추가하면 이곳에

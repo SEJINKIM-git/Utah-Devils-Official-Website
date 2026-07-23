@@ -4,12 +4,27 @@ import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://utah-devils-official-website.vercel.app"),
   title: {
     default: "Utah Devils Baseball Club",
     template: "%s | Utah Devils",
   },
   description:
     "유타대학교 아시아캠퍼스 야구동아리 Utah Devils 공식 홈페이지 — 선수단, 경기 일정, 아카이브, 굿즈",
+  openGraph: {
+    title: "Utah Devils Baseball Club",
+    description:
+      "유타대학교 아시아캠퍼스 야구동아리 Utah Devils 공식 홈페이지 — 선수단, 경기 일정, 아카이브, 굿즈",
+    url: "/",
+    siteName: "Utah Devils Baseball Club",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({

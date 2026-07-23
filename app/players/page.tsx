@@ -21,13 +21,22 @@ type RosterMember = {
 
 async function fetchRoster(): Promise<RosterMember[] | null> {
   const supabase = getSupabase();
-  if (!supabase) return null;
+  if (!supabase) {
+    console.error("[players] Supabase env(NEXT_PUBLIC_SUPABASE_URL/ANON_KEY) 미설정");
+    return null;
+  }
   const { data, error } = await supabase
     .from("roster_members")
     .select(
       "id, season, name_ko, name_en, number, birth_date, joined, is_captain, positions, player_id, sort_order"
     );
-  if (error) return null;
+  if (error) {
+    console.error(
+      "[players] roster_members 조회 실패 (sql/01_roster_members.sql 실행 여부 확인):",
+      error.message
+    );
+    return null;
+  }
   return data as RosterMember[];
 }
 
@@ -73,16 +82,10 @@ export default async function PlayersPage({
 
       <section style={{ paddingBottom: 8 }}>
         {roster === null ? (
-          <div className="notice">
-            로스터를 불러오지 못했습니다. Supabase에{" "}
-            <strong>roster_members</strong> 테이블이 필요합니다 —{" "}
-            <strong>sql/01_roster_members.sql</strong>을 SQL Editor에서 실행해
-            주세요.
-          </div>
+          <div className="notice">로스터 데이터를 준비 중입니다.</div>
         ) : roster.length === 0 ? (
           <div className="notice">
-            등록된 로스터가 없습니다. <strong>roster_members</strong> 테이블에
-            시즌 명단을 추가하면 이곳에 표시됩니다.
+            새 시즌 로스터를 준비 중입니다. 명단이 확정되면 이곳에 공개됩니다.
           </div>
         ) : (
           <>

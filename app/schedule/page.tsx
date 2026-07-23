@@ -20,14 +20,20 @@ type Game = {
 
 async function fetchGames(): Promise<Game[] | null> {
   const supabase = getSupabase();
-  if (!supabase) return null;
+  if (!supabase) {
+    console.error("[schedule] Supabase env(NEXT_PUBLIC_SUPABASE_URL/ANON_KEY) 미설정");
+    return null;
+  }
   const { data, error } = await supabase
     .from("games")
     .select(
       "id, date, time, opponent, location, is_home, result, score_us, score_them, season"
     )
     .order("date", { ascending: true });
-  if (error) return null;
+  if (error) {
+    console.error("[schedule] games 조회 실패:", error.message);
+    return null;
+  }
   return data as Game[];
 }
 
@@ -80,12 +86,11 @@ export default async function SchedulePage({
 
       <section style={{ paddingBottom: 8 }}>
         {games === null ? (
-          <div className="notice">
-            경기 일정을 불러오지 못했습니다. <strong>Supabase 환경변수</strong>
-            가 설정되어 있는지 확인해 주세요.
-          </div>
+          <div className="notice">경기 데이터를 준비 중입니다.</div>
         ) : games.length === 0 ? (
-          <div className="notice">등록된 경기가 없습니다.</div>
+          <div className="notice">
+            등록된 경기가 없습니다. 새 시즌 일정이 확정되면 이곳에 공개됩니다.
+          </div>
         ) : (
           <>
             <div className="tabs">

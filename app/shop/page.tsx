@@ -50,7 +50,9 @@ export default async function ShopPage({
   let products: Product[] | null = null;
   let surveys: ProductSurvey[] = [];
 
-  if (supabase) {
+  if (!supabase) {
+    console.error("[shop] Supabase env(NEXT_PUBLIC_SUPABASE_URL/ANON_KEY) 미설정");
+  } else {
     const [productsRes, surveysRes] = await Promise.all([
       supabase
         .from("products")
@@ -63,6 +65,10 @@ export default async function ShopPage({
         .select("id, product_id, title, notes, size_options, closes_at, is_open")
         .eq("is_open", true),
     ]);
+    if (productsRes.error)
+      console.error("[shop] products 조회 실패:", productsRes.error.message);
+    if (surveysRes.error)
+      console.error("[shop] product_surveys 조회 실패:", surveysRes.error.message);
     products = (productsRes.data as Product[]) ?? null;
     surveys = (surveysRes.data as ProductSurvey[]) ?? [];
   }
@@ -92,10 +98,7 @@ export default async function ShopPage({
       </section>
 
       {!supabase ? (
-        <div className="notice">
-          상품 정보를 불러오지 못했습니다. <strong>Supabase 환경변수</strong>가
-          설정되어 있는지 확인해 주세요.
-        </div>
+        <div className="notice">굿즈 데이터를 준비 중입니다.</div>
       ) : (
         <>
           <section style={{ marginBottom: 56 }}>
