@@ -11,12 +11,13 @@
 
 | 경로 | 이름 | 상태 | 데이터 소스 |
 |---|---|---|---|
-| `/` | 메인 히어로 | ✅ 완료 | — |
-| `/devils` | 소개 + 연혁 타임라인 | ✅ 완료 | `timeline_events` |
-| `/players` | 시즌 로스터 | ✅ 완료 | `roster_members` (신규, `sql/01_roster_members.sql` 실행 필요) |
-| `/schedule` | 경기 일정/결과 | ✅ 완료 | `games` (읽기 전용, 시즌은 date 연도로 자동 감지) |
-| `/archive` | Awards / Hall of Fame / Events | ✅ 뼈대 완료 | `season_awards`, `hall_of_fame`, `archive_events` |
-| `/shop` | 수요조사 + 굿즈 아카이브 | ✅ 뼈대 완료 | `products`, `product_surveys`, `survey_responses`(anon INSERT) |
+| `/` | 메인 히어로 | ✅ 완료 (파비콘/OG 적용) | — |
+| `/devils` | 소개 + 연혁 타임라인 | ✅ 완료 + 시드(2022~2026) | `timeline_events` |
+| `/players` | 시즌 로스터 | ✅ 완료 + 시드(2026, 11명) | `roster_members` |
+| `/schedule` | 경기 일정/결과 | ✅ 완료 | `games` (읽기 전용, 시즌은 date 연도로 자동 감지) — 누락 경기는 [docs/games_gap_report.md](docs/games_gap_report.md) 참조 |
+| `/archive` | Awards / Hall of Fame / Events | ✅ 완료 + 시드(어워즈 4시즌, HoF 7, 행사 13) | `season_awards`, `hall_of_fame`, `archive_events` |
+| `/shop` | 수요조사 + 굿즈 아카이브 | ✅ 뼈대 완료 (상품 등록 대기) | `products`, `product_surveys`, `survey_responses`(anon INSERT) |
+| `404` | not-found | ✅ 완료 | — |
 | STATS | 외부 링크 (새 탭) | ✅ | devils-insight-ai.vercel.app |
 
 ## 개발
@@ -33,12 +34,26 @@ npm run dev
 ## DB 준비 (1회)
 
 - 콘텐츠 테이블 7종(`timeline_events` 등)은 이미 생성/RLS 적용 완료.
-- **`/players`용 `roster_members` 테이블은 추가로 필요** → Supabase SQL Editor에서
-  [`sql/01_roster_members.sql`](sql/01_roster_members.sql) 실행 (2026 시즌 시드 포함).
+- **`/players`용 `roster_members` 테이블** → Supabase SQL Editor에서
+  [`sql/01_roster_members.sql`](sql/01_roster_members.sql) 실행 (✅ 2026-07 실행 완료).
   - 배경: 기존 `players` 테이블은 anon SELECT가 막혀 있고 카드에 필요한
     컬럼(영문명·생년월일·입부시기·주장)이 없어, 기존 테이블을 건드리지 않고
     홈페이지 전용 테이블을 사용한다. `player_id`는 분석 플랫폼 `players.id`로의
     느슨한 참조(FK 없음)로, 값을 채우면 선수 카드가 분석 플랫폼 상세로 링크된다.
+
+## 시드 데이터 실행 순서 (Supabase SQL Editor)
+
+모든 시드는 **멱등**(재실행 안전)이며, 기존 행과 중복 삽입되지 않는다.
+`sql/01_roster_members.sql` 실행 후 아래 순서대로 실행:
+
+1. [`sql/seed/seed_timeline.sql`](sql/seed/seed_timeline.sql) — 연혁 2022~2026 (36건)
+2. [`sql/seed/seed_awards.sql`](sql/seed/seed_awards.sql) — 시즌 어워즈 2023~2025 (2022는 기존재)
+3. [`sql/seed/seed_hall_of_fame.sql`](sql/seed/seed_hall_of_fame.sql) — 헌액자 7건 (hof_category CHECK를 faculty 포함으로 확장)
+4. [`sql/seed/seed_roster.sql`](sql/seed/seed_roster.sql) — 2026 로스터 상세(영문명/생년월일/입부/주장) upsert
+5. [`sql/seed/seed_archive_events.sql`](sql/seed/seed_archive_events.sql) — 행사 13건 (사진은 Storage 업로드 후 photo_urls UPDATE)
+
+`games` 누락 경기(2022~2024 전체 등)는 시드하지 않는다 — 기존 테이블 쓰기 금지.
+[docs/games_gap_report.md](docs/games_gap_report.md)의 목록을 분석 플랫폼 업로드 경로로 추가할 것.
 
 ## 원칙
 
