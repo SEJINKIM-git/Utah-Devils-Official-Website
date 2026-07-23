@@ -123,8 +123,11 @@ export default async function ArchivePage({
     awardsBySeason.get(a.season)!.push(a);
   });
 
+  // 학생/매니저는 헌액 연도 그룹으로, faculty는 별도 섹션으로 분리
+  const hofStudents = (hof ?? []).filter((m) => m.hof_category !== "faculty");
+  const hofFaculty = (hof ?? []).filter((m) => m.hof_category === "faculty");
   const hofByYear = new Map<number, HofMember[]>();
-  (hof ?? []).forEach((m) => {
+  hofStudents.forEach((m) => {
     if (!hofByYear.has(m.inducted_year)) hofByYear.set(m.inducted_year, []);
     hofByYear.get(m.inducted_year)!.push(m);
   });
@@ -218,13 +221,14 @@ export default async function ArchivePage({
           ))
         )
       ) : tab === "hof" ? (
-        hofByYear.size === 0 ? (
+        hofByYear.size === 0 && hofFaculty.length === 0 ? (
           <div className="notice">
             아직 헌액자가 없습니다. 명예의 전당에 오른 데빌스가 이곳에
             기록됩니다.
           </div>
         ) : (
-          Array.from(hofByYear.entries()).map(([year, list]) => (
+          <>
+          {Array.from(hofByYear.entries()).map(([year, list]) => (
             <section key={year} style={{ marginBottom: 40 }}>
               <div className="section-head">
                 <h2 className="section-title" style={{ fontSize: 28 }}>
@@ -277,7 +281,45 @@ export default async function ArchivePage({
                 ))}
               </div>
             </section>
-          ))
+          ))}
+          {hofFaculty.length > 0 ? (
+            <section style={{ marginBottom: 40 }}>
+              <div className="section-head">
+                <h2 className="section-title" style={{ fontSize: 28 }}>
+                  <span className="outline">FACULTY</span>
+                </h2>
+                <span className="pill">HONORARY</span>
+              </div>
+              <div className="grid grid--2">
+                {hofFaculty.map((m) => (
+                  <div key={m.id} className="card card--hover hof-card">
+                    {m.photo_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        className="hof-card__photo"
+                        src={m.photo_url}
+                        alt={m.name_ko}
+                      />
+                    ) : (
+                      <div className="hof-card__placeholder">UD</div>
+                    )}
+                    <div>
+                      <div className="hof-card__name">{m.name_ko}</div>
+                      {m.roles?.length ? (
+                        <div className="award-card__sub" style={{ marginTop: 4 }}>
+                          {m.roles.join(" · ")}
+                        </div>
+                      ) : null}
+                      <div className="award-card__sub" style={{ marginTop: 4 }}>
+                        Class of {m.inducted_year}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
+          </>
         )
       ) : (
         <>

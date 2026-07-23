@@ -86,6 +86,14 @@ export default async function DevilsPage() {
                 ))}
               </div>
             ))}
+            <div className="timeline__item">
+              <div
+                className="timeline__year"
+                style={{ color: "var(--red)", fontSize: 20, letterSpacing: "0.12em" }}
+              >
+                TO BE CONTINUED
+              </div>
+            </div>
           </div>
         )}
       </section>

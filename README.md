@@ -46,12 +46,16 @@ npm run dev
 시드 파일(`sql/seed/`)은 **DDL 없이 DML만** 포함하며 전부 **멱등**(재실행 안전)이다.
 스키마 변경은 번호 파일(`sql/0X_*.sql`)에만 둔다. 실행 순서:
 
-1. [`sql/02_hall_of_fame_faculty.sql`](sql/02_hall_of_fame_faculty.sql) — **스키마**: hof_category CHECK에 faculty 추가 (seed 3 선행 조건)
+**파일 하나당 별도 쿼리로 실행할 것** (SQL Editor는 스크립트 전체가 한 트랜잭션 —
+이어붙이면 에러 하나로 전부 롤백된다.)
+
+1. [`sql/02_hall_of_fame_faculty.sql`](sql/02_hall_of_fame_faculty.sql) — **스키마**: hof_category CHECK에 faculty 추가 (seed 4 선행 조건)
 2. [`sql/seed/seed_timeline.sql`](sql/seed/seed_timeline.sql) — 연혁 2022~2026 (총 36건)
 3. [`sql/seed/seed_awards.sql`](sql/seed/seed_awards.sql) — 시즌 어워즈 2023~2025 (2022는 기존재)
-4. [`sql/seed/seed_hall_of_fame.sql`](sql/seed/seed_hall_of_fame.sql) — 헌액자 7건
+4. [`sql/seed/seed_hall_of_fame.sql`](sql/seed/seed_hall_of_fame.sql) — 헌액자 10건 (학생/매니저 6 + faculty 4)
 5. [`sql/seed/seed_roster.sql`](sql/seed/seed_roster.sql) — 로스터 중복 정리 + 2026 상세(영문명/생년월일/입부/주장)
 6. [`sql/seed/seed_archive_events.sql`](sql/seed/seed_archive_events.sql) — 행사 13건 (사진은 Storage 업로드 후 photo_urls UPDATE)
+7. [`sql/03_roster_unique.sql`](sql/03_roster_unique.sql) — **스키마**: (season, number) 유니크 제약. **반드시 5번(중복 정리) 이후 실행**
 
 `01_roster_members.sql`은 이미 실행 완료 — 재실행해도 이제 안전하지만 다시 실행할 필요 없다.
 (과거 2회 실행으로 생긴 중복 행은 seed_roster.sql 1단계가 정리한다.)
