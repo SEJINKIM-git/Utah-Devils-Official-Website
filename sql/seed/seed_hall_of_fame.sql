@@ -1,29 +1,10 @@
 -- ============================================================
 -- 시드 3/5: Hall of Fame (hall_of_fame) — 부록 D 공식 확정본
--- 교직원 헌액은 운영자 결정에 따라 'faculty' 카테고리 단일 카드,
--- inducted_year 2026으로 등록한다. 이를 위해 hof_category CHECK
--- 제약을 faculty 포함으로 확장한다 (hall_of_fame은 홈페이지 전용
--- 테이블이므로 변경 가능. 분석 플랫폼 테이블 아님).
--- (name_en, inducted_year) 존재 확인 패턴 — 재실행해도 안전(멱등).
+-- ⚠️ 선행 조건: sql/02_hall_of_fame_faculty.sql을 먼저 실행할 것
+--   ('faculty' 카테고리는 CHECK 제약 확장 후에만 insert 가능)
+-- INSERT만 수행한다. (name_en, inducted_year) 존재 확인 패턴 —
+-- 재실행해도 안전(멱등).
 -- ============================================================
-
--- hof_category CHECK 확장: 기존 제약(이름 무관)을 찾아 제거 후 재생성
-do $$
-declare c record;
-begin
-  for c in
-    select conname from pg_constraint
-    where conrelid = 'public.hall_of_fame'::regclass
-      and contype = 'c'
-      and pg_get_constraintdef(oid) ilike '%hof_category%'
-  loop
-    execute format('alter table public.hall_of_fame drop constraint %I', c.conname);
-  end loop;
-end $$;
-
-alter table public.hall_of_fame
-  add constraint hall_of_fame_hof_category_check
-  check (hof_category is null or hof_category in ('batter', 'pitcher', 'manager', 'faculty'));
 
 insert into public.hall_of_fame
   (name_ko, name_en, birth_date, number, active_period, roles, achievements,
