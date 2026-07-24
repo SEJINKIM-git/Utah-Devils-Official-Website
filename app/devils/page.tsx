@@ -24,14 +24,22 @@ async function fetchTimeline(): Promise<TimelineEvent[] | null> {
   const { data, error } = await supabase
     .from("timeline_events")
     .select("id, year, season, month, title, sort_order")
-    .order("year", { ascending: true })
-    .order("sort_order", { ascending: true })
-    .order("month", { ascending: true });
+    .order("year", { ascending: true });
   if (error) {
     console.error("[devils] timeline_events 조회 실패:", error.message);
     return null;
   }
-  return data as TimelineEvent[];
+  // 디자인 규칙: 연도 내 시즌 그룹핑(SPRING 먼저 → FALL), 그 안에서 월 오름차순.
+  // sort_order는 시즌별로 1부터 매겨져 연도 전체 정렬 키로 쓰면 시즌이 섞인다.
+  const seasonRank = (s: string | null) =>
+    s === "SPRING" ? 0 : s === "FALL" ? 1 : 2;
+  return (data as TimelineEvent[]).sort(
+    (a, b) =>
+      a.year - b.year ||
+      seasonRank(a.season) - seasonRank(b.season) ||
+      (a.month ?? 13) - (b.month ?? 13) ||
+      a.sort_order - b.sort_order
+  );
 }
 
 export default async function DevilsPage() {
