@@ -91,8 +91,9 @@ if (!dryRun) {
 function ruleFor(relPath) {
   const top = relPath.split(path.sep)[0];
   if (top === "logos") return { resize: null, keepOriginal: true };
-  if (top === "roster" || top === "hof") return { resize: 800, keepOriginal: false };
-  return { resize: 1400, keepOriginal: false }; // events, games, 기타
+  if (top === "roster" || top === "hof" || top === "awards")
+    return { resize: 800, keepOriginal: false }; // 인물 사진
+  return { resize: 1400, keepOriginal: false }; // events, games, main, timeline, 기타
 }
 
 async function optimize(absPath, relPath) {
@@ -120,7 +121,8 @@ function contentTypeOf(p) {
 async function walk(dir) {
   const out = [];
   for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
-    if (entry.name.startsWith(".")) continue;
+    // 숨김 폴더와 _review/_reference(검수 대기·대조용)는 업로드하지 않는다
+    if (entry.name.startsWith(".") || entry.name.startsWith("_")) continue;
     const abs = path.join(dir, entry.name);
     if (entry.isDirectory()) out.push(...(await walk(abs)));
     else if (IMAGE_EXTS.has(path.extname(entry.name).toLowerCase())) out.push(abs);
