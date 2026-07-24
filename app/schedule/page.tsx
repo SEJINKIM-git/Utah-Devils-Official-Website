@@ -5,6 +5,17 @@ import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 export const metadata: Metadata = { title: "Schedule" };
 export const revalidate = 300;
 
+// 디자인 기준 시즌 탭 범위. games에 데이터가 없는 시즌도 탭은 노출한다.
+const SEASON_TABS = ["2022", "2023", "2024", "2025", "2026"];
+// 진행 중 시즌의 예정 경기 슬롯 수 — 디자인은 2026에 GAME 04~06 TBA 노출.
+// 시즌당 목표 경기 수는 운영자 확인 필요(기본 6).
+const TARGET_GAMES_PER_SEASON = 6;
+
+const MONTH_ABBR = [
+  "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
+];
+
 type Game = {
   id: number;
   date: string;
@@ -52,6 +63,21 @@ function isUpcoming(g: Game, today: string): boolean {
   return g.date > today && g.score_us == null && g.score_them == null;
 }
 
+// "APR 17" — 디자인의 영문 월 약어 표기
+function formatDate(date: string): string {
+  const month = MONTH_ABBR[Number(date.slice(5, 7)) - 1] ?? "";
+  return `${month} ${date.slice(8, 10)}`;
+}
+
+// time 컬럼 "19:30:00" → "19:30"
+function formatTime(time: string | null): string | null {
+  return time ? time.slice(0, 5) : null;
+}
+
+function pad2(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
 export default async function SchedulePage({
   searchParams,
 }: {
@@ -59,15 +85,25 @@ export default async function SchedulePage({
 }) {
   const games = await fetchGames();
   const today = new Date().toISOString().slice(0, 10);
+  const currentYear = today.slice(0, 4);
 
-  const seasons = Array.from(new Set((games ?? []).map(seasonOf))).sort();
+  const dataSeasons = Array.from(new Set((games ?? []).map(seasonOf)));
+  const seasons = Array.from(new Set([...SEASON_TABS, ...dataSeasons])).sort();
   const currentSeason =
     searchParams.season && seasons.includes(searchParams.season)
       ? searchParams.season
-      : seasons[seasons.length - 1];
+      : currentYear >= seasons[0] && seasons.includes(currentYear)
+        ? currentYear
+        : seasons[seasons.length - 1];
   const seasonGames = (games ?? []).filter(
     (g) => seasonOf(g) === currentSeason
   );
+
+  // 진행 중 시즌: 목표 경기 수까지 TBA placeholder 슬롯을 채운다
+  const tbaCount =
+    currentSeason === currentYear
+      ? Math.max(0, TARGET_GAMES_PER_SEASON - seasonGames.length)
+      : 0;
 
   return (
     <div className="container">
@@ -87,10 +123,6 @@ export default async function SchedulePage({
       <section style={{ paddingBottom: 8 }}>
         {games === null ? (
           <div className="notice">경기 데이터를 준비 중입니다.</div>
-        ) : games.length === 0 ? (
-          <div className="notice">
-            등록된 경기가 없습니다. 새 시즌 일정이 확정되면 이곳에 공개됩니다.
-          </div>
         ) : (
           <>
             <div className="tabs">
@@ -105,72 +137,118 @@ export default async function SchedulePage({
               ))}
             </div>
 
-            <div className="grid grid--2">
-              {seasonGames.map((g, i) => {
-                const cancelled = isCancelled(g);
-                const upcoming = isUpcoming(g, today);
-                const hasScore = g.score_us != null && g.score_them != null;
-                const win = g.result === "W";
-                return (
-                  <div
-                    key={g.id}
-                    className={`card game-card${win ? " game-card--win" : ""}`}
-                  >
+            <div className="section-head">
+              <h2 className="section-title" style={{ fontSize: 32 }}>
+                {currentSeason} <span className="outline">SEASON</span>
+              </h2>
+            </div>
+
+            {seasonGames.length === 0 && tbaCount === 0 ? (
+              <div className="notice">
+                {currentSeason} 시즌의 등록된 경기가 없습니다. 경기 기록이
+                업로드되면 이곳에 공개됩니다.
+              </div>
+            ) : (
+              <div className="grid grid--2">
+                {seasonGames.map((g, i) => {
+                  const cancelled = isCancelled(g);
+                  const upcoming = isUpcoming(g, today);
+                  const hasScore = g.score_us != null && g.score_them != null;
+                  const win = g.result === "W";
+                  return (
+                    <div
+                      key={g.id}
+                      className={`card game-card${win ? " game-card--win" : ""}`}
+                    >
+                      <div className="game-card__top">
+                        <span className="game-card__no">
+                          GAME {pad2(i + 1)}
+                        </span>
+                        {cancelled ? null : upcoming ? (
+                          <span className="badge">UPCOMING</span>
+                        ) : win ? (
+                          <span className="badge badge--solid">WIN</span>
+                        ) : g.result === "L" ? (
+                          <span className="badge badge--muted">LOSE</span>
+                        ) : g.result === "D" ? (
+                          <span className="badge badge--muted">DRAW</span>
+                        ) : !hasScore ? (
+                          <span className="badge badge--muted">미기록</span>
+                        ) : null}
+                      </div>
+
+                      {cancelled ? (
+                        <div className="game-card__score game-card__score--cancelled">
+                          경기취소
+                        </div>
+                      ) : hasScore ? (
+                        <div
+                          className="game-card__score"
+                          style={win ? { color: "var(--red)" } : undefined}
+                        >
+                          {pad2(g.score_us!)}
+                          <span className="vs">:</span>
+                          {pad2(g.score_them!)}
+                        </div>
+                      ) : (
+                        <div
+                          className="game-card__score"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          –<span className="vs">:</span>–
+                        </div>
+                      )}
+
+                      <div className="game-card__opponent">
+                        VS {g.opponent}
+                        {g.is_home != null ? (
+                          <span
+                            className="pill pill--muted"
+                            style={{ marginLeft: 10 }}
+                          >
+                            {g.is_home ? "HOME" : "AWAY"}
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <div className="game-card__meta">
+                        <span>
+                          {formatDate(g.date)}
+                          {formatTime(g.time) ? ` ${formatTime(g.time)}` : ""}
+                        </span>
+                        {g.location ? <span>{g.location}</span> : null}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {Array.from({ length: tbaCount }, (_, i) => (
+                  <div key={`tba-${i}`} className="card game-card">
                     <div className="game-card__top">
                       <span className="game-card__no">
-                        GAME {String(i + 1).padStart(2, "0")}
+                        GAME {pad2(seasonGames.length + i + 1)}
                       </span>
-                      {cancelled ? (
-                        <span className="badge badge--muted">경기취소</span>
-                      ) : upcoming ? (
-                        <span className="badge">UPCOMING</span>
-                      ) : win ? (
-                        <span className="badge badge--solid">WIN</span>
-                      ) : g.result === "L" ? (
-                        <span className="badge badge--muted">LOSE</span>
-                      ) : g.result === "D" ? (
-                        <span className="badge badge--muted">DRAW</span>
-                      ) : !hasScore ? (
-                        <span className="badge badge--muted">미기록</span>
-                      ) : null}
+                      <span className="badge badge--muted">TBA</span>
                     </div>
-
-                    {hasScore && !cancelled ? (
-                      <div className="game-card__score">
-                        {g.score_us}
-                        <span className="vs">:</span>
-                        {g.score_them}
-                      </div>
-                    ) : (
-                      <div
-                        className="game-card__score"
-                        style={{ color: "var(--text-muted)" }}
-                      >
-                        –<span className="vs">:</span>–
-                      </div>
-                    )}
-
-                    <div className="game-card__opponent">
-                      VS {g.opponent}
-                      {g.is_home != null ? (
-                        <span
-                          className="pill pill--muted"
-                          style={{ marginLeft: 10 }}
-                        >
-                          {g.is_home ? "HOME" : "AWAY"}
-                        </span>
-                      ) : null}
+                    <div
+                      className="game-card__score"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      TBA
                     </div>
-
+                    <div
+                      className="game-card__opponent"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      VS TBA
+                    </div>
                     <div className="game-card__meta">
-                      <span>{g.date}</span>
-                      {g.time ? <span>{g.time}</span> : null}
-                      {g.location ? <span>{g.location}</span> : null}
+                      <span>TBA</span>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            )}
           </>
         )}
       </section>

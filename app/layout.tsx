@@ -48,6 +48,15 @@ export default function RootLayout({
         />
       </head>
       <body>
+        {/* 디자인 시안의 반복 워드마크 배경 — CSS 텍스트 전용, 스크린리더/선택 제외 */}
+        <div className="wordmark-bg" aria-hidden="true">
+          {Array.from({ length: 14 }, (_, i) => (
+            <div key={i} className="wordmark-bg__row">
+              UTAH DEVILS BASEBALL · UTAH DEVILS · INCHEON · BASEBALL · UTAH
+              DEVILS BASEBALL · UTAH DEVILS · INCHEON · BASEBALL
+            </div>
+          ))}
+        </div>
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />

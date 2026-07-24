@@ -56,7 +56,7 @@ export default async function DevilsPage() {
         </p>
       </section>
 
-      <section className="section" style={{ paddingTop: 24 }}>
+      <section id="timeline" className="section" style={{ paddingTop: 24 }}>
         <div className="section-head">
           <h2 className="section-title">
             <span className="outline">TIME</span>LINE

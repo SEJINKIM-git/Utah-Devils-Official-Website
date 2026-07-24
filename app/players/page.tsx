@@ -112,7 +112,12 @@ export default async function PlayersPage({
                         <span className="badge badge--solid">CAPTAIN</span>
                       ) : null}
                       {m.joined ? (
-                        <span className="badge badge--muted">{m.joined}</span>
+                        <span
+                          className="badge badge--muted"
+                          style={{ textTransform: "none" }}
+                        >
+                          {m.joined}
+                        </span>
                       ) : null}
                     </div>
                     <div className="player-card__number">
@@ -120,7 +125,18 @@ export default async function PlayersPage({
                     </div>
                     <div className="player-card__name-ko">{m.name_ko}</div>
                     {m.name_en ? (
-                      <div className="player-card__name-en">{m.name_en}</div>
+                      // 디자인 표기: First/Last 2줄 (예: "Sawyer" / "Ott")
+                      <div className="player-card__name-en">
+                        {m.name_en.includes(" ") ? (
+                          <>
+                            {m.name_en.slice(0, m.name_en.lastIndexOf(" "))}
+                            <br />
+                            {m.name_en.slice(m.name_en.lastIndexOf(" ") + 1)}
+                          </>
+                        ) : (
+                          m.name_en
+                        )}
+                      </div>
                     ) : null}
                     {m.birth_date ? (
                       <div className="player-card__birth">{m.birth_date}</div>

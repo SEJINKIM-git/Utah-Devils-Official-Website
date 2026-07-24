@@ -88,6 +88,36 @@ button {
   color: var(--red);
 }
 
+/* ---------- 반복 워드마크 배경 (디자인 시안 공통 패턴) ---------- */
+
+.wordmark-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.wordmark-bg__row {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(226, 232, 240, 0.045);
+}
+
+.wordmark-bg__row:nth-child(even) {
+  margin-left: -140px;
+}
+
 /* ---------- Header ---------- */
 
 .site-header {
@@ -507,8 +537,8 @@ a.card:hover,
   font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--text-muted);
+  line-height: 1.5;
 }
 
 .player-card__birth {
@@ -563,6 +593,13 @@ a.card:hover,
   letter-spacing: 0.02em;
 }
 
+.game-card__score--cancelled {
+  font-family: var(--font-body);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
 .game-card__score .vs {
   color: var(--text-muted);
   font-size: 24px;
@@ -584,6 +621,115 @@ a.card:hover,
 }
 
 /* ---------- Archive ---------- */
+
+.hub-tile {
+  display: block;
+  padding: 36px 28px;
+}
+
+.hub-tile__sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+.hub-tile__title {
+  font-size: clamp(30px, 5vw, 44px);
+  margin-top: 8px;
+}
+
+.hub-tile__desc {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.award-card__number {
+  font-family: var(--font-mono);
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1;
+  margin-top: 12px;
+  color: var(--red);
+}
+
+.award-card--placeholder .award-card__number {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--text-muted);
+}
+
+.hof-detail {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.hof-detail__side {
+  flex-shrink: 0;
+  width: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hof-detail__number {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--red);
+}
+
+.hof-detail__initials {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.hof-detail__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.hof-detail__idline {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.hof-detail__period {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.hof-detail__lines {
+  font-size: 13px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hof-detail__points {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--red);
+}
+
+.hof-detail__inducted {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  border-top: 1px solid var(--hairline);
+  padding-top: 10px;
+  margin-top: 2px;
+}
 
 .award-card__type {
   font-family: var(--font-mono);
@@ -838,6 +984,22 @@ a.card:hover,
 
   .game-card__score {
     font-size: 30px;
+  }
+
+  .hof-detail {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .hof-detail__side {
+    flex-direction: row;
+    align-items: baseline;
+    width: auto;
+    gap: 12px;
+  }
+
+  .wordmark-bg__row {
+    font-size: 40px;
   }
 }
 
