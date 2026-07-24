@@ -11,14 +11,19 @@
 
 | 경로 | 이름 | 상태 | 데이터 소스 |
 |---|---|---|---|
-| `/` | 메인 히어로 | ✅ 완료 (파비콘/OG 적용) | — |
+| `/` | 스크롤 저니 (HERO→DEVILS→PLAYER→SCHEDULE→ARCHIVE→STATS→SHOP) | ✅ 완료 — 투명→솔리드 헤더, scrollspy, 섹션 티저 + VIEW ALL | `games`, `roster_members`, `season_awards`, `hall_of_fame`, `timeline_events`, `products`, `product_surveys` (섹션당 limit, revalidate 300) |
 | `/devils` | 소개 + 연혁 타임라인 | ✅ 완료 + 시드(2022~2026) | `timeline_events` |
 | `/players` | 시즌 로스터 | ✅ 완료 + 시드(2026, 11명) | `roster_members` |
 | `/schedule` | 경기 일정/결과 | ✅ 완료 | `games` (읽기 전용, 시즌은 date 연도로 자동 감지) — 누락 경기는 [docs/games_gap_report.md](docs/games_gap_report.md) 참조 |
 | `/archive` | Awards / Hall of Fame / Events | ✅ 완료 + 시드(어워즈 4시즌, HoF 7, 행사 13) | `season_awards`, `hall_of_fame`, `archive_events` |
 | `/shop` | 수요조사 + 굿즈 아카이브 | ✅ 뼈대 완료 (상품 등록 대기) | `products`, `product_surveys`, `survey_responses`(anon INSERT) |
 | `404` | not-found | ✅ 완료 | — |
-| STATS | 외부 링크 (새 탭) | ✅ | devils-insight-ai.vercel.app |
+| STATS | 메인 #stats 섹션 (외부 버튼은 새 탭) | ✅ | devils-insight-ai.vercel.app |
+
+메인 헤더는 스크롤 반응형(메인 최상단 투명 → scrollY>50 솔리드+56px 축소)이고,
+메뉴는 메인에서는 섹션 앵커 + scrollspy, 상세 페이지에서는 `/#섹션`으로 이동한다.
+모바일 메뉴는 슬라이드다운 패널(ESC/포커스 트랩/스크롤 잠금), 푸터는 4칼럼(브랜드/SITE/LINKS/CONTACT).
+등장 애니메이션은 `prefers-reduced-motion: reduce`에서 전부 비활성화된다.
 
 ## 개발
 
