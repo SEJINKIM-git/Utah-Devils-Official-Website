@@ -30,6 +30,27 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ---------- 브랜드 커스텀 스크롤바 (R3) ---------- */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0e1428;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #dc2626, #7f1d1d);
+  border-radius: 10px;
+  border: 2px solid #0e1428;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #dc2626 #0e1428;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
@@ -124,9 +145,22 @@ button {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(14, 20, 40, 0.88);
-  backdrop-filter: blur(12px);
+  background: rgba(14, 20, 40, 0.92);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--hairline);
+  transition: background 0.4s ease, border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+/* R1: 메인 최상단에서는 히어로와 한 몸처럼 완전 투명 */
+.site-header--transparent {
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+
+.site-header--scrolled {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .site-header__inner {
@@ -135,6 +169,11 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  transition: height 0.4s ease;
+}
+
+.site-header--scrolled .site-header__inner {
+  height: 56px;
 }
 
 .site-header__logo {
@@ -192,22 +231,73 @@ button {
   letter-spacing: 0.08em;
 }
 
+/* R2: 모바일 메뉴 슬라이드다운 — grid rows 0fr→1fr 트릭 */
+
+.mobile-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--hairline);
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.35s ease, opacity 0.35s ease;
+}
+
+.mobile-panel.open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.mobile-panel__inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.mobile-panel nav {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 24px 28px;
+}
+
+.mobile-panel nav a {
+  font-family: var(--font-display);
+  font-size: 30px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.mobile-panel nav a.active,
+.mobile-panel nav a:hover {
+  color: var(--red);
+}
+
+.mobile-panel nav a .ext {
+  font-size: 14px;
+  vertical-align: super;
+}
+
 /* ---------- Footer ---------- */
+
+/* R4: 4컬럼 리치 푸터 */
 
 .site-footer {
   border-top: 1px solid var(--hairline);
   margin-top: 96px;
-  padding: 40px 0 56px;
   color: var(--text-muted);
   font-size: 13px;
 }
 
-.site-footer__inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  align-items: flex-end;
-  justify-content: space-between;
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 32px;
+  padding: 48px 0 40px;
 }
 
 .site-footer .wordmark {
@@ -219,10 +309,32 @@ button {
   color: var(--text);
 }
 
-.site-footer__meta {
+.site-footer__head {
   font-family: var(--font-mono);
   font-size: 12px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 14px;
+}
+
+.site-footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.site-footer__bar {
+  border-top: 1px solid var(--hairline);
+  padding: 18px 0 28px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  justify-content: space-between;
 }
 
 /* ---------- Hero (메인) ---------- */
@@ -930,6 +1042,177 @@ a.card:hover,
   margin-top: 6px;
 }
 
+/* ---------- 스크롤 저니 (메인) ---------- */
+
+/* 히어로: 투명 헤더와 결합해 100vh 수준 (svh로 모바일 주소창 보정) */
+.hero--journey {
+  min-height: calc(100svh - var(--header-h));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+
+.journey-section {
+  padding: 88px 0 0;
+  scroll-margin-top: 64px;
+}
+
+.journey-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+.journey-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 6vw, 64px);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  margin-top: 8px;
+}
+
+.journey-title .outline {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--text);
+}
+
+.view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--red);
+}
+
+.view-all:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* 등장 애니메이션 — IntersectionObserver 클래스 토글 */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* 히어로 스크롤 유도 */
+
+.hero-scroll {
+  margin-top: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+}
+
+.hero-scroll::before {
+  content: "";
+  width: 1px;
+  height: 48px;
+  margin-left: 2ch;
+  background: linear-gradient(180deg, var(--red), transparent);
+  animation: scroll-hint 2s ease-in-out infinite;
+  transform-origin: top;
+}
+
+@keyframes scroll-hint {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.5; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+.hero-teaser {
+  margin-top: 28px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.hero-teaser strong {
+  color: var(--red);
+  font-weight: 600;
+}
+
+/* #devils 팩트 그리드 */
+
+.fact-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.fact {
+  border-left: 2px solid var(--red);
+  padding: 4px 0 4px 16px;
+}
+
+.fact__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.fact__value {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+}
+
+/* #player 가로 스크롤 카드 레일 */
+
+.player-rail {
+  display: flex;
+  gap: 16px;
+  margin-top: 28px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.player-rail > * {
+  flex: 0 0 240px;
+  scroll-snap-align: start;
+}
+
+/* 시즌 전적 한 줄 */
+
+.season-record {
+  margin-top: 20px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.season-record strong {
+  color: var(--red);
+  font-weight: 600;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 900px) {
@@ -942,29 +1225,14 @@ a.card:hover,
 @media (max-width: 720px) {
   .site-nav {
     display: none;
-    position: absolute;
-    top: var(--header-h);
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    align-items: stretch;
-    background: var(--surface);
-    border-bottom: 1px solid var(--hairline);
-    padding: 12px 16px 20px;
-    gap: 2px;
-  }
-
-  .site-nav.open {
-    display: flex;
-  }
-
-  .site-nav a {
-    padding: 12px;
-    font-size: 14px;
   }
 
   .nav-toggle {
     display: block;
+  }
+
+  .mobile-panel {
+    display: grid;
   }
 
   .hero {
@@ -973,6 +1241,19 @@ a.card:hover,
 
   .grid--2 {
     grid-template-columns: 1fr;
+  }
+
+  .fact-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .site-footer__grid {
+    grid-template-columns: 1fr 1fr;
+    padding: 36px 0 28px;
+  }
+
+  .journey-section {
+    padding-top: 64px;
   }
 }
 
@@ -1019,5 +1300,14 @@ a.card:hover,
   a.card:hover,
   .card--hover:hover {
     transform: none;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-scroll::before {
+    animation: none;
   }
 }
