@@ -44,6 +44,8 @@ const PLACE = {
   "img-052": ["main/mood-4.jpg"],
   // §3 타임라인 연도 스냅 (125/128/169는 §8 행사와 재사용 → 중복 복사)
   "img-122": ["timeline/2022/img-122.jpg"],
+  "img-163": ["timeline/2024/img-163.jpg"],
+  "img-166": ["timeline/2024/img-166.png"],
   "img-125": ["timeline/2023/img-125.png", "events/2023-baseball-night/img-125.png"],
   "img-128": ["timeline/2023/img-128.png", "events/2023-baseball-night/img-128.png"],
   "img-169": ["timeline/2024/img-169.jpg", "events/2024-assembly-dongsim/img-169.jpg"],
@@ -53,27 +55,54 @@ const PLACE = {
   "img-246": ["timeline/2026/img-246.png"],
   "img-249": ["timeline/2026/img-249.jpg"],
   "img-252": ["timeline/2026/img-252.jpg"],
-  // §4 어워즈 — 확정 항목만 (부문-등번호-인물)
-  "img-320": ["awards/2022/bp-52-yoonjunyoung.png"],
-  "img-359": ["awards/2023/bp-35-leehowon.jpg"],
-  "img-361": ["awards/2023/rookie-22-kimkyungjae.png"],
-  "img-362": ["awards/2023/manager-21-kimeuna.png"],
-  "img-396": ["awards/2024/bb-25-kangbaehyun.png"],
-  "img-397": ["awards/2024/bp-11-kimtaekyeong.png"],
-  "img-399": ["awards/2024/rookie-82-hwangseohyun.png"],
-  "img-400": ["awards/2024/manager-45-parkyeyoung.jpg"],
-  "img-435": ["awards/2025/bp-82-hwangseohyun.jpg"],
+  // §4 어워즈 — 운영자 확정(2026-07-25) 반영.
+  // 추출 라벨이 전 시즌에서 한 칸씩 밀려 있었음 → 카드 순서대로 재정렬.
+  // 2022 (Rookie 없음, 5카드): MVP 이호원 → BB 권혁준 → BP 윤준영 → MIP 강배현 → Mgr 김채영
+  "img-319": ["awards/2022/mvp-35-leehowon.jpg"],
+  "img-320": ["awards/2022/bb-46-kwonhyukjoon.png"],
+  "img-321": ["awards/2022/bp-52-yoonjunyoung.png"],
+  "img-322": ["awards/2022/mip-25-kangbaehyun.jpg"],
+  "img-323": ["awards/2022/manager-32-kimchaeyoung.png"],
+  // 2023: MVP 김경재 → BB 박성연 → BP 이호원 → MIP 김태경 → Rookie 김경재 → Mgr 김은아
+  "img-358": ["awards/2023/mvp-22-kimkyungjae.png"],
+  "img-359": ["awards/2023/bb-27-parkseongyeon.jpg"],
+  "img-360": ["awards/2023/bp-35-leehowon.png"],
+  "img-361": ["awards/2023/mip-11-kimtaekyeong.png"],
+  "img-362": ["awards/2023/rookie-22-kimkyungjae.png"],
+  "img-363": ["awards/2023/manager-21-kimeuna.png"],
+  // 2024: MVP 이호원 → BB 강배현 → BP 김태경 → MIP 정재형 → Rookie 황서현 → Mgr 박예영
+  "img-396": ["awards/2024/mvp-35-leehowon.png"],
+  "img-397": ["awards/2024/bb-25-kangbaehyun.png"],
+  "img-398": ["awards/2024/bp-11-kimtaekyeong.jpg"],
+  "img-399": ["awards/2024/mip-17-jungjaehyeong.png"],
+  "img-400": ["awards/2024/rookie-82-hwangseohyun.jpg"],
+  "img-401": ["awards/2024/manager-45-parkyeyoung.jpg"],
+  // 2025: MVP 이호원(717) → BB 박상언(435, 소거법 ⚠️) → BP 황서현(752)
+  //       → MIP 조경민(437) → Rookie 임희찬(438) → Mgr 김민정(439)
+  "img-717": ["awards/2025/mvp-35-leehowon.jpg", "_reference/player-design-cuts/35-leehowon.jpg"],
+  "img-435": ["awards/2025/bb-23-parksangeon.jpg"],
+  "img-752": ["awards/2025/bp-82-hwangseohyun.png"],
+  "img-437": ["awards/2025/mip-14-chokyungmin.jpg"],
+  "img-438": ["awards/2025/rookie-13-limheechan.jpg"],
+  "img-439": ["awards/2025/manager-51-kimminjung.jpg"],
   // §5 Hall of Fame Faculty (라벨 확정)
   "img-512": ["hof/faculty-greg-hill.png"],
   "img-513": ["hof/faculty-marisa-hill.png"],
   "img-514": ["hof/faculty-james-park.png"],
   "img-515": ["hof/faculty-molly-kinder.png"],
-  // §6 선수 컷 — 드라이브 원본 대조용 (업로드 제외 _reference/)
+  // §6 선수 컷 — 드라이브 원본 대조용 (업로드 제외 _reference/), 운영자 확정 반영
+  "img-676": ["_reference/player-design-cuts/1-sawyer.jpg"],
   "img-677": ["_reference/player-design-cuts/2-limjuho.jpg"],
-  "img-750": ["_reference/player-design-cuts/56-parkjimin.jpg"],
+  "img-678": ["_reference/player-design-cuts/13-limheechan.png"],
+  "img-679": ["_reference/player-design-cuts/14-chokyungmin.png"],
+  "img-714": ["_reference/player-design-cuts/18-yoonjunho.jpg"],
+  "img-715": ["_reference/player-design-cuts/25-kangbaehyun.png"],
+  "img-716": ["_reference/player-design-cuts/34-samuel.jpg"],
+  "img-751": ["_reference/player-design-cuts/56-parkjimin.png"],
   // §8 행사 사진
   "img-1585": ["events/2022-baseball-night/img-1585.png"],
   "img-1586": ["events/2022-baseball-night/img-1586.png"],
+  "img-1589": ["events/2022-baseball-night/img-1589.png"],
   "img-1578": ["events/2023-baseball-night/img-1578.png"],
   "img-1579": ["events/2023-baseball-night/img-1579.png"],
   "img-1580": ["events/2023-baseball-night/img-1580.png"],
@@ -101,38 +130,12 @@ const PLACE = {
 // ---------- ⚠️ 검수 필요 (라벨 겹침·문서 간 충돌·미배치) ----------
 
 const REVIEW = {
-  // §3 타임라인 연도 경계
-  "img-163": "타임라인 2023~2024 경계 — 어느 연도 블록인지 확인",
-  "img-166": "타임라인 2023~2024 경계 — 어느 연도 블록인지 확인",
-  // §4 어워즈 라벨 겹침
-  "img-319": "2022 MVP 이호원(35) 추정 — 권혁준 BB 카드와 걸친 대형, 시트 대조 필요",
-  "img-321": "2022 권혁준(46) BB 또는 김채영(32) Manager — 둘 중 확정 필요",
-  "img-322": "2022 MIP 강배현(25) 추정 — 라벨 겹침",
-  "img-323": "2022 권혁준(46) BB 또는 김채영(32) Manager — 둘 중 확정 필요",
-  "img-358": "2023 BB 박성연(27) 추정 — MVP 김경재와 인접",
-  "img-360": "2023 김태경(11) MIP 또는 잔여 카드 — 확정 필요",
-  "img-363": "2023 김태경(11) MIP 또는 잔여 카드 — 확정 필요",
-  "img-398": "2024 MVP 이호원(35) 추정 — 대형 이미지 걸침",
-  "img-401": "2024 MIP 정재형(17) 추정 — 라벨 겹침",
-  "img-437": "2025 Rookie 임희찬(13) 추정 — 라벨 겹침",
-  "img-438": "2025 Manager 김민정(51) 추정 — 조경민 MIP와 걸친 대형",
-  "img-439": "2025 MVP 이호원(35) 추정 — 라벨 겹침",
-  "img-717": "문서 충돌: §4는 박상언(23) 2025 BB, §6은 이호원(35) — 신원 확정 필요",
-  "img-752": "문서 충돌: §4는 조경민(14) 2025 MIP, §6은 강래원(37) — 신원 확정 필요",
-  // §6 선수 컷 라벨 겹침 (확정돼도 _reference로만 감 — 드라이브 원본 우선)
-  "img-676": "선수 컷: 소이어(1) 추정 — 임주호 카드와 걸친 대형",
-  "img-678": "선수 컷: 임희찬(13) 추정 — 조경민 라벨 인접",
-  "img-679": "선수 컷: 조경민(14) 추정 — 라벨 인접",
-  "img-714": "선수 컷: 강배현(25) 추정 — 윤준호(18)와 인접",
-  "img-715": "선수 컷: 윤준호(18) 추정 — 라벨 인접",
-  "img-716": "선수 컷: 사무엘(34) 추정 — 이호원(35)과 걸친 대형",
-  "img-751": "선수 컷: 황서현(82) 추정 — 라벨 인접",
-  // §8 행사 경계
-  "img-1589": "2022 vs 2023 Baseball Night 경계 — 어느 행사인지 확인",
-  // §9 미배치 — 확인 전까지 업로드 보류
-  "img-037": "인물 세로컷 — 초안 배치 미확인, 용도 확인 필요",
-  "img-434": "미배치 — 사용 여부 확인",
-  "img-436": "미배치 — 사용 여부 확인",
+  // 운영자 보류 (2026-07-25)
+  "img-037": "인물 세로컷 — 보류 (운영자 지시)",
+  "img-434": "미배치 — 보류 (운영자 지시)",
+  "img-436": "미배치 — 보류 (운영자 지시)",
+  // 소거법 추정 — 확정 답변에 없던 파일
+  "img-750": "선수 컷: 강래원(37) 추정 (751=박지민 확정에 따른 소거) — 재확인 필요",
 };
 
 // ---------- 사용 안 함 ----------

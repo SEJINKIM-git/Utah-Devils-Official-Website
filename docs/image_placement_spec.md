@@ -31,43 +31,30 @@ Task 2(DB 연결)·Task 3(프론트 슬롯)의 기준 문서. 시각 대조는 `
 행사 slug: 2022/2023/2025-baseball-night, 2024-assembly-dongsim(국회동심한마당),
 2024-carnival-10th(10주년 카니발), 2025-dongsim, 2025-neungheodae, 2026-childrens-day.
 
-## 2. 어워즈 확정 매핑 (업로드 완료분 → seed_photos.sql 대상)
+## 2. 어워즈 확정 매핑 (운영자 확정 2026-07-25 — 23장 전체)
 
-| 시즌 | 부문 | 인물 | 파일 |
-|---|---|---|---|
-| 2022 | Best Pitcher | 윤준영(52) | awards/2022/bp-52-yoonjunyoung.jpg |
-| 2023 | Best Pitcher | 이호원(35) | awards/2023/bp-35-leehowon.jpg |
-| 2023 | Rookie | 김경재(22) | awards/2023/rookie-22-kimkyungjae.jpg |
-| 2023 | Manager | 김은아(21) | awards/2023/manager-21-kimeuna.jpg |
-| 2024 | Best Batter | 강배현(25) | awards/2024/bb-25-kangbaehyun.jpg |
-| 2024 | Best Pitcher | 김태경(11) | awards/2024/bp-11-kimtaekyeong.jpg |
-| 2024 | Rookie | 황서현(82) | awards/2024/rookie-82-hwangseohyun.jpg |
-| 2024 | Manager | 박예영(45) | awards/2024/manager-45-parkyeyoung.jpg |
-| 2025 | Best Pitcher | 황서현(82) | awards/2025/bp-82-hwangseohyun.jpg |
+운영자 답변으로 추출 라벨이 **전 시즌에서 카드 한 칸씩 밀려 있었음**이 확인됨.
+카드 배치 순서(MVP→BB→BP→MIP→Rookie→Manager)대로 재정렬한 최종 매핑:
 
-MVP 카드(2022/2024/2025 이호원 추정)와 나머지는 전부 _review — 확정 후 추가.
-
-## 3. 검수 대기 목록 (_review/ 27장)
-
-| 파일 | 확인할 내용 |
+| 시즌 | 파일 순서 (img-NNN → 부문/인물) |
 |---|---|
-| img-037.png | 인물 세로컷 — 초안 배치 미확인, 용도 확인 |
-| img-163.jpg / img-166.png | 타임라인 2023~2024 경계 — 연도 확정 |
-| img-319.jpg | 2022 MVP 이호원(35) 추정 — 대형 걸침 |
-| img-321.png / img-323.png | 2022 권혁준(46) BB vs 김채영(32) Manager — 매칭 확정 |
-| img-322.jpg | 2022 MIP 강배현(25) 추정 |
-| img-358.png | 2023 BB 박성연(27) 추정 — MVP 김경재 인접 |
-| img-360.png / img-363.png | 2023 김태경(11) MIP vs 잔여 카드 |
-| img-398.jpg | 2024 MVP 이호원(35) 추정 — 대형 |
-| img-401.jpg | 2024 MIP 정재형(17) 추정 |
-| img-434.jpg / img-436.png | 미배치 — 사용 여부 |
-| img-437.jpg | 2025 Rookie 임희찬(13) 추정 |
-| img-438.jpg | 2025 Manager 김민정(51) 추정 — 조경민 MIP 걸침 |
-| img-439.jpg | 2025 MVP 이호원(35) 추정 |
-| img-676/678/679/714/715/716/751 | 선수 컷 신원 (확정돼도 드라이브 원본 대조용) |
-| img-717.jpg | **문서 충돌**: §4 박상언(23) 2025 BB vs §6 이호원(35) |
-| img-752.png | **문서 충돌**: §4 조경민(14) 2025 MIP vs §6 강래원(37) |
-| img-1589.png | 2022 vs 2023 Baseball Night 경계 |
+| 2022 | 319=MVP 이호원(35) · 320=BB 권혁준(46)* · 321=BP 윤준영(52) · 322=MIP 강배현(25) · 323=Mgr 김채영(32) |
+| 2023 | 358=MVP 김경재(22) · 359=BB 박성연(27)* · 360=BP 이호원(35) · 361=MIP 김태경(11)* · 362=Rookie 김경재(22)* · 363=Mgr 김은아(21) |
+| 2024 | 396=MVP 이호원(35)* · 397=BB 강배현(25)* · 398=BP 김태경(11) · 399=MIP 정재형(17)* · 400=Rookie 황서현(82)* · 401=Mgr 박예영(45) |
+| 2025 | 717=MVP 이호원(35) · 435=BB 박상언(23)* · 752=BP 황서현(82) · 437=MIP 조경민(14) · 438=Rookie 임희찬(13) · 439=Mgr 김민정(51) |
+
+\* = 운영자 직접 확정이 아니라 밀림 패턴+소거법 추론 — 프론트 반영 후 화면에서 최종 확인.
+
+선수 컷(대조용 _reference/): 676=소이어(1), 677=임주호(2), 678=임희찬(13), 679=조경민(14),
+714=윤준호(18), 715=강배현(25), 716=사무엘(34), 717=이호원(35), 751=박지민(56).
+타임라인: 163·166 → 2024 블록. 행사: 1589 → 2022 Baseball Night.
+
+## 3. 검수 대기 목록 (_review/ 4장)
+
+| 파일 | 상태 |
+|---|---|
+| img-037.png / img-434.jpg / img-436.png | 운영자 보류 |
+| img-750.jpg | 강래원(37) 추정 (751=박지민 확정에 따른 소거) — 재확인 필요 |
 
 미지정: MEDIA 카드 대표 이미지 (제안: img-1631 방송 컷) — 운영자 지정.
 
