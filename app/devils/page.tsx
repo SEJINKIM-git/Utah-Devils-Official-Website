@@ -1,10 +1,35 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getSupabase } from "@/lib/supabase";
 
 export const metadata: Metadata = { title: "Devils" };
 // force-dynamic으로 쿼리 정상 동작을 검증 완료(2026-07). ISR로 복귀하되
 // 빌드 시점 일시 장애가 캐시에 고정되지 않도록 재검증 주기를 둔다.
 export const revalidate = 300;
+
+// 디자인 초안 p2: 연도 블록 옆 스냅 사진 — timeline_events에 사진 컬럼이 없어 정적 매핑
+const STORAGE =
+  (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "") +
+  "/storage/v1/object/public/official-site/timeline";
+const TIMELINE_SNAPS: Record<number, string[]> = {
+  2022: [`${STORAGE}/2022/img-122.jpg`],
+  2023: [`${STORAGE}/2023/img-125.jpg`, `${STORAGE}/2023/img-128.jpg`],
+  2024: [
+    `${STORAGE}/2024/img-163.jpg`,
+    `${STORAGE}/2024/img-166.jpg`,
+    `${STORAGE}/2024/img-169.jpg`,
+  ],
+  2025: [
+    `${STORAGE}/2025/img-204.jpg`,
+    `${STORAGE}/2025/img-207.jpg`,
+    `${STORAGE}/2025/img-210.jpg`,
+  ],
+  2026: [
+    `${STORAGE}/2026/img-246.jpg`,
+    `${STORAGE}/2026/img-249.jpg`,
+    `${STORAGE}/2026/img-252.jpg`,
+  ],
+};
 
 type TimelineEvent = {
   id: string;
@@ -94,6 +119,21 @@ export default async function DevilsPage() {
                     ) : null}
                   </div>
                 ))}
+                {TIMELINE_SNAPS[year]?.length ? (
+                  <div className="timeline__snaps">
+                    {TIMELINE_SNAPS[year].map((url, i) => (
+                      <div key={url} className="timeline__snap">
+                        <Image
+                          src={url}
+                          alt={`${year}년 활동 사진 ${i + 1}`}
+                          fill
+                          sizes="(max-width: 720px) 50vw, 168px"
+                          style={{ objectFit: "cover" }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             ))}
             <div className="timeline__item">

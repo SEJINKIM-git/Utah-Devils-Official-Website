@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 
 export const metadata: Metadata = { title: "Player" };
@@ -17,6 +18,7 @@ type RosterMember = {
   positions: string[] | null;
   player_id: number | null;
   sort_order: number;
+  photo_url: string | null;
 };
 
 async function fetchRoster(): Promise<RosterMember[] | null> {
@@ -28,7 +30,7 @@ async function fetchRoster(): Promise<RosterMember[] | null> {
   const { data, error } = await supabase
     .from("roster_members")
     .select(
-      "id, season, name_ko, name_en, number, birth_date, joined, is_captain, positions, player_id, sort_order"
+      "id, season, name_ko, name_en, number, birth_date, joined, is_captain, positions, player_id, sort_order, photo_url"
     );
   if (error) {
     console.error(
@@ -107,6 +109,17 @@ export default async function PlayersPage({
               {members.map((m) => {
                 const inner = (
                   <>
+                    {m.photo_url ? (
+                      <div className="player-card__photo">
+                        <Image
+                          src={m.photo_url}
+                          alt={m.name_ko}
+                          fill
+                          sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
+                          style={{ objectFit: "cover", objectPosition: "top" }}
+                        />
+                      </div>
+                    ) : null}
                     <div className="player-card__badges">
                       {m.is_captain ? (
                         <span className="badge badge--solid">CAPTAIN</span>

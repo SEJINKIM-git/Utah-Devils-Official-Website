@@ -99,6 +99,10 @@ const PLACE = {
   "img-715": ["_reference/player-design-cuts/25-kangbaehyun.png"],
   "img-716": ["_reference/player-design-cuts/34-samuel.jpg"],
   "img-751": ["_reference/player-design-cuts/56-parkjimin.png"],
+  "img-750": ["_reference/player-design-cuts/37-kangraewon.jpg"],
+  // 운영자 확정(2026-07-25): 434=이호원 대체 컷, 436=황서현 — 배치 슬롯 없음 → 대조용 보관
+  "img-434": ["_reference/player-design-cuts/35-leehowon-alt.jpg"],
+  "img-436": ["_reference/player-design-cuts/82-hwangseohyun.png"],
   // §8 행사 사진
   "img-1585": ["events/2022-baseball-night/img-1585.png"],
   "img-1586": ["events/2022-baseball-night/img-1586.png"],
@@ -132,10 +136,6 @@ const PLACE = {
 const REVIEW = {
   // 운영자 보류 (2026-07-25)
   "img-037": "인물 세로컷 — 보류 (운영자 지시)",
-  "img-434": "미배치 — 보류 (운영자 지시)",
-  "img-436": "미배치 — 보류 (운영자 지시)",
-  // 소거법 추정 — 확정 답변에 없던 파일
-  "img-750": "선수 컷: 강래원(37) 추정 (751=박지민 확정에 따른 소거) — 재확인 필요",
 };
 
 // ---------- 사용 안 함 ----------

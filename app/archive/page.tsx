@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { getSupabase } from "@/lib/supabase";
+import EventLightbox from "../components/EventLightbox";
 
 export const metadata: Metadata = { title: "Archive" };
 export const revalidate = 300;
@@ -64,6 +66,7 @@ type SeasonAward = {
   player_name: string;
   player_name_en: string | null;
   player_number: number | null;
+  photo_url?: string | null;
 };
 
 type HofMember = {
@@ -143,12 +146,23 @@ export default async function ArchivePage({
     if (error) console.error("[archive] media 조회 실패:", error.message);
     mediaLinks = (data as ArchiveEvent[]) ?? [];
   } else if (view === "awards") {
-    const { data, error } = await supabase
-      .from("season_awards")
-      .select("id, season, award_type, player_name, player_name_en, player_number")
-      .order("season", { ascending: false });
-    if (error) console.error("[archive] season_awards 조회 실패:", error.message);
-    awards = (data as SeasonAward[]) ?? null;
+    let res: { data: unknown; error: { code?: string; message: string } | null } =
+      await supabase
+        .from("season_awards")
+        .select(
+          "id, season, award_type, player_name, player_name_en, player_number, photo_url"
+        )
+        .order("season", { ascending: false });
+    if (res.error?.code === "42703") {
+      // photo_url 컬럼 미생성(sql/05 실행 전) — 사진 없이 폴백
+      console.error("[archive] season_awards.photo_url 없음 — sql/05_awards_photo.sql 실행 필요");
+      res = await supabase
+        .from("season_awards")
+        .select("id, season, award_type, player_name, player_name_en, player_number")
+        .order("season", { ascending: false });
+    }
+    if (res.error) console.error("[archive] season_awards 조회 실패:", res.error.message);
+    awards = (res.data as SeasonAward[]) ?? null;
   } else if (view === "hof") {
     const [hofRes, awardsRes] = await Promise.all([
       supabase
@@ -347,6 +361,17 @@ export default async function ArchivePage({
                           );
                           return (
                             <div key={t.key} className="card card--hover">
+                              {winner?.photo_url ? (
+                                <div className="award-card__photo">
+                                  <Image
+                                    src={winner.photo_url}
+                                    alt={winner.player_name}
+                                    fill
+                                    sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
+                                    style={{ objectFit: "cover", objectPosition: "top" }}
+                                  />
+                                </div>
+                              ) : null}
                               <div className="award-card__type">{t.label}</div>
                               {winner ? (
                                 <>
@@ -480,7 +505,19 @@ export default async function ArchivePage({
                     </div>
                     <div className="grid grid--2">
                       {hofFaculty.map((m) => (
-                        <div key={m.id} className="card card--hover">
+                        <div key={m.id} className="card card--hover hof-card">
+                          {m.photo_url ? (
+                            <div className="hof-card__photo--next">
+                              <Image
+                                src={m.photo_url}
+                                alt={m.name_ko}
+                                fill
+                                sizes="96px"
+                                style={{ objectFit: "cover", objectPosition: "top" }}
+                              />
+                            </div>
+                          ) : null}
+                          <div>
                           <div className="hof-card__name">{m.name_ko}</div>
                           {m.roles?.length ? (
                             <div
@@ -495,6 +532,7 @@ export default async function ArchivePage({
                             style={{ marginTop: 10 }}
                           >
                             Inducted into the Hall of Fame in {m.inducted_year}
+                          </div>
                           </div>
                         </div>
                       ))}
@@ -536,13 +574,8 @@ export default async function ArchivePage({
                         ?.label ?? e.category;
                     return (
                       <div key={e.id} className="card card--hover">
-                        {e.photo_urls?.[0] ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            className="event-card__photo"
-                            src={e.photo_urls[0]}
-                            alt={e.title}
-                          />
+                        {e.photo_urls?.length ? (
+                          <EventLightbox title={e.title} photos={e.photo_urls} />
                         ) : null}
                         <div className="event-card__date">
                           {e.event_date ?? ""}{" "}

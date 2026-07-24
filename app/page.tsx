@@ -1,8 +1,20 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import Reveal from "./components/Reveal";
 
 export const revalidate = 300;
+
+// 디자인 초안 p1 전폭 사진 4장 — 섹션 사이 분위기 컷 (배치 순서 유지)
+const STORAGE =
+  (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "") +
+  "/storage/v1/object/public/official-site";
+const MOOD_CUTS = {
+  devils: `${STORAGE}/main/mood-1.jpg`,
+  schedule: `${STORAGE}/main/mood-2.jpg`,
+  archive: `${STORAGE}/main/mood-3.jpg`,
+  stats: `${STORAGE}/main/mood-4.jpg`,
+};
 
 const MONTH_ABBR = [
   "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
@@ -29,6 +41,7 @@ type RosterMember = {
   is_captain: boolean;
   player_id: number | null;
   sort_order: number;
+  photo_url: string | null;
 };
 
 type Award = {
@@ -38,6 +51,7 @@ type Award = {
   player_name: string;
   player_name_en: string | null;
   player_number: number | null;
+  photo_url?: string | null;
 };
 
 type TimelineEvent = {
@@ -99,11 +113,13 @@ async function fetchJourneyData() {
         .limit(100),
       supabase
         .from("roster_members")
-        .select("id, season, name_ko, name_en, number, is_captain, player_id, sort_order")
+        .select("id, season, name_ko, name_en, number, is_captain, player_id, sort_order, photo_url")
         .limit(60),
       supabase
         .from("season_awards")
-        .select("id, season, award_type, player_name, player_name_en, player_number")
+        .select(
+          "id, season, award_type, player_name, player_name_en, player_number, photo_url"
+        )
         .in("award_type", ["MVP", "BEST_BATTER", "BEST_PITCHER"])
         .order("season", { ascending: false })
         .limit(30),
@@ -154,7 +170,18 @@ async function fetchJourneyData() {
 
   // 최신 완료 시즌 어워즈 (진행 중 시즌 제외)
   const currentYear = String(new Date().getFullYear());
-  const allAwards = (awardsRes.data as Award[]) ?? [];
+  let awardsData = awardsRes.data as Award[] | null;
+  if (awardsRes.error?.code === "42703") {
+    // photo_url 컬럼 미생성(sql/05 실행 전) — 사진 없이 폴백
+    const fb = await supabase
+      .from("season_awards")
+      .select("id, season, award_type, player_name, player_name_en, player_number")
+      .in("award_type", ["MVP", "BEST_BATTER", "BEST_PITCHER"])
+      .order("season", { ascending: false })
+      .limit(30);
+    awardsData = (fb.data as Award[]) ?? null;
+  }
+  const allAwards = awardsData ?? [];
   const awardSeasons = Array.from(new Set(allAwards.map((a) => a.season)))
     .filter((s) => s < currentYear)
     .sort();
@@ -303,6 +330,15 @@ export default async function HomePage() {
                 ))}
               </div>
             ) : null}
+            <div className="mood-cut">
+              <Image
+                src={MOOD_CUTS.devils}
+                alt="Utah Devils 단체 사진"
+                fill
+                sizes="(max-width: 1120px) 100vw, 1072px"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
             <Link href="/devils" className="view-all">
               VIEW ALL →
             </Link>
@@ -327,6 +363,17 @@ export default async function HomePage() {
                 {data.roster.map((m) => {
                   const inner = (
                     <>
+                      {m.photo_url ? (
+                        <div className="player-card__photo">
+                          <Image
+                            src={m.photo_url}
+                            alt={m.name_ko}
+                            fill
+                            sizes="240px"
+                            style={{ objectFit: "cover", objectPosition: "top" }}
+                          />
+                        </div>
+                      ) : null}
                       {m.is_captain ? (
                         <span className="badge badge--solid">CAPTAIN</span>
                       ) : null}
@@ -456,6 +503,15 @@ export default async function HomePage() {
                 경기 기록이 업로드되면 이곳에 공개됩니다.
               </div>
             )}
+            <div className="mood-cut">
+              <Image
+                src={MOOD_CUTS.schedule}
+                alt="야간 경기 모습"
+                fill
+                sizes="(max-width: 1120px) 100vw, 1072px"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
             <Link href="/schedule" className="view-all">
               VIEW ALL →
             </Link>
@@ -484,6 +540,17 @@ export default async function HomePage() {
                     if (!winner) return null;
                     return (
                       <div key={type} className="card">
+                        {winner.photo_url ? (
+                          <div className="award-card__photo">
+                            <Image
+                              src={winner.photo_url}
+                              alt={winner.player_name}
+                              fill
+                              sizes="(max-width: 560px) 100vw, 33vw"
+                              style={{ objectFit: "cover", objectPosition: "top" }}
+                            />
+                          </div>
+                        ) : null}
                         <div className="award-card__type">
                           {AWARD_LABELS[type]}
                         </div>
@@ -531,6 +598,15 @@ export default async function HomePage() {
                 </span>
               </Link>
             ) : null}
+            <div className="mood-cut">
+              <Image
+                src={MOOD_CUTS.archive}
+                alt="경기 장면"
+                fill
+                sizes="(max-width: 1120px) 100vw, 1072px"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
             <Link href="/archive" className="view-all">
               VIEW ALL →
             </Link>
@@ -564,6 +640,15 @@ export default async function HomePage() {
               >
                 DEVILS INSIGHT AI ↗
               </a>
+            </div>
+            <div className="mood-cut">
+              <Image
+                src={MOOD_CUTS.stats}
+                alt="잠실야구장 단체 사진"
+                fill
+                sizes="(max-width: 1120px) 100vw, 1072px"
+                style={{ objectFit: "cover" }}
+              />
             </div>
           </Reveal>
         </div>

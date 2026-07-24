@@ -147,6 +147,14 @@ export default function SiteHeader() {
     <header className={headerClass} ref={headerRef}>
       <div className="container site-header__inner">
         <Link href="/" className="site-header__logo" onClick={() => setOpen(false)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logos/emblem-64.png"
+            alt=""
+            width={30}
+            height={30}
+            className="site-header__emblem"
+          />
           UTAH <span className="accent">DEVILS</span>
         </Link>
         <button
