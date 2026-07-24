@@ -56,7 +56,15 @@ npm run dev
 5. [`sql/seed/seed_roster.sql`](sql/seed/seed_roster.sql) — 로스터 중복 정리 + 2026 상세(영문명/생년월일/입부/주장)
 6. [`sql/seed/seed_archive_events.sql`](sql/seed/seed_archive_events.sql) — 행사 13건 (사진은 Storage 업로드 후 photo_urls UPDATE)
 7. [`sql/03_roster_unique.sql`](sql/03_roster_unique.sql) — **스키마**: (season, number) 유니크 제약. **반드시 6번(행사 이후) 실행** (중복 행 원천 차단)
-8. Vercel **Redeploy** (캐시 제거)
+8. [`sql/04_admin_rls.sql`](sql/04_admin_rls.sql) — **스키마**: /admin 콘솔용 authenticated RLS 정책 (연혁/행사 쓰기, 수요조사 응답 읽기). 기존 테이블은 건드리지 않음
+9. Vercel **Redeploy** (캐시 제거)
+
+## 관리자 콘솔 (/admin)
+
+- Supabase Auth 이메일 로그인 + 미들웨어 가드. **회원가입 UI 없음** — 운영진 계정은 Supabase 대시보드 → Authentication → Add user로 생성
+- 기능: 연혁(timeline_events) CRUD · 행사(archive_events) 추가/수정 · 수요조사 사이즈×수량 집계 + CSV 다운로드
+- 쓰기는 전부 authenticated RLS 경로 — service_role 키를 서버에 두지 않는다
+- noindex, 사이트 네비게이션 미노출. 최초 사용 전 `sql/04_admin_rls.sql` 1회 실행 필요
 
 `01_roster_members.sql`은 이미 실행 완료 — 재실행해도 이제 안전하지만 다시 실행할 필요 없다.
 (과거 2회 실행으로 생긴 중복 행은 seed_roster.sql 1단계가 정리한다.)
