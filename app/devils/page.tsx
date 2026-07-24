@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getSupabase } from "@/lib/supabase";
 
 export const metadata: Metadata = { title: "Devils" };
+// force-dynamic으로 쿼리 정상 동작을 검증 완료(2026-07). ISR로 복귀하되
+// 빌드 시점 일시 장애가 캐시에 고정되지 않도록 재검증 주기를 둔다.
 export const revalidate = 300;
 
 type TimelineEvent = {
