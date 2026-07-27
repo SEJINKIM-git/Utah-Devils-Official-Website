@@ -8,9 +8,17 @@ export const revalidate = 300;
 // PDF 디자인 초안에서 추출한 팀 사진. 외부 Storage 설정 없이도 항상 렌더링한다.
 const MOOD_CUTS = {
   devils: "/images/home/team-huddle.png",
-  schedule: "/images/home/night-lineup.png",
+  schedule: "/images/home/night-walk.png",
   archive: "/images/home/team-celebration.png",
-  stats: "/images/home/team-huddle.png",
+  stats: "/images/home/night-lineup.png",
+};
+
+// 2025 어워드 카드 사진은 PDF 시안의 각 카드 사진 영역을 그대로 분리한 로컬 자산이다.
+// Storage의 임시 썸네일이 인물 구도를 훼손하더라도, 홈에서는 얼굴이 보이는 원본 구도를 유지한다.
+const HOME_AWARD_PHOTOS: Record<string, string> = {
+  MVP: "/images/awards/2025-mvp.png",
+  BEST_BATTER: "/images/awards/2025-best-batter.png",
+  BEST_PITCHER: "/images/awards/2025-best-pitcher.png",
 };
 
 const MONTH_ABBR = [
@@ -260,8 +268,8 @@ export default async function HomePage() {
       <section id="hero" className="hero hero--journey">
         <Image
           className="hero__photo"
-          src="/images/home/hero-team.png"
-          alt="경기를 앞둔 Utah Devils 선수단"
+          src="/images/home/team-celebration.png"
+          alt="경기 후 함께 기념 사진을 남긴 Utah Devils 선수단"
           fill
           priority
           sizes="100vw"
@@ -544,16 +552,20 @@ export default async function HomePage() {
                       (a) => a.award_type === type
                     );
                     if (!winner) return null;
+                    const photo =
+                      latestAwardSeason === "2025"
+                        ? HOME_AWARD_PHOTOS[type]
+                        : winner.photo_url;
                     return (
                       <div key={type} className="card">
-                        {winner.photo_url ? (
+                        {photo ? (
                           <div className="award-card__photo">
                             <Image
-                              src={winner.photo_url}
+                              src={photo}
                               alt={winner.player_name}
                               fill
                               sizes="(max-width: 560px) 100vw, 33vw"
-                              style={{ objectFit: "cover", objectPosition: "top" }}
+                              style={{ objectFit: "contain", objectPosition: "center" }}
                             />
                           </div>
                         ) : null}

@@ -1188,7 +1188,8 @@ a.card:hover,
 .mood-cut {
   position: relative;
   width: 100%;
-  aspect-ratio: 21 / 9;
+  /* 추출 원본과 같은 비율을 유지해 PDF의 서로 다른 사진 영역이 섞이지 않게 한다. */
+  aspect-ratio: 7 / 3;
   border-radius: var(--radius);
   overflow: hidden;
   margin-top: 32px;
@@ -1198,20 +1199,21 @@ a.card:hover,
 /* 상세 페이지 공통 사진 배너 — PDF 초안의 사진 중심 구성을 확장 */
 .visual-band {
   position: relative;
-  height: clamp(190px, 26vw, 320px);
+  width: 100%;
+  aspect-ratio: 7 / 3;
   overflow: hidden;
   border: 1px solid var(--hairline);
   border-radius: var(--radius);
   margin: 0 0 12px;
 }
 
-.visual-band img { object-fit: cover; object-position: center 45%; filter: saturate(.82) contrast(1.06); }
+.visual-band img { object-fit: contain; object-position: center; filter: saturate(.82) contrast(1.06); }
 .visual-band__shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8, 13, 31, .76), rgba(8, 13, 31, .12)); }
 .visual-band__label { position: absolute; left: 24px; bottom: 18px; font-family: var(--font-mono); font-size: clamp(11px, 1.5vw, 14px); font-weight: 600; letter-spacing: .15em; color: var(--text); }
 
 @media (max-width: 720px) {
   .mood-cut {
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 7 / 3;
   }
 
   .timeline__snap {
