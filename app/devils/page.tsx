@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getSupabase } from "@/lib/supabase";
+import VisualBand from "@/app/components/VisualBand";
 
 export const metadata: Metadata = { title: "Devils" };
 // force-dynamic으로 쿼리 정상 동작을 검증 완료(2026-07). ISR로 복귀하되
@@ -88,6 +89,7 @@ export default async function DevilsPage() {
           팀을 지향합니다.
         </p>
       </section>
+      <VisualBand image="/images/home/team-huddle.png" alt="Utah Devils 팀 허들" label="ONE TEAM · ONE DEVILS" />
 
       <section id="timeline" className="section" style={{ paddingTop: 24 }}>
         <div className="section-head">

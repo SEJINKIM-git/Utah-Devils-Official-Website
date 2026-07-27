@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getSupabase } from "@/lib/supabase";
 import EventLightbox from "../components/EventLightbox";
+import VisualBand from "@/app/components/VisualBand";
 
 export const metadata: Metadata = { title: "Archive" };
 export const revalidate = 300;
@@ -238,6 +239,7 @@ export default async function ArchivePage({
           기록입니다.
         </p>
       </section>
+      <VisualBand image="/images/home/team-celebration.png" alt="Utah Devils 단체 사진" label="MOMENTS THAT STAY" />
 
       {view === null ? (
         /* ---------- 허브: 4개 대형 타일 + MEDIA ---------- */

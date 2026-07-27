@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabase } from "@/lib/supabase";
 import SurveyForm from "./SurveyForm";
+import VisualBand from "@/app/components/VisualBand";
 
 export const metadata: Metadata = { title: "Shop" };
 export const revalidate = 60;
@@ -96,6 +97,7 @@ export default async function ShopPage({
           Utah Devils 굿즈 수요조사와 지금까지 만든 굿즈들의 아카이브입니다.
         </p>
       </section>
+      <VisualBand image="/images/home/team-huddle.png" alt="Utah Devils 팀 사진" label="WEAR THE DEVILS" />
 
       {!supabase ? (
         <div className="notice">굿즈 데이터를 준비 중입니다.</div>

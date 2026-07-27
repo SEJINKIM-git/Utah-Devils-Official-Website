@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
+import VisualBand from "@/app/components/VisualBand";
 
 export const metadata: Metadata = { title: "Player" };
 export const revalidate = 300;
@@ -81,6 +82,7 @@ export default async function PlayersPage({
           </p>
         ) : null}
       </section>
+      <VisualBand image="/images/home/night-lineup.png" alt="야간 경기 전 Utah Devils 선수단" label="THE 2026 ROSTER" />
 
       <section style={{ paddingBottom: 8 }}>
         {roster === null ? (

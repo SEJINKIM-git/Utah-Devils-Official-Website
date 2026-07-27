@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
+import VisualBand from "@/app/components/VisualBand";
 
 export const metadata: Metadata = { title: "Schedule" };
 export const revalidate = 300;
@@ -119,6 +120,7 @@ export default async function SchedulePage({
           Utah Devils의 시즌별 경기 일정과 결과입니다.
         </p>
       </section>
+      <VisualBand image="/images/home/night-lineup.png" alt="야간 경기장의 Utah Devils" label="GAME DAY · DEVILS BASEBALL" />
 
       <section style={{ paddingBottom: 8 }}>
         {games === null ? (

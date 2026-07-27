@@ -5,15 +5,12 @@ import Reveal from "./components/Reveal";
 
 export const revalidate = 300;
 
-// 디자인 초안 p1 전폭 사진 4장 — 섹션 사이 분위기 컷 (배치 순서 유지)
-const STORAGE =
-  (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "") +
-  "/storage/v1/object/public/official-site";
+// PDF 디자인 초안에서 추출한 팀 사진. 외부 Storage 설정 없이도 항상 렌더링한다.
 const MOOD_CUTS = {
-  devils: `${STORAGE}/main/mood-1.jpg`,
-  schedule: `${STORAGE}/main/mood-2.jpg`,
-  archive: `${STORAGE}/main/mood-3.jpg`,
-  stats: `${STORAGE}/main/mood-4.jpg`,
+  devils: "/images/home/team-huddle.png",
+  schedule: "/images/home/night-lineup.png",
+  archive: "/images/home/team-celebration.png",
+  stats: "/images/home/team-huddle.png",
 };
 
 const MONTH_ABBR = [
@@ -261,6 +258,15 @@ export default async function HomePage() {
     <>
       {/* ---------- #hero ---------- */}
       <section id="hero" className="hero hero--journey">
+        <Image
+          className="hero__photo"
+          src="/images/home/hero-team.png"
+          alt="경기를 앞둔 Utah Devils 선수단"
+          fill
+          priority
+          sizes="100vw"
+        />
+        <div className="hero__scrim" aria-hidden="true" />
         <div className="container">
           <div className="hero__meta">UTAH ASIA CAMPUS · BASEBALL CLUB</div>
           <h1 className="wordmark" style={{ marginTop: 12 }}>

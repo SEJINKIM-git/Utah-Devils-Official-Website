@@ -1195,6 +1195,20 @@ a.card:hover,
   border: 1px solid var(--hairline);
 }
 
+/* 상세 페이지 공통 사진 배너 — PDF 초안의 사진 중심 구성을 확장 */
+.visual-band {
+  position: relative;
+  height: clamp(190px, 26vw, 320px);
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  margin: 0 0 12px;
+}
+
+.visual-band img { object-fit: cover; object-position: center 45%; filter: saturate(.82) contrast(1.06); }
+.visual-band__shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8, 13, 31, .76), rgba(8, 13, 31, .12)); }
+.visual-band__label { position: absolute; left: 24px; bottom: 18px; font-family: var(--font-mono); font-size: clamp(11px, 1.5vw, 14px); font-weight: 600; letter-spacing: .15em; color: var(--text); }
+
 @media (max-width: 720px) {
   .mood-cut {
     aspect-ratio: 16 / 10;
@@ -1209,11 +1223,35 @@ a.card:hover,
 
 /* 히어로: 투명 헤더와 결합해 100vh 수준 (svh로 모바일 주소창 보정) */
 .hero--journey {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   min-height: calc(100svh - var(--header-h));
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 48px 0;
+}
+
+.hero--journey .container {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__photo {
+  z-index: -2;
+  object-fit: cover;
+  object-position: center 35%;
+  filter: saturate(0.82) contrast(1.04);
+}
+
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(7, 11, 27, 0.92) 0%, rgba(7, 11, 27, 0.65) 52%, rgba(7, 11, 27, 0.3) 100%),
+    linear-gradient(0deg, rgba(7, 11, 27, 0.72), transparent 48%);
 }
 
 
