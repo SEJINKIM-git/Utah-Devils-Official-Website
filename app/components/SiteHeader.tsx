@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 // 기존 홈페이지 초안의 페이지 순서:
@@ -20,7 +20,6 @@ const NAV = [
 
 export default function SiteHeader() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const isHome = pathname === "/";
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -129,12 +128,11 @@ export default function SiteHeader() {
 
   function isActive(item: (typeof NAV)[number]): boolean {
     if (isHome) return activeId === item.id;
-    // pathname에는 query string이 포함되지 않으므로 /archive?tab=... 메뉴도
-    // 기본 경로(/archive) 기준으로 현재 페이지를 표시한다.
+    // Awards/HOF/Archive는 같은 상세 경로를 공유한다. 정적 렌더링을 유지하기
+    // 위해 쿼리 의존 훅은 사용하지 않고 Archive 메뉴만 현재 페이지로 표시한다.
     const basePath = item.page?.split("?")[0];
     if (basePath === "/archive") {
-      const targetTab = new URLSearchParams(item.page?.split("?")[1]).get("tab");
-      return pathname === "/archive" && searchParams.get("tab") === targetTab;
+      return pathname === "/archive" && item.id === "archive";
     }
     return basePath != null && pathname?.startsWith(basePath) === true;
   }
