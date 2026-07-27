@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
+import { HISTORICAL_GAMES, withHistoricalGames } from "@/lib/historical-games";
 import Reveal from "./components/Reveal";
 import SplitFeature from "./components/SplitFeature";
 
@@ -97,7 +98,7 @@ function formatDate(date: string): string {
 async function fetchJourneyData() {
   const supabase = getSupabase();
   const empty = {
-    games: [] as Game[],
+    games: HISTORICAL_GAMES as Game[],
     roster: [] as RosterMember[],
     awards: [] as Award[],
     hofStudents: 0,
@@ -160,7 +161,7 @@ async function fetchJourneyData() {
     if (res.error) console.error(`[home] ${name} 조회 실패:`, res.error.message);
   }
 
-  const games = (gamesRes.data as Game[]) ?? [];
+  const games = withHistoricalGames((gamesRes.data as Game[]) ?? []) as Game[];
 
   // 현재 시즌 로스터: 주장 먼저, 이후 등번호 순
   const allRoster = (rosterRes.data as RosterMember[]) ?? [];

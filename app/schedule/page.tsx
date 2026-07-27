@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
+import { withHistoricalGames } from "@/lib/historical-games";
 import VisualBand from "@/app/components/VisualBand";
 
 export const metadata: Metadata = { title: "Schedule" };
@@ -84,7 +85,9 @@ export default async function SchedulePage({
 }: {
   searchParams: { season?: string };
 }) {
-  const games = await fetchGames();
+  const liveGames = await fetchGames();
+  // 2022~2025는 배포된 공식 아카이브, 2026부터는 운영 데이터로 표시한다.
+  const games = withHistoricalGames(liveGames ?? []) as Game[];
   const today = new Date().toISOString().slice(0, 10);
   const currentYear = today.slice(0, 4);
 
@@ -124,10 +127,7 @@ export default async function SchedulePage({
       <VisualBand image="/images/home/night-lineup.png" alt="야간 경기장의 Utah Devils" label="GAME DAY · DEVILS BASEBALL" />
 
       <section style={{ paddingBottom: 8 }}>
-        {games === null ? (
-          <div className="notice">경기 데이터를 준비 중입니다.</div>
-        ) : (
-          <>
+        <>
             <div className="tabs">
               {seasons.map((s) => (
                 <Link
@@ -252,8 +252,7 @@ export default async function SchedulePage({
                 ))}
               </div>
             )}
-          </>
-        )}
+        </>
       </section>
 
       <div className="cta-panel">
