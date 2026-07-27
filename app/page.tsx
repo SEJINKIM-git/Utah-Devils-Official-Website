@@ -2,16 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import Reveal from "./components/Reveal";
+import SplitFeature from "./components/SplitFeature";
 
 export const revalidate = 300;
-
-// PDF 디자인 초안에서 추출한 팀 사진. 외부 Storage 설정 없이도 항상 렌더링한다.
-const MOOD_CUTS = {
-  devils: "/images/home/team-huddle.png",
-  schedule: "/images/home/night-walk.png",
-  archive: "/images/home/team-celebration.png",
-  stats: "/images/home/night-lineup.png",
-};
 
 // 2025 어워드 카드 사진은 PDF 시안의 각 카드 사진 영역을 그대로 분리한 로컬 자산이다.
 // Storage의 임시 썸네일이 인물 구도를 훼손하더라도, 홈에서는 얼굴이 보이는 원본 구도를 유지한다.
@@ -20,6 +13,15 @@ const HOME_AWARD_PHOTOS: Record<string, string> = {
   BEST_BATTER: "/images/awards/2025-best-batter.png",
   BEST_PITCHER: "/images/awards/2025-best-pitcher.png",
 };
+
+const QUICK_LINKS = [
+  { href: "/devils", icon: "⚾", title: "DEVILS", sub: "팀 소개와 연혁" },
+  { href: "/players", icon: "◆", title: "PLAYER", sub: "2026 선수단" },
+  { href: "/schedule", icon: "▦", title: "SCHEDULE", sub: "시즌별 경기 일정" },
+  { href: "/archive?tab=events", icon: "◌", title: "ARCHIVE", sub: "행사와 활동 기록" },
+  { href: "#stats", icon: "✦", title: "STATS", sub: "Devils Insight AI" },
+  { href: "/shop", icon: "⌁", title: "SHOP", sub: "굿즈와 수요조사" },
+];
 
 const MONTH_ABBR = [
   "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
@@ -284,8 +286,11 @@ export default async function HomePage() {
           </h1>
           <p className="hero__tagline">
             유타대학교 아시아캠퍼스 야구동아리 Utah Devils의 공식 홈페이지.
-            스크롤로 데빌스의 모든 것을 만나보세요.
+            경기, 사람, 기록으로 이어지는 데빌스의 모든 순간을 만나보세요.
           </p>
+          <Link href="/devils" className="hero__cta">
+            EXPLORE THE DEVILS <span aria-hidden="true">→</span>
+          </Link>
           {next ? (
             <p className="hero-teaser">
               <strong>NEXT GAME</strong> · {formatDate(next.date)} VS{" "}
@@ -293,7 +298,22 @@ export default async function HomePage() {
             </p>
           ) : null}
           <div className="hero-scroll" aria-hidden="true">
-            SCROLL
+            SCROLL <span>⌄</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- PDF 1의 퀵링크를 벤치마크형 아이콘 타일로 재해석 ---------- */}
+      <section className="quick-links-section" aria-label="Utah Devils 바로가기">
+        <div className="container">
+          <div className="quick-links">
+            {QUICK_LINKS.map((item) => (
+              <Link key={item.title} href={item.href} className="quick-link">
+                <span className="quick-link__icon" aria-hidden="true">{item.icon}</span>
+                <span className="quick-link__title">{item.title}</span>
+                <span className="quick-link__sub">{item.sub}</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -344,18 +364,15 @@ export default async function HomePage() {
                 ))}
               </div>
             ) : null}
-            <div className="mood-cut">
-              <Image
-                src={MOOD_CUTS.devils}
-                alt="Utah Devils 단체 사진"
-                fill
-                sizes="(max-width: 1120px) 100vw, 1072px"
-                style={{ objectFit: "cover" }}
-              />
-            </div>
-            <Link href="/devils" className="view-all">
-              VIEW ALL →
-            </Link>
+            <SplitFeature
+              image="/images/home/night-lineup.png"
+              alt="야간 경기장에 줄지어 선 Utah Devils 선수단"
+              eyebrow="ABOUT UTAH DEVILS"
+              title={<>WE ARE <span className="outline">DEVILS</span></>}
+              description="경기장 안팎에서 함께 성장하는 유타대학교 아시아캠퍼스 야구동아리의 이야기와 연혁을 확인하세요."
+              href="/devils"
+              linkLabel="DISCOVER OUR STORY"
+            />
           </Reveal>
         </div>
       </section>
@@ -517,18 +534,17 @@ export default async function HomePage() {
                 경기 기록이 업로드되면 이곳에 공개됩니다.
               </div>
             )}
-            <div className="mood-cut">
-              <Image
-                src={MOOD_CUTS.schedule}
-                alt="야간 경기 모습"
-                fill
-                sizes="(max-width: 1120px) 100vw, 1072px"
-                style={{ objectFit: "cover" }}
-              />
-            </div>
-            <Link href="/schedule" className="view-all">
-              VIEW ALL →
-            </Link>
+            <SplitFeature
+              image="/images/home/night-walk.png"
+              alt="야간 경기 후 그라운드를 걷는 Utah Devils 선수단"
+              eyebrow="2026 SEASON"
+              title={<>GAME <span className="outline">DAY</span></>}
+              description="2022년부터 이어진 시즌별 경기 일정, 결과와 현재 시즌의 예정 경기를 한곳에서 확인하세요."
+              href="/schedule"
+              linkLabel="VIEW SCHEDULE"
+              reverse
+              redPanel
+            />
           </Reveal>
         </div>
       </section>
@@ -616,18 +632,15 @@ export default async function HomePage() {
                 </span>
               </Link>
             ) : null}
-            <div className="mood-cut">
-              <Image
-                src={MOOD_CUTS.archive}
-                alt="경기 장면"
-                fill
-                sizes="(max-width: 1120px) 100vw, 1072px"
-                style={{ objectFit: "cover" }}
-              />
-            </div>
-            <Link href="/archive" className="view-all">
-              VIEW ALL →
-            </Link>
+            <SplitFeature
+              image="/images/home/team-huddle.png"
+              alt="경기를 앞두고 손을 모은 Utah Devils 선수단"
+              eyebrow="HISTORY & RECORDS"
+              title={<>THE <span className="outline">ARCHIVE</span></>}
+              description="시즌 어워즈, 명예의 전당, 야구의 밤과 캠퍼스 활동까지 데빌스의 기록을 모았습니다."
+              href="/archive"
+              linkLabel="OPEN THE ARCHIVE"
+            />
           </Reveal>
         </div>
       </section>
@@ -659,14 +672,15 @@ export default async function HomePage() {
                 DEVILS INSIGHT AI ↗
               </a>
             </div>
-            <div className="mood-cut">
+            <div className="closing-cut">
               <Image
-                src={MOOD_CUTS.stats}
-                alt="잠실야구장 단체 사진"
+                src="/images/home/team-celebration.png"
+                alt="경기 후 함께 기념 사진을 남긴 Utah Devils 선수단"
                 fill
-                sizes="(max-width: 1120px) 100vw, 1072px"
-                style={{ objectFit: "cover" }}
+                sizes="100vw"
               />
+              <div className="closing-cut__shade" aria-hidden="true" />
+              <span>ONE TEAM · ONE DEVILS</span>
             </div>
           </Reveal>
         </div>
