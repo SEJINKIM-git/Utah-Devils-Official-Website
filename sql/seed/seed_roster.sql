@@ -25,8 +25,8 @@ set name_ko    = v.name_ko,
     is_captain = v.is_captain
 from (
   values
-    ('2026',  1, '소이어', 'Sawyer Ott',      '2007-07-19'::date, '26 Spring', false),
-    ('2026',  2, '임주호', 'Juho Lim',        '2007-06-21'::date, '24 Fall',   false),
+    ('2026',  1, '소이어', 'Sawyer Ott',      '2007-07-19'::date, '24 Fall',   false),
+    ('2026',  2, '임주호', 'Juho Lim',        '2007-06-21'::date, '26 Spring', false),
     ('2026', 13, '임희찬', 'Heechan Im',      '2002-04-22'::date, '25 Spring', false),
     ('2026', 14, '조경민', 'Kyungmin Cho',    '2005-02-14'::date, '24 Fall',   false),
     ('2026', 18, '윤준호', 'Junho Yoon',      '2007-02-16'::date, '26 Spring', false),
@@ -34,8 +34,8 @@ from (
     ('2026', 34, '사무엘', 'Samuel Bernerad', '2004-05-29'::date, '26 Spring', false),
     ('2026', 35, '이호원', 'Howon Lee',       '2002-03-15'::date, '22 Spring', true),
     ('2026', 37, '강래원', 'Raewon Kang',     '2007-05-25'::date, '26 Spring', false),
-    ('2026', 56, '박지민', 'Jimin Park',      '2003-05-06'::date, '24 Fall',   false),
-    ('2026', 82, '황서현', 'Seohyun Hwang',   '2004-08-20'::date, '23 Spring', false)
+    ('2026', 56, '박지민', 'Jimin Park',      '2003-05-06'::date, '23 Spring', false),
+    ('2026', 82, '황서현', 'Seohyun Hwang',   '2004-08-20'::date, '24 Fall',   false)
 ) as v(season, number, name_ko, name_en, birth_date, joined, is_captain)
 where r.season = v.season
   and r.number = v.number;
@@ -46,8 +46,8 @@ insert into public.roster_members
 select v.season, v.number, v.name_ko, v.name_en, v.birth_date, v.joined, v.is_captain
 from (
   values
-    ('2026',  1, '소이어', 'Sawyer Ott',      '2007-07-19'::date, '26 Spring', false),
-    ('2026',  2, '임주호', 'Juho Lim',        '2007-06-21'::date, '24 Fall',   false),
+    ('2026',  1, '소이어', 'Sawyer Ott',      '2007-07-19'::date, '24 Fall',   false),
+    ('2026',  2, '임주호', 'Juho Lim',        '2007-06-21'::date, '26 Spring', false),
     ('2026', 13, '임희찬', 'Heechan Im',      '2002-04-22'::date, '25 Spring', false),
     ('2026', 14, '조경민', 'Kyungmin Cho',    '2005-02-14'::date, '24 Fall',   false),
     ('2026', 18, '윤준호', 'Junho Yoon',      '2007-02-16'::date, '26 Spring', false),
@@ -55,8 +55,8 @@ from (
     ('2026', 34, '사무엘', 'Samuel Bernerad', '2004-05-29'::date, '26 Spring', false),
     ('2026', 35, '이호원', 'Howon Lee',       '2002-03-15'::date, '22 Spring', true),
     ('2026', 37, '강래원', 'Raewon Kang',     '2007-05-25'::date, '26 Spring', false),
-    ('2026', 56, '박지민', 'Jimin Park',      '2003-05-06'::date, '24 Fall',   false),
-    ('2026', 82, '황서현', 'Seohyun Hwang',   '2004-08-20'::date, '23 Spring', false)
+    ('2026', 56, '박지민', 'Jimin Park',      '2003-05-06'::date, '23 Spring', false),
+    ('2026', 82, '황서현', 'Seohyun Hwang',   '2004-08-20'::date, '24 Fall',   false)
 ) as v(season, number, name_ko, name_en, birth_date, joined, is_captain)
 where not exists (
   select 1 from public.roster_members r

@@ -47,6 +47,22 @@ function sortByNumber(a: RosterMember, b: RosterMember) {
   return (a.number ?? 999) - (b.number ?? 999) || a.sort_order - b.sort_order;
 }
 
+// PDF Player p.5의 공식 표기. 데이터 보정 SQL이 실행되기 전에도
+// 방문자에게 검증된 입단 시기가 보이도록 사용한다.
+const OFFICIAL_JOINED_2026: Record<number, string> = {
+  1: "24 Fall",
+  2: "26 Spring",
+  56: "23 Spring",
+  82: "24 Fall",
+};
+
+function displayJoined(member: RosterMember): string | null {
+  if (member.season === "2026" && member.number != null) {
+    return OFFICIAL_JOINED_2026[member.number] ?? member.joined;
+  }
+  return member.joined;
+}
+
 export default async function PlayersPage({
   searchParams,
 }: {
@@ -109,6 +125,7 @@ export default async function PlayersPage({
 
             <div className="grid grid--3">
               {members.map((m) => {
+                const joined = displayJoined(m);
                 const inner = (
                   <>
                     {m.photo_url ? (
@@ -126,12 +143,12 @@ export default async function PlayersPage({
                       {m.is_captain ? (
                         <span className="badge badge--solid">CAPTAIN</span>
                       ) : null}
-                      {m.joined ? (
+                      {joined ? (
                         <span
                           className="badge badge--muted"
                           style={{ textTransform: "none" }}
                         >
-                          {m.joined}
+                          {joined}
                         </span>
                       ) : null}
                     </div>
