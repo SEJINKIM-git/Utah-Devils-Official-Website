@@ -56,11 +56,41 @@ const OFFICIAL_JOINED_2026: Record<number, string> = {
   82: "24 Fall",
 };
 
+// 운영진이 인벤토리 원본과 선수·등번호를 확인한 2026 프로필 사진.
+// DB 보정 SQL 실행 전에도 공개 사이트에서 같은 원본을 사용한다.
+const OFFICIAL_PROFILE_PHOTOS_2026: Record<
+  number,
+  { src: string; position: string }
+> = {
+  1: { src: "/images/roster/01-sawyer-ott.jpg", position: "54% 58%" },
+  2: { src: "/images/roster/02-juho-lim.jpg", position: "50% 30%" },
+  13: { src: "/images/roster/13-heechan-im.png", position: "50% 26%" },
+  14: { src: "/images/roster/14-kyungmin-cho.png", position: "50% 34%" },
+  18: { src: "/images/roster/18-junho-yoon.jpg", position: "51% 30%" },
+  25: { src: "/images/roster/25-baehyun-kang.png", position: "50% 22%" },
+  34: { src: "/images/roster/34-samuel-bernerad.jpg", position: "64% 28%" },
+  35: { src: "/images/roster/35-howon-lee.jpg", position: "50% 27%" },
+  37: { src: "/images/roster/37-raewon-kang.jpg", position: "50% 25%" },
+  56: { src: "/images/roster/56-jimin-park.png", position: "50% 24%" },
+  82: { src: "/images/roster/82-seohyun-hwang.png", position: "50% 24%" },
+};
+
 function displayJoined(member: RosterMember): string | null {
   if (member.season === "2026" && member.number != null) {
     return OFFICIAL_JOINED_2026[member.number] ?? member.joined;
   }
   return member.joined;
+}
+
+function displayPhoto(member: RosterMember) {
+  const official =
+    member.season === "2026" && member.number != null
+      ? OFFICIAL_PROFILE_PHOTOS_2026[member.number]
+      : undefined;
+  return {
+    src: member.photo_url ?? official?.src ?? null,
+    position: official?.position ?? "50% 25%",
+  };
 }
 
 export default async function PlayersPage({
@@ -126,16 +156,17 @@ export default async function PlayersPage({
             <div className="grid grid--3">
               {members.map((m) => {
                 const joined = displayJoined(m);
+                const photo = displayPhoto(m);
                 const inner = (
                   <>
-                    {m.photo_url ? (
+                    {photo.src ? (
                       <div className="player-card__photo">
                         <Image
-                          src={m.photo_url}
+                          src={photo.src}
                           alt={m.name_ko}
                           fill
                           sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
-                          style={{ objectFit: "cover", objectPosition: "top" }}
+                          style={{ objectFit: "cover", objectPosition: photo.position }}
                         />
                       </div>
                     ) : null}
