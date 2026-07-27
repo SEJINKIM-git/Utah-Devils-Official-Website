@@ -117,7 +117,8 @@ export default async function SchedulePage({
           SCHE<span className="outline">DULE</span>
         </h1>
         <p className="hero__tagline">
-          Utah Devils의 시즌별 경기 일정과 결과입니다.
+          2022년부터 2026년까지, Utah Devils의 시즌별 경기 일정과 결과를
+          확인하세요. 진행 중인 시즌의 미정 경기는 TBA로 표시됩니다.
         </p>
       </section>
       <VisualBand image="/images/home/night-lineup.png" alt="야간 경기장의 Utah Devils" label="GAME DAY · DEVILS BASEBALL" />

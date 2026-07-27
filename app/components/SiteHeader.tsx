@@ -1,21 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-// 스크롤 저니 섹션과 1:1 대응 — 메인에서는 앵커, 상세에서는 /#앵커로 이동
+// 기존 홈페이지 초안의 페이지 순서:
+// 1 Home → 2 Devils → 3 Awards → 4 Hall of Fame → 5 Player
+// → 6~10 Schedule(시즌별) → 11 Archive
 const NAV = [
   { id: "devils", label: "DEVILS", page: "/devils" },
+  { id: "awards", label: "AWARDS", page: "/archive?tab=awards" },
+  { id: "hof", label: "HOF", page: "/archive?tab=hof" },
   { id: "player", label: "PLAYER", page: "/players" },
   { id: "schedule", label: "SCHEDULE", page: "/schedule" },
-  { id: "archive", label: "ARCHIVE", page: "/archive" },
+  { id: "archive", label: "ARCHIVE", page: "/archive?tab=events" },
   { id: "stats", label: "STATS", page: null },
   { id: "shop", label: "SHOP", page: "/shop" },
 ];
 
 export default function SiteHeader() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const isHome = pathname === "/";
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -124,10 +129,20 @@ export default function SiteHeader() {
 
   function isActive(item: (typeof NAV)[number]): boolean {
     if (isHome) return activeId === item.id;
-    return item.page != null && pathname?.startsWith(item.page) === true;
+    // pathname에는 query string이 포함되지 않으므로 /archive?tab=... 메뉴도
+    // 기본 경로(/archive) 기준으로 현재 페이지를 표시한다.
+    const basePath = item.page?.split("?")[0];
+    if (basePath === "/archive") {
+      const targetTab = new URLSearchParams(item.page?.split("?")[1]).get("tab");
+      return pathname === "/archive" && searchParams.get("tab") === targetTab;
+    }
+    return basePath != null && pathname?.startsWith(basePath) === true;
   }
 
   function hrefOf(item: (typeof NAV)[number]): string {
+    // 원본 시안은 페이지별 구성이므로, 각 메뉴는 해당 상세 페이지로 바로 이동한다.
+    // Stats만 메인 페이지의 분석 소개 섹션을 유지한다.
+    if (item.page) return item.page;
     return isHome ? `#${item.id}` : `/#${item.id}`;
   }
 

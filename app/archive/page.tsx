@@ -38,25 +38,25 @@ const HUB_TILES = [
     href: "/devils#timeline",
     title: "HISTORY",
     sub: "History of Devils",
-    desc: "창단부터 지금까지, 시즌별 연혁 타임라인",
+    desc: "2022년 창단부터 현재까지의 시즌별 활동과 팀의 발자취",
   },
   {
     href: "/archive?tab=awards",
     title: "AWARDS",
     sub: "Awards of Devils",
-    desc: "시즌별 6개 부문 수상자 기록",
+    desc: "MVP부터 Manager까지, 시즌별 수상자와 데빌스의 성과",
   },
   {
     href: "/archive?tab=hof",
     title: "HALL OF FAME",
     sub: "Hall of Fame",
-    desc: "명예의 전당에 헌액된 데빌스",
+    desc: "팀을 빛낸 선수·매니저와 Utah Asia Campus Faculty",
   },
   {
     href: "/archive?tab=events",
     title: "ARCHIVE",
     sub: "Archive of Devils",
-    desc: "야구의 밤, 부스, 캠퍼스 행사 기록",
+    desc: "야구의 밤, 교류 활동, 캠퍼스 부스와 외부 행사 아카이브",
   },
 ];
 

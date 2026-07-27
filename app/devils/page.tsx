@@ -84,12 +84,53 @@ export default async function DevilsPage() {
           WE ARE <span className="outline-red">DEVILS</span>
         </h1>
         <p className="hero__tagline">
-          Utah Devils는 유타대학교 아시아캠퍼스의 야구동아리입니다. 매 시즌
-          리그와 교류전에 참가하며, 야구를 사랑하는 부원들이 함께 성장하는
-          팀을 지향합니다.
+          Utah Devils는 야구를 통해 사람과 경험을 연결하는 유타대학교
+          아시아캠퍼스의 공식 야구동아리입니다.
         </p>
       </section>
       <VisualBand image="/images/home/team-huddle.png" alt="Utah Devils 팀 허들" label="ONE TEAM · ONE DEVILS" />
+
+      <section className="section about-section" style={{ paddingTop: 36 }}>
+        <div className="section-head">
+          <h2 className="section-title">
+            UTAH <span className="outline">DEVILS</span>는?
+          </h2>
+        </div>
+        <div className="about-copy">
+          <p>
+            2022년 2월 창단한 유타대학교의 야구동아리 Utah Devils는 야구를
+            좋아하는 학생들이 모여, 단순히 경기를 하는 것을 넘어 야구가 지닌
+            가치와 매력을 함께 만들어 가는 동아리입니다.
+          </p>
+          <p>
+            정기 리그와 교류전, 캠퍼스 행사, 야구의 밤을 꾸준히 운영하며
+            유타대학교 아시아캠퍼스를 대표하는 야구 커뮤니티로 성장하고
+            있습니다.
+          </p>
+          <p>
+            부원들은 경기뿐 아니라 스포츠 산업, 홍보·마케팅, 미디어 콘텐츠
+            제작 활동에도 참여합니다. 야구와 자신의 진로를 연결하며 실전 경험과
+            대학 생활의 추억을 함께 쌓아 갑니다.
+          </p>
+        </div>
+        <div className="grid grid--3 about-activity-grid">
+          <article className="card">
+            <div className="card__eyebrow">ON THE FIELD</div>
+            <h3 className="card__title">PLAY</h3>
+            <p className="card__body">정기 경기와 교류전을 통해 팀워크와 경기 경험을 쌓습니다.</p>
+          </article>
+          <article className="card">
+            <div className="card__eyebrow">BEYOND THE GAME</div>
+            <h3 className="card__title">CREATE</h3>
+            <p className="card__body">콘텐츠·홍보·행사 기획으로 데빌스만의 이야기를 만듭니다.</p>
+          </article>
+          <article className="card">
+            <div className="card__eyebrow">ONE COMMUNITY</div>
+            <h3 className="card__title">CONNECT</h3>
+            <p className="card__body">야구를 좋아하는 학생들이 캠퍼스와 지역 사회를 연결합니다.</p>
+          </article>
+        </div>
+      </section>
 
       <section id="timeline" className="section" style={{ paddingTop: 24 }}>
         <div className="section-head">

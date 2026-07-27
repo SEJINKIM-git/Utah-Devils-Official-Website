@@ -1211,6 +1211,18 @@ a.card:hover,
 .visual-band__shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8, 13, 31, .76), rgba(8, 13, 31, .12)); }
 .visual-band__label { position: absolute; left: 24px; bottom: 18px; font-family: var(--font-mono); font-size: clamp(11px, 1.5vw, 14px); font-weight: 600; letter-spacing: .15em; color: var(--text); }
 
+/* Devils 소개 — 원본 2번 페이지의 소개글과 활동 축을 웹용으로 재구성 */
+.about-copy {
+  max-width: 760px;
+  display: grid;
+  gap: 14px;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+.about-copy p { margin: 0; }
+.about-activity-grid { margin-top: 28px; }
+
 @media (max-width: 720px) {
   .mood-cut {
     aspect-ratio: 7 / 3;
@@ -1425,7 +1437,8 @@ a.card:hover,
   }
 }
 
-@media (max-width: 720px) {
+/* 번호별 페이지 메뉴가 늘어나므로 태블릿부터 접근 가능한 MENU 패널을 사용한다. */
+@media (max-width: 960px) {
   .site-nav {
     display: none;
   }
@@ -1437,6 +1450,9 @@ a.card:hover,
   .mobile-panel {
     display: grid;
   }
+}
+
+@media (max-width: 720px) {
 
   .hero {
     padding: 64px 0 48px;
