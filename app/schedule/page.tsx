@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import { withHistoricalGames } from "@/lib/historical-games";
@@ -17,6 +18,29 @@ const MONTH_ABBR = [
   "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
 ];
+
+// 과거 시즌 PDF의 실제 경기 카드에서 추출한 상대팀 로고.
+// 2026의 분석 플랫폼 상대팀처럼 시안에 없는 이름은 이니셜 마크로 폴백한다.
+const OPPONENT_LOGOS: Record<string, string> = {
+  TEAM송도: "/images/opponents/team-songdo.png",
+  육군사관학교: "/images/opponents/kma.png",
+  TEAM시흥: "/images/opponents/team-siheung.png",
+  TEAMIPA: "/images/opponents/team-ipa.png",
+  TEAM곤지암: "/images/opponents/team-gonjiam.png",
+  인하대JADE: "/images/opponents/jade.png",
+  매지션즈: "/images/opponents/magicians.png",
+  바이퍼즈: "/images/opponents/vipers.png",
+  에이포스: "/images/opponents/aforce.png",
+  TEAM선학: "/images/opponents/team-seonhak.png",
+  국민대윈드밀스: "/images/opponents/windmills.png",
+  충북대타우르스: "/images/opponents/taurus.png",
+  메이슨바이퍼스: "/images/opponents/mason-vipers.png",
+  서원대흑마: "/images/opponents/seowon-black-horse.png",
+  청주대나인파이터스: "/images/opponents/nine-fighters.png",
+  SKIPPERS: "/images/opponents/skippers.png",
+  THUNDERBOLT: "/images/opponents/thunderbolt.png",
+  다이아몬드에이스: "/images/opponents/diamond-ace.png",
+};
 
 type Game = {
   id: number;
@@ -78,6 +102,23 @@ function formatTime(time: string | null): string | null {
 
 function pad2(n: number): string {
   return String(n).padStart(2, "0");
+}
+
+function OpponentMark({ opponent }: { opponent: string }) {
+  const logo = OPPONENT_LOGOS[opponent];
+  if (logo) {
+    return (
+      <span className="game-card__logo" aria-label={`${opponent} 로고`}>
+        <Image src={logo} alt="" fill sizes="44px" style={{ objectFit: "cover" }} />
+      </span>
+    );
+  }
+
+  return (
+    <span className="game-card__logo game-card__logo--fallback" aria-label={`${opponent} 이니셜`}>
+      {opponent.slice(0, 2).toUpperCase()}
+    </span>
+  );
 }
 
 export default async function SchedulePage({
@@ -202,16 +243,22 @@ export default async function SchedulePage({
                         </div>
                       )}
 
-                      <div className="game-card__opponent">
-                        VS {g.opponent}
-                        {g.is_home != null ? (
-                          <span
-                            className="pill pill--muted"
-                            style={{ marginLeft: 10 }}
-                          >
-                            {g.is_home ? "HOME" : "AWAY"}
-                          </span>
-                        ) : null}
+                      <div className="game-card__matchup">
+                        <OpponentMark opponent={g.opponent} />
+                        <div className="game-card__opponent">
+                          VS {g.opponent}
+                          {g.is_home != null ? (
+                            <span
+                              className="pill pill--muted"
+                              style={{ marginLeft: 10 }}
+                            >
+                              {g.is_home ? "HOME" : "AWAY"}
+                            </span>
+                          ) : null}
+                        </div>
+                        <span className="game-card__logo game-card__logo--devils" aria-label="Utah Devils 로고">
+                          <Image src="/logos/emblem-64.png" alt="" fill sizes="44px" style={{ objectFit: "cover" }} />
+                        </span>
                       </div>
 
                       <div className="game-card__meta">

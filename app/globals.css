@@ -724,6 +724,47 @@ a.card:hover,
   font-weight: 700;
 }
 
+.game-card__matchup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.game-card__matchup .game-card__opponent {
+  flex: 1;
+  min-width: 0;
+}
+
+.game-card__logo {
+  position: relative;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--bg);
+  clip-path: circle(50%);
+}
+
+.game-card__logo--devils {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.game-card__logo--fallback {
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  border: 1px solid var(--hairline);
+  clip-path: none;
+  border-radius: 50%;
+  color: var(--red);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
 .game-card__meta {
   font-family: var(--font-mono);
   font-size: 12px;
