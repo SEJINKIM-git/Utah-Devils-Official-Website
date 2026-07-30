@@ -175,7 +175,7 @@ export default async function HomePage() {
             {seasonGames.length > 0 ? <p className="platform-season-line"><b>{currentYear}</b> SEASON / {record.w}W {record.l}L{record.d > 0 ? ` ${record.d}D` : ""}</p> : null}
             <Link href="/schedule" className="view-all">ALL RESULTS &amp; SCHEDULE <span aria-hidden="true">→</span></Link>
           </div>
-          <div className="platform-score" aria-label="최근 경기"><span className="platform-score__label">{last ? "LAST GAME" : "NEXT GAME"}</span>{last ? <><strong>{pad2(last.score_us!)}<i>:</i>{pad2(last.score_them!)}</strong><span>VS {last.opponent} · {formatDate(last.date)}</span></> : next ? <><strong>–<i>:</i>–</strong><span>VS {next.opponent} · {formatDate(next.date)}</span></> : <span>SEASON RECORDS COMING SOON</span>}</div>
+          <div className="platform-score" aria-label="최근 경기"><span className="platform-score__label">{last ? "LAST GAME" : "NEXT GAME"}</span>{last ? <><strong>{last.score_us}<i>:</i>{last.score_them}</strong><span>VS {last.opponent} · {formatDate(last.date)}</span></> : next ? <><strong>–<i>:</i>–</strong><span>VS {next.opponent} · {formatDate(next.date)}</span></> : <span>SEASON RECORDS COMING SOON</span>}</div>
         </Reveal></div>
       </section>
 
