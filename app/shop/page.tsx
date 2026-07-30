@@ -89,7 +89,7 @@ export default async function ShopPage({
         <div className="hero__meta">GOODS</div>
         <h1
           className="wordmark"
-          style={{ fontSize: "clamp(44px, 8vw, 88px)", marginTop: 12 }}
+          style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}
         >
           <span className="outline">DEVILS</span> SHOP
         </h1>

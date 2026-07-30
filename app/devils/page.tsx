@@ -80,7 +80,7 @@ export default async function DevilsPage() {
     <div className="container">
       <section className="hero" style={{ paddingBottom: 40 }}>
         <div className="hero__meta">ABOUT US</div>
-        <h1 className="wordmark" style={{ fontSize: "clamp(44px, 8vw, 88px)", marginTop: 12 }}>
+        <h1 className="wordmark" style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}>
           WE ARE <span className="outline-red">DEVILS</span>
         </h1>
         <p className="hero__tagline">
