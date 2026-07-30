@@ -113,18 +113,18 @@ export default async function DevilsPage() {
             대학 생활의 추억을 함께 쌓아 갑니다.
           </p>
         </div>
-        <div className="grid grid--3 about-activity-grid">
-          <article className="card">
+        <div className="about-activity-list">
+          <article>
             <div className="card__eyebrow">ON THE FIELD</div>
             <h3 className="card__title">PLAY</h3>
             <p className="card__body">정기 경기와 교류전을 통해 팀워크와 경기 경험을 쌓습니다.</p>
           </article>
-          <article className="card">
+          <article>
             <div className="card__eyebrow">BEYOND THE GAME</div>
             <h3 className="card__title">CREATE</h3>
             <p className="card__body">콘텐츠·홍보·행사 기획으로 데빌스만의 이야기를 만듭니다.</p>
           </article>
-          <article className="card">
+          <article>
             <div className="card__eyebrow">ONE COMMUNITY</div>
             <h3 className="card__title">CONNECT</h3>
             <p className="card__body">야구를 좋아하는 학생들이 캠퍼스와 지역 사회를 연결합니다.</p>
@@ -147,23 +147,25 @@ export default async function DevilsPage() {
             표시됩니다.
           </div>
         ) : (
-          <div className="timeline">
+          <div className="timeline timeline--gallery">
             {Array.from(byYear.entries()).map(([year, list]) => (
               <div key={year} className="timeline__item">
-                <div className="timeline__year">{year}</div>
-                {list.map((e) => (
-                  <div key={e.id} className="timeline__event">
-                    <span className="timeline__month">
-                      {e.month ? String(e.month).padStart(2, "0") : "--"}
-                    </span>
-                    <span>{e.title}</span>
-                    {e.season ? (
-                      <span className="pill pill--muted">{e.season}</span>
-                    ) : null}
-                  </div>
-                ))}
+                <div className="timeline__content">
+                  <div className="timeline__year">{year}</div>
+                  {list.map((e) => (
+                    <div key={e.id} className="timeline__event">
+                      <span className="timeline__month">
+                        {e.month ? String(e.month).padStart(2, "0") : "--"}
+                      </span>
+                      <span>{e.title}</span>
+                      {e.season ? (
+                        <span className="pill pill--muted">{e.season}</span>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
                 {TIMELINE_SNAPS[year]?.length ? (
-                  <div className="timeline__snaps">
+                  <div className="timeline__snaps timeline__snaps--side">
                     {TIMELINE_SNAPS[year].map((url, i) => (
                       <div key={url} className="timeline__snap">
                         <Image

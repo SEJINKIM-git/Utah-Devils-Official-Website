@@ -244,9 +244,9 @@ export default async function ArchivePage({
       {view === null ? (
         /* ---------- 허브: 4개 대형 타일 + MEDIA ---------- */
         <>
-          <div className="grid grid--2">
+          <div className="archive-hub-list">
             {HUB_TILES.map((t) => (
-              <Link key={t.title} href={t.href} className="card hub-tile">
+              <Link key={t.title} href={t.href} className="hub-tile">
                 <div className="hub-tile__sub">{t.sub}</div>
                 <div className="wordmark hub-tile__title">{t.title}</div>
                 <p className="hub-tile__desc">{t.desc}</p>
@@ -260,12 +260,12 @@ export default async function ArchivePage({
                 <span className="outline">MEDIA</span>
               </h2>
             </div>
-            <div className="grid grid--2">
+            <div className="archive-hub-list">
               <a
                 href={youtube?.external_link ?? "https://youtube.com/@utahdevils"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="card hub-tile media-tile"
+                className="hub-tile media-tile"
               >
                 <div className="hub-tile__sub">DEVILS TV</div>
                 <div className="wordmark hub-tile__title">
@@ -282,7 +282,7 @@ export default async function ArchivePage({
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                className="card hub-tile media-tile"
+                className="hub-tile media-tile"
               >
                 <div className="hub-tile__sub">@uac.baseball</div>
                 <div className="wordmark hub-tile__title">
