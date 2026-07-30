@@ -149,7 +149,6 @@ export default async function HomePage() {
             <Link href="/devils" className="view-all">TEAM HISTORY <span aria-hidden="true">→</span></Link>
           </div>
           {data.milestones.length > 0 ? <ol className="platform-timeline" aria-label="주요 연혁">{data.milestones.map((milestone) => <li key={`${milestone.year}-${milestone.title}`}><b>{milestone.year}</b><span>{milestone.month ? `${pad2(milestone.month)} / ` : ""}{milestone.title}</span></li>)}</ol> : null}
-          <div className="stage-3d stage-3d--devils" aria-hidden="true"><span /><span /><Image src="/logos/emblem.png" alt="" width={260} height={260} /></div>
         </Reveal></div>
       </section>
 
@@ -163,7 +162,6 @@ export default async function HomePage() {
             {featuredRoster.length > 0 ? <ol className="platform-roster" aria-label="주요 선수단">{featuredRoster.map((member) => <li key={member.id}><b>{String(member.number ?? 0).padStart(2, "0")}</b><span>{member.name_ko}</span><small>{member.is_captain ? "CAPTAIN" : member.season}</small></li>)}</ol> : null}
             <Link href="/players" className="view-all">VIEW FULL ROSTER <span aria-hidden="true">→</span></Link>
           </div>
-          <div className="stage-3d stage-3d--roster" aria-hidden="true"><span /><span /><span className="stage-3d__number">35</span></div>
         </Reveal></div>
       </section>
 
@@ -178,7 +176,6 @@ export default async function HomePage() {
             <Link href="/schedule" className="view-all">ALL RESULTS &amp; SCHEDULE <span aria-hidden="true">→</span></Link>
           </div>
           <div className="platform-score" aria-label="최근 경기"><span className="platform-score__label">{last ? "LAST GAME" : "NEXT GAME"}</span>{last ? <><strong>{pad2(last.score_us!)}<i>:</i>{pad2(last.score_them!)}</strong><span>VS {last.opponent} · {formatDate(last.date)}</span></> : next ? <><strong>–<i>:</i>–</strong><span>VS {next.opponent} · {formatDate(next.date)}</span></> : <span>SEASON RECORDS COMING SOON</span>}</div>
-          <div className="stage-3d stage-3d--schedule" aria-hidden="true"><span /><span /></div>
         </Reveal></div>
       </section>
 
@@ -192,7 +189,6 @@ export default async function HomePage() {
             {featuredAwards.length > 0 ? <div className="platform-awards" aria-label="주요 수상">{featuredAwards.map((award) => <p key={award.id}><span>{AWARD_LABELS[award.award_type] ?? award.award_type}</span><b>{award.player_name}</b><em>{award.player_number != null ? `#${award.player_number}` : ""}</em></p>)}</div> : null}
             <Link href="/archive" className="view-all">OPEN THE ARCHIVE <span aria-hidden="true">→</span></Link>
           </div>
-          <div className="stage-3d stage-3d--archive" aria-hidden="true"><span /><Image src="/logos/emblem.png" alt="" width={220} height={220} /></div>
         </Reveal></div>
       </section>
 
@@ -205,7 +201,6 @@ export default async function HomePage() {
             <a href={INSIGHT_AI_URL} target="_blank" rel="noopener noreferrer" className="hero__cta">OPEN DEVILS INSIGHT AI <span aria-hidden="true">↗</span></a>
           </div>
           <div className="platform-statements" aria-label="데이터 범위"><span>PLAYER<br /><b>STATS</b></span><span>GAME<br /><b>LOGS</b></span><span>TEAM<br /><b>INSIGHT</b></span></div>
-          <div className="stage-3d stage-3d--stats" aria-hidden="true"><span /><span /><span /></div>
         </Reveal></div>
       </section>
 

@@ -2,7 +2,7 @@ import Image from "next/image";
 
 type Props = { image: string; alt: string; label: string };
 
-/** PDF 디자인 초안의 사진 언어를 상세 페이지에 일관되게 적용한다. */
+/** 상세 페이지의 사진 배경. 장식 오브젝트 없이 텍스트와 흐린 사진만 남긴다. */
 export default function VisualBand({ image, alt, label }: Props) {
   return (
     <div className="visual-band">
