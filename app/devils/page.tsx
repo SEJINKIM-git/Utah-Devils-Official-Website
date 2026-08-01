@@ -174,9 +174,10 @@ export default async function DevilsPage() {
                         <Image
                           src={url}
                           alt={`${year}년 활동 사진 ${i + 1}`}
-                          fill
+                          width={1600}
+                          height={1200}
                           sizes="(max-width: 720px) 50vw, 168px"
-                          style={{ objectFit: "contain" }}
+                          className="timeline__photo"
                         />
                       </div>
                     ))}
