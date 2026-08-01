@@ -1362,6 +1362,8 @@ a.card:hover,
   width: 100%;
   height: auto;
   min-height: auto;
+  aspect-ratio: auto;
+  overflow: visible;
   background: transparent;
   border: 0;
   border-radius: 0;
