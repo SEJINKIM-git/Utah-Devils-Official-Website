@@ -23,6 +23,12 @@ const AWARD_TYPES: { key: string; label: string }[] = [
   { key: "MANAGER", label: "MANAGER" },
 ];
 
+// 원본에 얼굴이 있으나 세로 구도가 긴 사진은 수상자 위치를 중심으로 프레이밍한다.
+// 원본 자체가 뒷모습/경기장인 사진은 임의의 다른 인물 사진으로 바꾸지 않는다.
+const AWARD_PHOTO_FOCUS: Record<string, string> = {
+  "2025:MVP": "center 78%",
+};
+
 // media는 허브의 MEDIA 섹션으로 분리 — 행사 그리드에서는 제외
 const EVENT_CATEGORIES: { key: string; label: string }[] = [
   { key: "baseball_night", label: "야구의 밤" },
@@ -370,7 +376,13 @@ export default async function ArchivePage({
                                     alt={winner.player_name}
                                     fill
                                     sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
-                                    style={{ objectFit: "cover", objectPosition: "top" }}
+                                    style={{
+                                      objectFit: "cover",
+                                      objectPosition:
+                                        AWARD_PHOTO_FOCUS[
+                                          `${winner.season}:${winner.award_type}`
+                                        ] ?? "center",
+                                    }}
                                   />
                                 </div>
                               ) : null}
