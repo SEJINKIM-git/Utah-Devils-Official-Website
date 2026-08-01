@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { getSupabase } from "@/lib/supabase";
 import VisualBand from "@/app/components/VisualBand";
+import TimelineJourney from "@/app/components/TimelineJourney";
 
 export const metadata: Metadata = { title: "Devils" };
 // force-dynamic으로 쿼리 정상 동작을 검증 완료(2026-07). ISR로 복귀하되
@@ -147,7 +148,9 @@ export default async function DevilsPage() {
             표시됩니다.
           </div>
         ) : (
-          <div className="timeline timeline--gallery">
+          <>
+            <TimelineJourney />
+            <div className="timeline timeline--gallery timeline--journey">
             {Array.from(byYear.entries()).map(([year, list]) => (
               <div key={year} className="timeline__item">
                 <div className="timeline__content">
@@ -189,7 +192,8 @@ export default async function DevilsPage() {
                 TO BE CONTINUED
               </div>
             </div>
-          </div>
+            </div>
+          </>
         )}
       </section>
     </div>

@@ -1307,6 +1307,79 @@ a.card:hover,
 
 .timeline--gallery .timeline__item:last-child { display: block; }
 
+/* 연도별 스크롤 저니: 한 연도가 화면을 채우고 중앙에 들어올 때만 선명해진다. */
+.timeline--journey {
+  gap: 0;
+  margin-left: 0;
+  padding-left: 0;
+  border-left: 0;
+}
+
+.timeline--journey .timeline__item {
+  grid-template-columns: minmax(0, 1fr) minmax(420px, .92fr);
+  align-items: center;
+  gap: clamp(48px, 7vw, 128px);
+  min-height: calc(100svh - 78px);
+  padding: clamp(72px, 10vh, 120px) 0;
+  scroll-margin-top: 78px;
+  opacity: .16;
+  transform: scale(.985);
+  filter: saturate(.52);
+  transition: opacity .65s ease, transform .65s ease, filter .65s ease;
+}
+
+.timeline--journey .timeline__item::before { display: none; }
+
+.timeline--journey .timeline__item.is-active {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.timeline--journey .timeline__content { min-width: 0; }
+
+.timeline--journey .timeline__year {
+  margin-bottom: clamp(24px, 3vw, 40px);
+  font-size: clamp(52px, 6vw, 84px);
+  line-height: 1;
+}
+
+.timeline--journey .timeline__event {
+  gap: 20px;
+  padding: 12px 0;
+  line-height: 1.6;
+}
+
+.timeline--journey .timeline__snaps--side {
+  min-height: clamp(380px, 58svh, 640px);
+  margin: 0;
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr);
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.timeline--journey .timeline__snap {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 0;
+}
+
+.timeline--journey .timeline__snaps--side .timeline__snap:first-child:last-child {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.timeline--journey .timeline__snaps--side .timeline__snap:first-child:nth-last-child(2),
+.timeline--journey .timeline__snaps--side .timeline__snap:nth-child(2):last-child {
+  grid-row: span 2;
+}
+
+.timeline--journey .timeline__snaps--side .timeline__snap:first-child:nth-last-child(3) {
+  grid-row: span 2;
+}
+
 @media (max-width: 720px) {
   .archive-hub-list,
   .about-activity-list {
@@ -1321,6 +1394,19 @@ a.card:hover,
   .timeline--gallery { gap: 52px; padding-left: 28px; }
   .timeline--gallery .timeline__item { grid-template-columns: 1fr; gap: 24px; }
   .timeline--gallery .timeline__snaps--side { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .timeline--journey { padding-left: 0; }
+  .timeline--journey .timeline__item {
+    gap: 28px;
+    min-height: auto;
+    padding: 80px 0;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .timeline--journey .timeline__year { font-size: clamp(46px, 14vw, 62px); }
+  .timeline--journey .timeline__snaps--side { min-height: min(110vw, 540px); }
 
   .mood-cut {
     aspect-ratio: 7 / 3;
