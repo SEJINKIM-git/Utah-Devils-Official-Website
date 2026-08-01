@@ -176,7 +176,7 @@ export default async function DevilsPage() {
                           alt={`${year}년 활동 사진 ${i + 1}`}
                           fill
                           sizes="(max-width: 720px) 50vw, 168px"
-                          style={{ objectFit: "cover" }}
+                          style={{ objectFit: "contain" }}
                         />
                       </div>
                     ))}
