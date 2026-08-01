@@ -815,10 +815,10 @@ a.card:hover,
 
 .hof-detail__side {
   flex-shrink: 0;
-  width: 96px;
+  width: 112px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
 }
 
 .hof-detail__number {
@@ -834,6 +834,16 @@ a.card:hover,
   font-size: 14px;
   letter-spacing: 0.08em;
   color: var(--text-muted);
+}
+
+/* 명예의 전당 사진은 프로필의 원본 비율을 유지해 얼굴과 상체를 자르지 않는다. */
+.hof-detail__photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--hairline);
 }
 
 .hof-detail__body {
@@ -1104,13 +1114,18 @@ a.card:hover,
 
 /* 어워즈 카드 인물 사진 */
 .award-card__photo {
-  position: relative;
   width: calc(100% + 48px);
   margin: -24px -24px 14px;
-  aspect-ratio: 4 / 3;
   border-radius: var(--radius) var(--radius) 0 0;
   overflow: hidden;
-  background: var(--bg);
+  background: transparent;
+}
+
+/* 고정 비율 박스를 없애 원본 사진이 카드 높이를 결정하도록 한다. */
+.award-card__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* 행사 썸네일 (라이트박스 트리거) */
@@ -1740,10 +1755,8 @@ a.card:hover,
   }
 
   .hof-detail__side {
-    flex-direction: row;
-    align-items: baseline;
-    width: auto;
-    gap: 12px;
+    width: 112px;
+    gap: 10px;
   }
 
 }

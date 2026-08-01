@@ -23,10 +23,14 @@ const AWARD_TYPES: { key: string; label: string }[] = [
   { key: "MANAGER", label: "MANAGER" },
 ];
 
-// 원본에 얼굴이 있으나 세로 구도가 긴 사진은 수상자 위치를 중심으로 프레이밍한다.
-// 원본 자체가 뒷모습/경기장인 사진은 임의의 다른 인물 사진으로 바꾸지 않는다.
-const AWARD_PHOTO_FOCUS: Record<string, string> = {
-  "2025:MVP": "center 78%",
+// 운영진이 확인한 명예의 전당 인물 사진. 등번호 아래에 원본 비율 그대로 표시한다.
+const HOF_PROFILE_PHOTOS: Record<number, string> = {
+  45: "/images/hof/45-park-yeyoung.jpg",
+  17: "/images/hof/17-jeong-jaehyeong.png",
+  11: "/images/hof/11-kim-taekyeong.jpg",
+  21: "/images/hof/21-kim-euna.png",
+  46: "/images/hof/46-kwon-hyukjoon.png",
+  22: "/images/hof/22-kim-kyungjae.png",
 };
 
 // media는 허브의 MEDIA 섹션으로 분리 — 행사 그리드에서는 제외
@@ -371,18 +375,12 @@ export default async function ArchivePage({
                             <div key={t.key} className="card card--hover">
                               {winner?.photo_url ? (
                                 <div className="award-card__photo">
-                                  <Image
+                                  {/* 원본의 얼굴·상체와 전체 구도를 보존하기 위해 크롭하지 않는다. */}
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
                                     src={winner.photo_url}
                                     alt={winner.player_name}
-                                    fill
-                                    sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
-                                    style={{
-                                      objectFit: "cover",
-                                      objectPosition:
-                                        AWARD_PHOTO_FOCUS[
-                                          `${winner.season}:${winner.award_type}`
-                                        ] ?? "center",
-                                    }}
+                                    loading="lazy"
                                   />
                                 </div>
                               ) : null}
@@ -443,20 +441,27 @@ export default async function ArchivePage({
                       </h2>
                     </div>
                     <div className="grid grid--2">
-                      {list.map((m) => (
-                        <div key={m.id} className="card hof-detail">
+                      {list.map((m) => {
+                        const profilePhoto =
+                          (m.number != null
+                            ? HOF_PROFILE_PHOTOS[m.number]
+                            : undefined) ?? m.photo_url;
+
+                        return (
+                          <div key={m.id} className="card hof-detail">
                           <div className="hof-detail__side">
-                            {m.photo_url ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                className="hof-card__photo"
-                                src={m.photo_url}
-                                alt={m.name_ko}
-                              />
-                            ) : null}
                             <div className="hof-detail__number">
                               {m.number != null ? m.number : "UD"}
                             </div>
+                            {profilePhoto ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                className="hof-detail__photo"
+                                src={profilePhoto}
+                                alt={`${m.name_ko} 프로필 사진`}
+                                loading="lazy"
+                              />
+                            ) : null}
                             <div className="hof-detail__initials">
                               {initialsOf(m, initialsMap)}
                             </div>
@@ -500,8 +505,9 @@ export default async function ArchivePage({
                               Inducted into the Hall of Fame in {m.inducted_year}
                             </div>
                           </div>
-                        </div>
-                      ))}
+                          </div>
+                        );
+                      })}
                     </div>
                   </section>
                 ))}
