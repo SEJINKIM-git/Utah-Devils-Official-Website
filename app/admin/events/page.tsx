@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getBrowserSupabase } from "@/lib/supabase-browser";
 
 const CATEGORIES = [
-  { key: "baseball_night", label: "야구의 밤" },
+  { key: "baseball_night", label: "Utah Baseball Night" },
   { key: "booth", label: "부스" },
   { key: "competition", label: "대회" },
   { key: "exchange", label: "교류전" },

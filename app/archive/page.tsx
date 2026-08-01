@@ -35,7 +35,7 @@ const HOF_PROFILE_PHOTOS: Record<number, string> = {
 
 // media는 허브의 MEDIA 섹션으로 분리 — 행사 그리드에서는 제외
 const EVENT_CATEGORIES: { key: string; label: string }[] = [
-  { key: "baseball_night", label: "야구의 밤" },
+  { key: "baseball_night", label: "Utah Baseball Night" },
   { key: "booth", label: "부스" },
   { key: "competition", label: "대회" },
   { key: "exchange", label: "교류전" },
@@ -66,7 +66,7 @@ const HUB_TILES = [
     href: "/archive?tab=events",
     title: "ARCHIVE",
     sub: "Archive of Devils",
-    desc: "야구의 밤, 교류 활동, 캠퍼스 부스와 외부 행사 아카이브",
+    desc: "Utah Baseball Night, 교류 활동, 캠퍼스 부스와 외부 행사 아카이브",
   },
 ];
 
@@ -583,7 +583,7 @@ export default async function ArchivePage({
               </div>
               {filteredEvents.length === 0 ? (
                 <div className="notice">
-                  아직 등록된 행사 기록이 없습니다. 야구의 밤, 부스, 교류전
+                  아직 등록된 행사 기록이 없습니다. Utah Baseball Night, 부스, 교류전
                   등의 활동이 이곳에 기록됩니다.
                 </div>
               ) : (
