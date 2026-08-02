@@ -1892,12 +1892,6 @@ a.card:hover,
 
 .platform-stage__copy--right { margin-left: auto; }
 
-/* 연혁은 소개 텍스트와 분리해 읽기 쉬운 독립 영역으로 둔다. */
-@media (min-width: 721px) {
-  .platform-stage--devils .platform-stage__copy { width: min(480px, 40%); }
-  .platform-stage--devils .platform-timeline { width: min(420px, 35%); }
-}
-
 .platform-stage__title {
   max-width: 600px;
   margin-top: 12px;
@@ -1908,6 +1902,7 @@ a.card:hover,
   letter-spacing: .055em;
   line-height: 1.12;
   text-wrap: balance;
+  white-space: nowrap;
 }
 
 .platform-stage__title .outline {
@@ -2020,6 +2015,41 @@ a.card:hover,
 .platform-shop { position: relative; padding: clamp(88px, 10vw, 150px) 0; background: #0a0f20; border-top: 1px solid var(--hairline); }
 .platform-shop p { color: var(--red); font-family: var(--font-mono); font-size: 12px; letter-spacing: .16em; }
 .platform-shop h2 { margin-top: 8px; font-family: var(--font-display); font-size: clamp(42px, 6vw, 60px); font-weight: 400; letter-spacing: .06em; line-height: 1.15; }
+
+/* 넓은 화면은 콘텐츠와 보조 정보를 두 개의 독립 열로 배치한다.
+   각 열의 최소 폭을 보장해 제목·선수명·점수·버튼이 세로로 쪼개지지 않는다. */
+@media (min-width: 900px) {
+  .platform-stage:not(.platform-stage--stats) .reveal {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
+    column-gap: clamp(48px, 7vw, 120px);
+    align-items: center;
+  }
+
+  .platform-stage:not(.platform-stage--stats) .platform-stage__copy {
+    width: auto;
+  }
+
+  .platform-stage:not(.platform-stage--stats) .platform-stage__copy--right {
+    grid-column: 2;
+    margin-left: 0;
+  }
+
+  .platform-stage--devils .platform-timeline,
+  .platform-stage--schedule .platform-score {
+    position: static;
+    grid-column: 2;
+    grid-row: 1;
+    width: auto;
+    max-width: none;
+    align-self: end;
+  }
+
+  .platform-stage--schedule .platform-score {
+    justify-self: end;
+    min-width: 320px;
+  }
+}
 
 @media (max-width: 720px) {
   .platform-index .container { min-height: 58px; gap: 20px; }
