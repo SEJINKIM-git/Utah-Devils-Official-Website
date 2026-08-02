@@ -1264,6 +1264,53 @@ a.card:hover,
 .visual-band__shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8, 13, 31, .84), rgba(8, 13, 31, .38)); }
 .visual-band__label { position: absolute; left: 24px; bottom: 18px; font-family: var(--font-mono); font-size: clamp(11px, 1.5vw, 14px); font-weight: 600; letter-spacing: .15em; color: var(--text); }
 
+/* 상세 페이지 상단: 분리된 사진 카드를 없애고 같은 이미지를 제목 뒤 배경으로 사용한다. */
+.page-hero {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(310px, 31vw, 410px);
+  margin-bottom: 36px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.page-hero .visual-band {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.page-hero .visual-band img {
+  filter: blur(3px) saturate(.62) contrast(1.05);
+  transform: scale(1.045);
+}
+
+.page-hero .visual-band__shade {
+  background:
+    linear-gradient(90deg, rgba(8, 13, 31, .96) 0%, rgba(8, 13, 31, .84) 52%, rgba(8, 13, 31, .54) 100%),
+    linear-gradient(0deg, rgba(8, 13, 31, .72), transparent 62%);
+}
+
+.page-hero .visual-band__label { display: none; }
+
+.page-hero__content {
+  position: relative;
+  z-index: 1;
+  min-height: clamp(310px, 31vw, 410px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(72px, 9vw, 112px) 0 clamp(56px, 7vw, 86px);
+}
+
+.page-hero__content.hero::after { display: none; }
+
 /* Devils 소개 — 원본 2번 페이지의 소개글과 활동 축을 웹용으로 재구성 */
 .about-copy {
   max-width: 760px;

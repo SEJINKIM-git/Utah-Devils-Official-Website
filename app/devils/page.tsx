@@ -79,17 +79,19 @@ export default async function DevilsPage() {
 
   return (
     <div className="container">
-      <section className="hero" style={{ paddingBottom: 40 }}>
-        <div className="hero__meta">ABOUT US</div>
-        <h1 className="wordmark" style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}>
-          WE ARE <span className="outline-red">DEVILS</span>
-        </h1>
-        <p className="hero__tagline">
-          Utah Devils는 야구를 통해 사람과 경험을 연결하는 유타대학교
-          아시아캠퍼스의 공식 야구동아리입니다.
-        </p>
-      </section>
-      <VisualBand image="/images/home/team-huddle.png" alt="Utah Devils 팀 허들" label="ONE TEAM · ONE DEVILS" />
+      <div className="page-hero">
+        <VisualBand image="/images/home/team-huddle.png" alt="" label="" />
+        <section className="hero page-hero__content">
+          <div className="hero__meta">ABOUT US</div>
+          <h1 className="wordmark" style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}>
+            WE ARE <span className="outline-red">DEVILS</span>
+          </h1>
+          <p className="hero__tagline">
+            Utah Devils는 야구를 통해 사람과 경험을 연결하는 유타대학교
+            아시아캠퍼스의 공식 야구동아리입니다.
+          </p>
+        </section>
+      </div>
 
       <section className="section about-section" style={{ paddingTop: 36 }}>
         <div className="section-head">

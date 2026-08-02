@@ -113,22 +113,24 @@ export default async function PlayersPage({
 
   return (
     <div className="container">
-      <section className="hero" style={{ paddingBottom: 40 }}>
-        <div className="hero__meta">ROSTER</div>
-        <h1
-          className="wordmark"
-          style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}
-        >
-          <span className="outline">PLAY</span>ERS
-        </h1>
-        {currentSeason ? (
-          <p className="hero__tagline">
-            {currentSeason} 시즌 Utah Devils 선수단입니다. 선수 카드를 누르면
-            Devils Insight AI의 상세 기록으로 이동합니다.
-          </p>
-        ) : null}
-      </section>
-      <VisualBand image="/images/home/night-lineup.png" alt="야간 경기 전 Utah Devils 선수단" label="THE 2026 ROSTER" />
+      <div className="page-hero">
+        <VisualBand image="/images/home/night-lineup.png" alt="" label="" />
+        <section className="hero page-hero__content">
+          <div className="hero__meta">ROSTER</div>
+          <h1
+            className="wordmark"
+            style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}
+          >
+            <span className="outline">PLAY</span>ERS
+          </h1>
+          {currentSeason ? (
+            <p className="hero__tagline">
+              {currentSeason} 시즌 Utah Devils 선수단입니다. 선수 카드를 누르면
+              Devils Insight AI의 상세 기록으로 이동합니다.
+            </p>
+          ) : null}
+        </section>
+      </div>
 
       <section style={{ paddingBottom: 8 }}>
         {roster === null ? (

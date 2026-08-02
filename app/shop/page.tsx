@@ -85,19 +85,21 @@ export default async function ShopPage({
 
   return (
     <div className="container">
-      <section className="hero" style={{ paddingBottom: 40 }}>
-        <div className="hero__meta">GOODS</div>
-        <h1
-          className="wordmark"
-          style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}
-        >
-          <span className="outline">DEVILS</span> SHOP
-        </h1>
-        <p className="hero__tagline">
-          Utah Devils 굿즈 수요조사와 지금까지 만든 굿즈들의 아카이브입니다.
-        </p>
-      </section>
-      <VisualBand image="/images/home/team-huddle.png" alt="Utah Devils 팀 사진" label="WEAR THE DEVILS" />
+      <div className="page-hero">
+        <VisualBand image="/images/home/team-huddle.png" alt="" label="" />
+        <section className="hero page-hero__content">
+          <div className="hero__meta">GOODS</div>
+          <h1
+            className="wordmark"
+            style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}
+          >
+            <span className="outline">DEVILS</span> SHOP
+          </h1>
+          <p className="hero__tagline">
+            Utah Devils 굿즈 수요조사와 지금까지 만든 굿즈들의 아카이브입니다.
+          </p>
+        </section>
+      </div>
 
       {!supabase ? (
         <div className="notice">굿즈 데이터를 준비 중입니다.</div>

@@ -236,20 +236,22 @@ export default async function ArchivePage({
 
   return (
     <div className="container">
-      <section className="hero" style={{ paddingBottom: 40 }}>
-        <div className="hero__meta">HISTORY & RECORDS</div>
-        <h1
-          className="wordmark"
-          style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}
-        >
-          ARCH<span className="outline">IVE</span>
-        </h1>
-        <p className="hero__tagline">
-          연혁, 시즌 어워즈, 명예의 전당, 그리고 Utah Devils가 함께한 행사들의
-          기록입니다.
-        </p>
-      </section>
-      <VisualBand image="/images/home/team-celebration.png" alt="Utah Devils 단체 사진" label="MOMENTS THAT STAY" />
+      <div className="page-hero">
+        <VisualBand image="/images/home/team-celebration.png" alt="" label="" />
+        <section className="hero page-hero__content">
+          <div className="hero__meta">HISTORY & RECORDS</div>
+          <h1
+            className="wordmark"
+            style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}
+          >
+            ARCH<span className="outline">IVE</span>
+          </h1>
+          <p className="hero__tagline">
+            연혁, 시즌 어워즈, 명예의 전당, 그리고 Utah Devils가 함께한 행사들의
+            기록입니다.
+          </p>
+        </section>
+      </div>
 
       {view === null ? (
         /* ---------- 허브: 4개 대형 타일 + MEDIA ---------- */
