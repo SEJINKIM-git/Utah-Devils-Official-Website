@@ -125,7 +125,6 @@ export default async function HomePage() {
         <div className="container">
           <div className="hero__meta">UTAH ASIA CAMPUS · BASEBALL CLUB</div>
           <h1 className="wordmark hero__wordmark">UTAH<br /><span className="outline">DEVILS</span></h1>
-          <p className="hero__tagline">시즌의 로스터와 경기 결과, 팀의 순간과 데이터를 한 흐름으로 확인하는 Utah Devils 기록 플랫폼입니다.</p>
           <Link href="/devils" className="hero__cta">EXPLORE THE DEVILS <span aria-hidden="true">→</span></Link>
           {next ? <p className="hero-teaser"><strong>NEXT GAME</strong> · {formatDate(next.date)} VS {next.opponent}</p> : null}
           <div className="hero-scroll" aria-hidden="true">SCROLL <span>⌄</span></div>
@@ -144,7 +143,6 @@ export default async function HomePage() {
           <div className="platform-stage__copy">
             <div className="journey-eyebrow">01 / CLUB IDENTITY</div>
             <h2 className="platform-stage__title">ONE TEAM.<br /><span className="outline">ONE DEVILS.</span></h2>
-            <p className="platform-stage__lead">2022년부터 이어진 시즌의 사람과 기록을 연결합니다. 팀의 시작부터 현재까지, 데빌스가 만든 장면을 한눈에 따라갈 수 있습니다.</p>
             <div className="platform-facts"><span><b>2022</b> ESTABLISHED</span><span><b>100+</b> MEMBERS</span><span><b>INCHEON</b> HOME</span></div>
             <Link href="/devils" className="view-all">TEAM HISTORY <span aria-hidden="true">→</span></Link>
           </div>
@@ -158,7 +156,6 @@ export default async function HomePage() {
           <div className="platform-stage__copy platform-stage__copy--right">
             <div className="journey-eyebrow">02 / ROSTER</div>
             <h2 className="platform-stage__title">PLAYERS,<br /><span className="outline">IN FOCUS.</span></h2>
-            <p className="platform-stage__lead">등번호와 입단 시즌, 주장 표시까지. 매 시즌의 선수단을 정확한 프로필 정보로 확인할 수 있습니다.</p>
             {featuredRoster.length > 0 ? <ol className="platform-roster" aria-label="주요 선수단">{featuredRoster.map((member) => <li key={member.id}><b>{String(member.number ?? 0).padStart(2, "0")}</b><span>{member.name_ko}</span><small>{member.is_captain ? "CAPTAIN" : member.season}</small></li>)}</ol> : null}
             <Link href="/players" className="view-all">VIEW FULL ROSTER <span aria-hidden="true">→</span></Link>
           </div>
@@ -171,7 +168,6 @@ export default async function HomePage() {
           <div className="platform-stage__copy">
             <div className="journey-eyebrow">03 / GAME DAY</div>
             <h2 className="platform-stage__title">EVERY GAME.<br /><span className="outline">ON RECORD.</span></h2>
-            <p className="platform-stage__lead">과거 경기의 결과와 이번 시즌의 일정을 같은 타임라인에서 이어 봅니다. 기록은 AI 분석과 별개로 바로 공개됩니다.</p>
             {seasonGames.length > 0 ? <p className="platform-season-line"><b>{currentYear}</b> SEASON / {record.w}W {record.l}L{record.d > 0 ? ` ${record.d}D` : ""}</p> : null}
             <Link href="/schedule" className="view-all">ALL RESULTS &amp; SCHEDULE <span aria-hidden="true">→</span></Link>
           </div>
@@ -185,7 +181,6 @@ export default async function HomePage() {
           <div className="platform-stage__copy platform-stage__copy--right">
             <div className="journey-eyebrow">04 / HISTORY &amp; RECORDS</div>
             <h2 className="platform-stage__title">KEEP THE<br /><span className="outline">MOMENT.</span></h2>
-            <p className="platform-stage__lead">시즌 어워즈와 명예의 전당, 행사 사진까지. 데빌스의 성취와 장면을 연도별 아카이브로 남깁니다.</p>
             {featuredAwards.length > 0 ? <div className="platform-awards" aria-label="주요 수상">{featuredAwards.map((award) => <p key={award.id}><span>{AWARD_LABELS[award.award_type] ?? award.award_type}</span><b>{award.player_name}</b><em>{award.player_number != null ? `#${award.player_number}` : ""}</em></p>)}</div> : null}
             <Link href="/archive" className="view-all">OPEN THE ARCHIVE <span aria-hidden="true">→</span></Link>
           </div>
@@ -197,14 +192,13 @@ export default async function HomePage() {
           <div className="platform-stage__copy">
             <div className="journey-eyebrow">05 / DATA PLATFORM</div>
             <h2 className="platform-stage__title">SEE THE<br /><span className="outline">GAME DEEPER.</span></h2>
-            <p className="platform-stage__lead">Devils Insight AI에서 선수별 타격·투구 기록과 팀 단위 분석을 이어서 확인하세요.</p>
             <a href={INSIGHT_AI_URL} target="_blank" rel="noopener noreferrer" className="hero__cta">OPEN DEVILS INSIGHT AI <span aria-hidden="true">↗</span></a>
           </div>
           <div className="platform-statements" aria-label="데이터 범위"><span>PLAYER<br /><b>STATS</b></span><span>GAME<br /><b>LOGS</b></span><span>TEAM<br /><b>INSIGHT</b></span></div>
         </Reveal></div>
       </section>
 
-      <section id="shop" className="platform-shop"><div className="container"><p>OFFICIAL GOODS</p><h2>DEVILS SHOP</h2><span>새 굿즈와 수요조사 소식은 한곳에서 확인하세요.</span><Link href="/shop" className="view-all">VIEW SHOP <span aria-hidden="true">→</span></Link></div></section>
+      <section id="shop" className="platform-shop"><div className="container"><p>OFFICIAL GOODS</p><h2>DEVILS SHOP</h2><Link href="/shop" className="view-all">VIEW SHOP <span aria-hidden="true">→</span></Link></div></section>
     </>
   );
 }

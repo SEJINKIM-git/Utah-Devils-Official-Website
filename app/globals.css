@@ -1892,6 +1892,12 @@ a.card:hover,
 
 .platform-stage__copy--right { margin-left: auto; }
 
+/* 연혁은 소개 텍스트와 분리해 읽기 쉬운 독립 영역으로 둔다. */
+@media (min-width: 721px) {
+  .platform-stage--devils .platform-stage__copy { width: min(480px, 40%); }
+  .platform-stage--devils .platform-timeline { width: min(420px, 35%); }
+}
+
 .platform-stage__title {
   max-width: 600px;
   margin-top: 12px;
@@ -1909,20 +1915,11 @@ a.card:hover,
   -webkit-text-stroke: 1.5px var(--text);
 }
 
-.platform-stage__lead {
-  max-width: 540px;
-  margin-top: 26px;
-  color: #c6d0df;
-  font-size: clamp(15px, 1.4vw, 17px);
-  line-height: 1.7;
-  word-break: keep-all;
-}
-
 .platform-facts {
   display: flex;
   flex-wrap: wrap;
   gap: 12px 28px;
-  margin-top: 34px;
+  margin-top: 48px;
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 11px;
@@ -1959,7 +1956,7 @@ a.card:hover,
 .platform-timeline b { color: var(--red); font-family: var(--font-mono); font-size: 13px; }
 
 .platform-roster,
-.platform-awards { margin-top: 30px; padding: 0; list-style: none; border-top: 1px solid rgba(226, 232, 240, .25); }
+.platform-awards { margin-top: 48px; padding: 0; list-style: none; border-top: 1px solid rgba(226, 232, 240, .25); }
 
 .platform-roster li,
 .platform-awards p {
@@ -1980,7 +1977,7 @@ a.card:hover,
 .platform-awards em { color: var(--red); }
 
 .platform-season-line {
-  margin-top: 28px;
+  margin-top: 48px;
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 13px;
@@ -2023,7 +2020,6 @@ a.card:hover,
 .platform-shop { position: relative; padding: clamp(88px, 10vw, 150px) 0; background: #0a0f20; border-top: 1px solid var(--hairline); }
 .platform-shop p { color: var(--red); font-family: var(--font-mono); font-size: 12px; letter-spacing: .16em; }
 .platform-shop h2 { margin-top: 8px; font-family: var(--font-display); font-size: clamp(42px, 6vw, 60px); font-weight: 400; letter-spacing: .06em; line-height: 1.15; }
-.platform-shop > .container > span { display: block; max-width: 420px; margin-top: 18px; color: var(--text-muted); font-size: 16px; line-height: 1.65; word-break: keep-all; }
 
 @media (max-width: 720px) {
   .platform-index .container { min-height: 58px; gap: 20px; }
@@ -2031,7 +2027,6 @@ a.card:hover,
   .platform-stage .reveal { min-height: 570px; align-items: flex-start; }
   .platform-stage__copy, .platform-stage__copy--right { width: 100%; margin-left: 0; }
   .platform-stage__title { font-size: clamp(40px, 12vw, 56px); line-height: 1.14; }
-  .platform-stage__lead { max-width: 470px; }
   .platform-timeline { position: relative; right: auto; bottom: auto; width: min(100%, 470px); margin-top: 40px; }
   .platform-score { position: relative; right: auto; bottom: auto; align-items: flex-start; max-width: 100%; margin-top: 42px; text-align: left; }
   .platform-score strong { font-size: clamp(72px, 22vw, 112px); }
