@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import { withHistoricalGames } from "@/lib/historical-games";
 import VisualBand from "@/app/components/VisualBand";
+import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 
 export const metadata: Metadata = { title: "Schedule" };
 export const revalidate = 300;
@@ -126,11 +127,11 @@ export default async function SchedulePage({
 }: {
   searchParams: { season?: string };
 }) {
-  const liveGames = await fetchGames();
+  const [liveGames, content, settings] = await Promise.all([fetchGames(), getSiteContent(), getSiteSettings()]);
   // 2022~2025는 배포된 공식 아카이브, 2026부터는 운영 데이터로 표시한다.
   const games = withHistoricalGames(liveGames ?? []) as Game[];
   const today = new Date().toISOString().slice(0, 10);
-  const currentYear = today.slice(0, 4);
+  const currentYear = settings.current_season;
 
   const dataSeasons = Array.from(new Set((games ?? []).map(seasonOf)));
   const seasons = Array.from(new Set([...SEASON_TABS, ...dataSeasons])).sort();
@@ -144,10 +145,11 @@ export default async function SchedulePage({
     (g) => seasonOf(g) === currentSeason
   );
 
+  const targetGames = Math.max(0, Number(settings.season_target_games) || TARGET_GAMES_PER_SEASON);
   // 진행 중 시즌: 목표 경기 수까지 TBA placeholder 슬롯을 채운다
   const tbaCount =
     currentSeason === currentYear
-      ? Math.max(0, TARGET_GAMES_PER_SEASON - seasonGames.length)
+      ? Math.max(0, targetGames - seasonGames.length)
       : 0;
 
   return (
@@ -162,10 +164,7 @@ export default async function SchedulePage({
           >
             SCHE<span className="outline">DULE</span>
           </h1>
-          <p className="hero__tagline">
-            2022년부터 2026년까지, Utah Devils의 시즌별 경기 일정과 결과를
-            확인하세요. 진행 중인 시즌의 미정 경기는 TBA로 표시됩니다.
-          </p>
+          <p className="hero__tagline">{content.section_desc_schedule}</p>
         </section>
       </div>
 

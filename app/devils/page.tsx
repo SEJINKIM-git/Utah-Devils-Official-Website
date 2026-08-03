@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getSupabase } from "@/lib/supabase";
 import VisualBand from "@/app/components/VisualBand";
 import TimelineJourney from "@/app/components/TimelineJourney";
+import { getSiteContent } from "@/lib/site-content";
 
 export const metadata: Metadata = { title: "Devils" };
 // force-dynamic으로 쿼리 정상 동작을 검증 완료(2026-07). ISR로 복귀하되
@@ -70,7 +71,7 @@ async function fetchTimeline(): Promise<TimelineEvent[] | null> {
 }
 
 export default async function DevilsPage() {
-  const events = await fetchTimeline();
+  const [events, content] = await Promise.all([fetchTimeline(), getSiteContent()]);
   const byYear = new Map<number, TimelineEvent[]>();
   (events ?? []).forEach((e) => {
     if (!byYear.has(e.year)) byYear.set(e.year, []);
@@ -86,10 +87,7 @@ export default async function DevilsPage() {
           <h1 className="wordmark" style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}>
             WE ARE <span className="outline-red">DEVILS</span>
           </h1>
-          <p className="hero__tagline">
-            Utah Devils는 야구를 통해 사람과 경험을 연결하는 유타대학교
-            아시아캠퍼스의 공식 야구동아리입니다.
-          </p>
+          <p className="hero__tagline">{content.hero_tagline}</p>
         </section>
       </div>
 
@@ -100,21 +98,7 @@ export default async function DevilsPage() {
           </h2>
         </div>
         <div className="about-copy">
-          <p>
-            2022년 2월 창단한 유타대학교의 야구동아리 Utah Devils는 야구를
-            좋아하는 학생들이 모여, 단순히 경기를 하는 것을 넘어 야구가 지닌
-            가치와 매력을 함께 만들어 가는 동아리입니다.
-          </p>
-          <p>
-            정기 리그와 교류전, 캠퍼스 행사, Utah Baseball Night를 꾸준히 운영하며
-            유타대학교 아시아캠퍼스를 대표하는 야구 커뮤니티로 성장하고
-            있습니다.
-          </p>
-          <p>
-            부원들은 경기뿐 아니라 스포츠 산업, 홍보·마케팅, 미디어 콘텐츠
-            제작 활동에도 참여합니다. 야구와 자신의 진로를 연결하며 실전 경험과
-            대학 생활의 추억을 함께 쌓아 갑니다.
-          </p>
+          {[content.about_p1, content.about_p2, content.about_p3, content.about_p4].map((text) => <p key={text}>{text}</p>)}
         </div>
         <div className="about-activity-list">
           <article>

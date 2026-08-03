@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
+import { getSiteSettings } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://utah-devils-official-website.vercel.app"),
@@ -27,11 +28,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await getSiteSettings();
   return (
     <html lang="ko">
       <head>
@@ -49,6 +51,7 @@ export default function RootLayout({
       </head>
       <body>
         <SiteHeader />
+        {settings.notice_banner ? <div className="site-notice" role="status">{settings.notice_banner}</div> : null}
         <main>{children}</main>
         <SiteFooter />
       </body>

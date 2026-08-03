@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import VisualBand from "@/app/components/VisualBand";
+import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 
 export const metadata: Metadata = { title: "Player" };
 export const revalidate = 300;
@@ -98,7 +99,7 @@ export default async function PlayersPage({
 }: {
   searchParams: { season?: string };
 }) {
-  const roster = await fetchRoster();
+  const [roster, content, settings] = await Promise.all([fetchRoster(), getSiteContent(), getSiteSettings()]);
 
   const seasons = Array.from(new Set((roster ?? []).map((r) => r.season))).sort(
     (a, b) => b.localeCompare(a)
@@ -106,7 +107,9 @@ export default async function PlayersPage({
   const currentSeason =
     searchParams.season && seasons.includes(searchParams.season)
       ? searchParams.season
-      : seasons[0];
+      : seasons.includes(settings.current_season)
+        ? settings.current_season
+        : seasons[0];
   const members = (roster ?? [])
     .filter((r) => r.season === currentSeason)
     .sort(sortByNumber);
@@ -123,12 +126,7 @@ export default async function PlayersPage({
           >
             <span className="outline">PLAY</span>ERS
           </h1>
-          {currentSeason ? (
-            <p className="hero__tagline">
-              {currentSeason} 시즌 Utah Devils 선수단입니다. 선수 카드를 누르면
-              Devils Insight AI의 상세 기록으로 이동합니다.
-            </p>
-          ) : null}
+          {currentSeason ? <p className="hero__tagline">{content.section_desc_players}</p> : null}
         </section>
       </div>
 

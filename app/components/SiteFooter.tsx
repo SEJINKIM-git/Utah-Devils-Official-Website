@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { INSIGHT_AI_URL } from "@/lib/supabase";
+import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 
 const SITE_LINKS = [
   { href: "/#devils", label: "Devils" },
@@ -9,13 +10,13 @@ const SITE_LINKS = [
   { href: "/#shop", label: "Shop" },
 ];
 
-const EXTERNAL_LINKS = [
-  { href: INSIGHT_AI_URL, label: "Devils Insight AI ↗" },
-  { href: "https://www.instagram.com/uac.baseball", label: "Instagram ↗" },
-  { href: "https://youtube.com/@utahdevils", label: "YouTube ↗" },
-];
-
-export default function SiteFooter() {
+export default async function SiteFooter() {
+  const [content, settings] = await Promise.all([getSiteContent(), getSiteSettings()]);
+  const externalLinks = [
+    { href: INSIGHT_AI_URL, label: "Devils Insight AI ↗" },
+    { href: settings.instagram_url, label: "Instagram ↗" },
+    { href: settings.youtube_url, label: "YouTube ↗" },
+  ];
   return (
     <footer className="site-footer">
       <div className="container">
@@ -25,7 +26,7 @@ export default function SiteFooter() {
               UTAH <span className="outline-red">DEVILS</span>
             </div>
             <p style={{ marginTop: 10, maxWidth: 260 }}>
-              유타대학교 아시아캠퍼스 야구동아리
+              {content.footer_about}
             </p>
           </div>
           <div className="site-footer__col">
@@ -38,7 +39,7 @@ export default function SiteFooter() {
           </div>
           <div className="site-footer__col">
             <div className="site-footer__head">Links</div>
-            {EXTERNAL_LINKS.map((l) => (
+            {externalLinks.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
@@ -57,7 +58,7 @@ export default function SiteFooter() {
               Songdo, Incheon, Korea
             </span>
             <a
-              href="https://www.instagram.com/uac.baseball"
+              href={settings.instagram_url}
               target="_blank"
               rel="noopener noreferrer"
             >

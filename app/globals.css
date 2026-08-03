@@ -86,6 +86,17 @@ button {
   padding: 0 24px;
 }
 
+/* 운영 공지는 설정값이 있을 때만 표시된다. */
+.site-notice {
+  padding: 10px max(24px, calc((100vw - 1120px) / 2));
+  border-bottom: 1px solid rgba(220, 38, 38, 0.35);
+  background: rgba(220, 38, 38, 0.14);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}
+
 /* ---------- Wordmark (솔리드/아웃라인 교차) ---------- */
 
 .wordmark {

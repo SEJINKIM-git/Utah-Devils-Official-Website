@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getSupabase } from "@/lib/supabase";
 import EventLightbox from "../components/EventLightbox";
 import VisualBand from "@/app/components/VisualBand";
+import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 
 export const metadata: Metadata = { title: "Archive" };
 export const revalidate = 300;
@@ -137,6 +138,7 @@ export default async function ArchivePage({
   const view = VIEWS.some((t) => t.key === searchParams.tab)
     ? (searchParams.tab as (typeof VIEWS)[number]["key"])
     : null;
+  const [content, settings] = await Promise.all([getSiteContent(), getSiteSettings()]);
   const supabase = getSupabase();
 
   let awards: SeasonAward[] | null = null;
@@ -246,10 +248,7 @@ export default async function ArchivePage({
           >
             ARCH<span className="outline">IVE</span>
           </h1>
-          <p className="hero__tagline">
-            연혁, 시즌 어워즈, 명예의 전당, 그리고 Utah Devils가 함께한 행사들의
-            기록입니다.
-          </p>
+          <p className="hero__tagline">{content.section_desc_archive}</p>
         </section>
       </div>
 
@@ -274,7 +273,7 @@ export default async function ArchivePage({
             </div>
             <div className="archive-hub-list">
               <a
-                href={youtube?.external_link ?? "https://youtube.com/@utahdevils"}
+                href={youtube?.external_link ?? settings.youtube_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hub-tile media-tile"
@@ -290,7 +289,7 @@ export default async function ArchivePage({
               <a
                 href={
                   instagram?.external_link ??
-                  "https://www.instagram.com/uac.baseball"
+                  settings.instagram_url
                 }
                 target="_blank"
                 rel="noopener noreferrer"

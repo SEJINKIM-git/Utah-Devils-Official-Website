@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getSupabase } from "@/lib/supabase";
 import SurveyForm from "./SurveyForm";
 import VisualBand from "@/app/components/VisualBand";
+import { getSiteContent } from "@/lib/site-content";
 
 export const metadata: Metadata = { title: "Shop" };
 export const revalidate = 60;
@@ -46,6 +47,7 @@ export default async function ShopPage({
 }: {
   searchParams: { type?: string };
 }) {
+  const [content] = await Promise.all([getSiteContent()]);
   const supabase = getSupabase();
 
   let products: Product[] | null = null;
@@ -95,9 +97,7 @@ export default async function ShopPage({
           >
             <span className="outline">DEVILS</span> SHOP
           </h1>
-          <p className="hero__tagline">
-            Utah Devils 굿즈 수요조사와 지금까지 만든 굿즈들의 아카이브입니다.
-          </p>
+          <p className="hero__tagline">{content.section_desc_shop}</p>
         </section>
       </div>
 
