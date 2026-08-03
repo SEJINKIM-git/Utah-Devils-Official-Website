@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getBrowserSupabase } from "@/lib/supabase-browser";
+import ImageUploader from "@/app/components/ImageUploader";
 
 const CATEGORIES = [
   { key: "baseball_night", label: "Utah Baseball Night" },
@@ -133,14 +134,23 @@ export default function AdminEventsPage() {
     load();
   }
 
+  function appendPhotoUrl(url: string) {
+    setDraft((current) => ({
+      ...current,
+      photo_urls: current.photo_urls
+        ? `${current.photo_urls}\n${url}`
+        : url,
+    }));
+  }
+
   return (
     <>
       <h1 className="wordmark" style={{ fontSize: 32 }}>
         행사 <span className="outline">관리</span>
       </h1>
       <p style={{ marginTop: 8, color: "var(--text-muted)", fontSize: 13 }}>
-        사진 업로드 UI는 다음 단계입니다 — Storage 업로드 후 URL을 아래에
-        붙여넣으세요 (docs/photo_upload_guide.md 참조).
+        저장된 행사에는 사진을 바로 업로드할 수 있습니다. 새 행사는 먼저 저장한 뒤
+        수정 화면에서 사진을 추가해 주세요.
       </p>
 
       <form
@@ -222,6 +232,14 @@ export default function AdminEventsPage() {
             onChange={(e) => setDraft({ ...draft, photo_urls: e.target.value })}
           />
         </div>
+        {editingId ? (
+          <ImageUploader
+            path={`events/${editingId}/${Date.now()}.jpg`}
+            mode="event"
+            label="행사 사진"
+            onUploaded={({ url }) => appendPhotoUrl(url)}
+          />
+        ) : null}
         <div>
           <label htmlFor="ev-link">외부 링크</label>
           <input
