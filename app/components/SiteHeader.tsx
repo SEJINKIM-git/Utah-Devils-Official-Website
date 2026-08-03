@@ -156,6 +156,16 @@ export default function SiteHeader() {
       </Link>
     ));
 
+  const adminLink = (onClick: () => void) => (
+    <Link
+      href="/admin"
+      className={pathname?.startsWith("/admin") ? "active site-nav__admin" : "site-nav__admin"}
+      onClick={onClick}
+    >
+      ADMIN LOGIN
+    </Link>
+  );
+
   return (
     <header className={headerClass} ref={headerRef}>
       <div className="container site-header__inner">
@@ -182,12 +192,16 @@ export default function SiteHeader() {
         </button>
         <nav id="site-nav" className="site-nav">
           {navLinks(() => setOpen(false))}
+          {adminLink(() => setOpen(false))}
         </nav>
       </div>
       {/* R2: 모바일 슬라이드다운 패널 — 큰 Anton 타이포 세로 나열 */}
       <div id="mobile-panel" className={`mobile-panel${open ? " open" : ""}`}>
         <div className="mobile-panel__inner">
-          <nav aria-label="모바일 메뉴">{navLinks(() => setOpen(false))}</nav>
+          <nav aria-label="모바일 메뉴">
+            {navLinks(() => setOpen(false))}
+            {adminLink(() => setOpen(false))}
+          </nav>
         </div>
       </div>
     </header>

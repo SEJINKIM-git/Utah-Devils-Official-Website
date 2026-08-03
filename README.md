@@ -66,7 +66,12 @@ npm run dev
 
 ## 관리자 콘솔 (/admin)
 
-- Supabase Auth 이메일 로그인 + 미들웨어 가드. **회원가입 UI 없음** — 운영진 계정은 Supabase 대시보드 → Authentication → Add user로 생성
+- 공개 헤더의 **ADMIN LOGIN** 메뉴에서 접근한다. Supabase Auth 이메일 로그인 + 미들웨어 가드이며, **회원가입 UI는 없다.**
+- 운영진 계정은 Supabase 대시보드 → Authentication → Users → Add user에서 생성한다.
+  - 회원 이름(User metadata `display_name`): 각자의 **영문 이름**
+  - 로그인 ID: 각자의 **UNID가 포함된 학교 이메일** (이 사이트의 Supabase Auth 로그인은 이메일 전체를 입력해야 함)
+  - 초기 비밀번호: **생년월일 `YYYYMMDD` + 두 자리 등번호**. 예: 2002-03-15, 35번 → `2002031535`; 2번 → `YYYYMMDD02`
+  - 최초 로그인 뒤에는 개인 비밀번호로 변경하도록 안내한다.
 - 기능: 연혁(timeline_events) CRUD · 행사(archive_events) 추가/수정 · 수요조사 사이즈×수량 집계 + CSV 다운로드
 - 쓰기는 전부 authenticated RLS 경로 — service_role 키를 서버에 두지 않는다
 - noindex, 사이트 네비게이션 미노출. 최초 사용 전 `sql/04_admin_rls.sql` 1회 실행 필요

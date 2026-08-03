@@ -39,11 +39,11 @@ export default function AdminLoginPage() {
         ADMIN <span className="outline">LOGIN</span>
       </h1>
       <p style={{ marginTop: 8, color: "var(--text-muted)", fontSize: 14 }}>
-        운영진 전용 페이지입니다. 계정은 운영진에게 문의하세요.
+        운영진 전용 페이지입니다. UNID가 포함된 학교 이메일과 비밀번호를 입력하세요.
       </p>
       <form className="form" style={{ marginTop: 28 }} onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="admin-email">EMAIL</label>
+          <label htmlFor="admin-email">UNID EMAIL</label>
           <input
             id="admin-email"
             type="email"

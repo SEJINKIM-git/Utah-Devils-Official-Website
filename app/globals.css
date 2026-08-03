@@ -275,6 +275,19 @@ button {
   color: var(--red);
 }
 
+.site-nav a.site-nav__admin {
+  margin-left: 8px;
+  border: 1px solid rgba(237, 38, 40, 0.56);
+  color: var(--text);
+}
+
+.site-nav a.site-nav__admin:hover,
+.site-nav a.site-nav__admin.active {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+}
+
 .site-nav a .ext {
   font-size: 10px;
   vertical-align: super;
@@ -342,6 +355,14 @@ button {
 .mobile-panel nav a .ext {
   font-size: 14px;
   vertical-align: super;
+}
+
+.mobile-panel nav a.site-nav__admin {
+  margin: 16px 0 0;
+  padding-left: 14px;
+  border: 1px solid var(--red);
+  border-radius: 8px;
+  color: var(--red);
 }
 
 /* ---------- Footer ---------- */
