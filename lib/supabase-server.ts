@@ -36,3 +36,21 @@ export async function getAuthenticatedUser(): Promise<User | null> {
   } = await supabase.auth.getUser();
   return user;
 }
+
+/** 가입자는 로그인만 가능하고, 승인된 운영진만 관리·편집 권한을 가진다. */
+export async function isApprovedAdmin(userId?: string): Promise<boolean> {
+  const supabase = getServerSupabase();
+  if (!supabase) return false;
+  const id = userId ?? (await getAuthenticatedUser())?.id;
+  if (!id) return false;
+  const { data, error } = await supabase
+    .from("admin_members")
+    .select("role, approved_at")
+    .eq("user_id", id)
+    .maybeSingle();
+  if (error) {
+    console.error("[admin-members] 승인 상태 조회 실패:", error.message);
+    return false;
+  }
+  return data?.role === "admin" && data.approved_at != null;
+}

@@ -62,19 +62,23 @@ npm run dev
 6. [`sql/seed/seed_archive_events.sql`](sql/seed/seed_archive_events.sql) — 행사 13건 (사진은 Storage 업로드 후 photo_urls UPDATE)
 7. [`sql/03_roster_unique.sql`](sql/03_roster_unique.sql) — **스키마**: (season, number) 유니크 제약. **반드시 6번(행사 이후) 실행** (중복 행 원천 차단)
 8. [`sql/04_admin_rls.sql`](sql/04_admin_rls.sql) — **스키마**: /admin 콘솔용 authenticated RLS 정책 (연혁/행사 쓰기, 수요조사 응답 읽기). 기존 테이블은 건드리지 않음
-9. Vercel **Redeploy** (캐시 제거)
+9. [`sql/08_member_registration_roles.sql`](sql/08_member_registration_roles.sql) — **스키마**: 공개 회원가입·승인 운영진 권한 분리. 기존 authenticated 전체 쓰기 권한을 승인된 운영진 전용으로 교체
+10. Vercel **Redeploy** (캐시 제거)
 
 ## 관리자 콘솔 (/admin)
 
-- 공개 헤더의 **ADMIN LOGIN** 메뉴에서 접근한다. Supabase Auth 이메일 로그인 + 미들웨어 가드이며, **회원가입 UI는 없다.**
-- 운영진 계정은 Supabase 대시보드 → Authentication → Users → Add user에서 생성한다.
+- 공개 헤더의 **ADMIN SIGN UP** 메뉴에서 회원 등록을 시작한다. Supabase Auth 이메일 로그인 + 미들웨어 가드다.
+- 회원가입 화면에서 User metadata를 함께 저장한다.
   - 회원 이름(User metadata `display_name`): 각자의 **영문 이름**
-  - 로그인 ID: 각자의 **UNID가 포함된 학교 이메일** (이 사이트의 Supabase Auth 로그인은 이메일 전체를 입력해야 함)
+  - ID(User metadata `unid`): 각자의 **UNID**
+  - 로그인: 생성 시 입력한 **학교 이메일 전체** (Supabase Auth 이메일 로그인 방식)
   - 초기 비밀번호: **생년월일 `YYYYMMDD` + 두 자리 등번호**. 예: 2002-03-15, 35번 → `2002031535`; 2번 → `YYYYMMDD02`
   - 최초 로그인 뒤에는 개인 비밀번호로 변경하도록 안내한다.
+- 새 회원은 등록·로그인만 가능하며, 운영진 승인이 완료된 계정만 콘텐츠·사진·운영 설정을 수정할 수 있다.
+- 승인 방법: [`sql/08_member_registration_roles.sql`](sql/08_member_registration_roles.sql) 마지막의 `update public.admin_members ... where unid = '실제_UNID';`에서 UNID를 실제 값으로 교체해 실행한다.
 - 기능: 연혁(timeline_events) CRUD · 행사(archive_events) 추가/수정 · 수요조사 사이즈×수량 집계 + CSV 다운로드
-- 쓰기는 전부 authenticated RLS 경로 — service_role 키를 서버에 두지 않는다
-- noindex, 사이트 네비게이션 미노출. 최초 사용 전 `sql/04_admin_rls.sql` 1회 실행 필요
+- 쓰기는 승인된 운영진 RLS 경로 — service_role 키를 서버에 두지 않는다
+- noindex. 최초 사용 전 `sql/08_member_registration_roles.sql` 1회 실행 필요
 
 `01_roster_members.sql`은 이미 실행 완료 — 재실행해도 이제 안전하지만 다시 실행할 필요 없다.
 (과거 2회 실행으로 생긴 중복 행은 seed_roster.sql 1단계가 정리한다.)

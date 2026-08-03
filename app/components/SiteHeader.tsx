@@ -158,11 +158,11 @@ export default function SiteHeader() {
 
   const adminLink = (onClick: () => void) => (
     <Link
-      href="/admin"
-      className={pathname?.startsWith("/admin") ? "active site-nav__admin" : "site-nav__admin"}
+      href="/admin/signup"
+      className={pathname === "/admin/signup" ? "active site-nav__admin" : "site-nav__admin"}
       onClick={onClick}
     >
-      ADMIN LOGIN
+      ADMIN SIGN UP
     </Link>
   );
 

@@ -36,25 +36,22 @@ export default function AdminHomePage() {
         ))}
       </div>
       <div className="notice" style={{ marginTop: 28, textAlign: "left" }}>
-        쓰기는 전부 로그인 계정(authenticated) RLS 정책을 거칩니다. 정책이 아직
-        없다면 sql/04_admin_rls.sql을 Supabase SQL Editor에서 1회 실행하세요.
+        쓰기는 승인된 운영진 계정만 통과하는 RLS 정책을 거칩니다. 정책이 아직
+        없다면 sql/08_member_registration_roles.sql을 Supabase SQL Editor에서 1회 실행하세요.
         기존 테이블(games, players, batting_stats, pitching_stats)은 이
         콘솔에서 다루지 않습니다.
       </div>
       <section className="notice" style={{ marginTop: 20, textAlign: "left" }}>
-        <strong>운영진 계정 생성 가이드</strong>
+        <strong>회원 승인 가이드</strong>
         <ol style={{ margin: "12px 0 0", paddingLeft: 20, lineHeight: 1.7 }}>
           <li>
-            Supabase Dashboard → Authentication → Users → Add user에서 계정을 생성합니다.
+            회원은 상단의 ADMIN SIGN UP에서 영문 이름·UNID·학교 이메일로 가입합니다.
           </li>
           <li>
-            회원 이름(User metadata의 display name)은 각자의 <strong>영문 이름</strong>으로 입력합니다.
+            가입 직후에는 로그인만 가능하며, 콘텐츠 수정 권한은 없습니다.
           </li>
           <li>
-            로그인 ID는 각자의 <strong>UNID가 포함된 학교 이메일</strong>로 입력합니다.
-          </li>
-          <li>
-            초기 비밀번호는 <strong>생년월일(YYYYMMDD) + 두 자리 등번호</strong>입니다. 예: 2002년 3월 15일, 35번 → 2002031535.
+            승인 담당자는 SQL Editor에서 해당 UNID의 role을 <strong>admin</strong>으로 변경하고 approved_at을 기록합니다.
           </li>
         </ol>
         <p style={{ margin: "12px 0 0", color: "var(--text-muted)" }}>

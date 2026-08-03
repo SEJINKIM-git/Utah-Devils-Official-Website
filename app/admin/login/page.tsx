@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getBrowserSupabase } from "@/lib/supabase-browser";
 
@@ -39,11 +40,11 @@ export default function AdminLoginPage() {
         ADMIN <span className="outline">LOGIN</span>
       </h1>
       <p style={{ marginTop: 8, color: "var(--text-muted)", fontSize: 14 }}>
-        운영진 전용 페이지입니다. UNID가 포함된 학교 이메일과 비밀번호를 입력하세요.
+        등록한 학교 이메일과 비밀번호를 입력하세요.
       </p>
       <form className="form" style={{ marginTop: 28 }} onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="admin-email">UNID EMAIL</label>
+          <label htmlFor="admin-email">SCHOOL EMAIL</label>
           <input
             id="admin-email"
             type="email"
@@ -69,6 +70,12 @@ export default function AdminLoginPage() {
           {submitting ? "로그인 중..." : "로그인"}
         </button>
       </form>
+      <p style={{ marginTop: 20, color: "var(--text-muted)", fontSize: 14 }}>
+        아직 등록하지 않았나요?{" "}
+        <Link href="/admin/signup" style={{ color: "var(--red)" }}>
+          관리자 회원가입 →
+        </Link>
+      </p>
     </div>
   );
 }

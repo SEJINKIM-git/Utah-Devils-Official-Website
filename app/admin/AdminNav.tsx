@@ -15,7 +15,7 @@ export default function AdminNav() {
   const pathname = usePathname();
   const router = useRouter();
 
-  if (pathname === "/admin/login") return null;
+  if (["/admin/login", "/admin/signup", "/admin/pending"].includes(pathname)) return null;
 
   async function handleLogout() {
     const supabase = getBrowserSupabase();

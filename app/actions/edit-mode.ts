@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { DEFAULT_CONTENT, DEFAULT_SETTINGS, type SiteContentKey, type SiteSettingKey } from "@/lib/site-content";
-import { getAuthenticatedUser, getServerSupabase } from "@/lib/supabase-server";
+import { getAuthenticatedUser, getServerSupabase, isApprovedAdmin } from "@/lib/supabase-server";
 
 type SaveTextInput = {
   table: "site_content" | "site_settings";
@@ -21,6 +21,9 @@ function validPath(path: string) {
 async function requireUser() {
   const user = await getAuthenticatedUser();
   if (!user) throw new Error("로그인이 필요합니다.");
+  if (!(await isApprovedAdmin(user.id))) {
+    throw new Error("승인된 운영진 계정이 필요합니다.");
+  }
   return user;
 }
 

@@ -29,11 +29,32 @@ export async function middleware(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isLogin = req.nextUrl.pathname === "/admin/login";
-  if (!user && !isLogin) {
+  const isPublicMemberPage = ["/admin/login", "/admin/signup", "/admin/pending"].includes(
+    req.nextUrl.pathname
+  );
+  if (!user && !isPublicMemberPage) {
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
-  if (user && isLogin) {
+  if (!user) return res;
+
+  const isLoginOrSignup = ["/admin/login", "/admin/signup"].includes(
+    req.nextUrl.pathname
+  );
+  if (isLoginOrSignup) {
+    return NextResponse.redirect(new URL("/admin", req.url));
+  }
+
+  const { data: membership } = await supabase
+    .from("admin_members")
+    .select("role, approved_at")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const approved = membership?.role === "admin" && membership.approved_at != null;
+
+  if (!approved && req.nextUrl.pathname !== "/admin/pending") {
+    return NextResponse.redirect(new URL("/admin/pending", req.url));
+  }
+  if (approved && req.nextUrl.pathname === "/admin/pending") {
     return NextResponse.redirect(new URL("/admin", req.url));
   }
   return res;
