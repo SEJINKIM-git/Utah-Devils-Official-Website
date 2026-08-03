@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { startEditMode } from "@/app/actions/edit-mode";
 
 const MENUS = [
   {
@@ -40,6 +41,11 @@ export default function AdminHomePage() {
         기존 테이블(games, players, batting_stats, pitching_stats)은 이
         콘솔에서 다루지 않습니다.
       </div>
+      <form action={startEditMode} style={{ marginTop: 20 }}>
+        <button type="submit" className="btn btn--primary">
+          사이트 편집 모드 열기 →
+        </button>
+      </form>
     </>
   );
 }

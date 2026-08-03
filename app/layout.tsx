@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
+import EditModeProvider from "./components/EditModeProvider";
+import EditModeToolbar from "./components/EditModeToolbar";
 import { getSiteSettings } from "@/lib/site-content";
+import { getAuthenticatedUser } from "@/lib/supabase-server";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://utah-devils-official-website.vercel.app"),
@@ -33,7 +37,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await getSiteSettings();
+  const [settings, user] = await Promise.all([getSiteSettings(), getAuthenticatedUser()]);
+  const editMode = Boolean(user && cookies().get("edit_mode")?.value === "1");
   return (
     <html lang="ko">
       <head>
@@ -50,10 +55,13 @@ export default async function RootLayout({
         />
       </head>
       <body>
-        <SiteHeader />
-        {settings.notice_banner ? <div className="site-notice" role="status">{settings.notice_banner}</div> : null}
-        <main>{children}</main>
-        <SiteFooter />
+        <EditModeProvider enabled={editMode}>
+          <SiteHeader />
+          {settings.notice_banner ? <div className="site-notice" role="status">{settings.notice_banner}</div> : null}
+          <main>{children}</main>
+          <SiteFooter />
+          {editMode ? <EditModeToolbar /> : null}
+        </EditModeProvider>
       </body>
     </html>
   );
