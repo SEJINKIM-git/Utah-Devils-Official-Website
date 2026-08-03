@@ -25,9 +25,19 @@
 3. 같은 SQL 파일 마지막의 다음 구문에서 UNID만 실제 값으로 바꿔 실행합니다.
 
 ```sql
+1. 승인 대기 회원은 `/admin/pending`에서 **운영진 승인 요청 보내기**를 누릅니다.
+2. `u1579825@umail.utah.edu`로 가입자 정보와 72시간 유효한 1회용 승인 링크가 전송됩니다.
+3. 운영진이 메일의 **운영진으로 승인하기** 버튼을 누르면 해당 계정만 관리자 권한을 받습니다.
+
+승인 메일 시스템을 쓰기 전에 Supabase SQL Editor에서 [`sql/09_email_approval_requests.sql`](../sql/09_email_approval_requests.sql)을 한 번 실행하고, Vercel 환경변수에 `RESEND_API_KEY`와 `NEXT_PUBLIC_SITE_URL`을 등록해야 합니다.
+
+메일 시스템이 일시적으로 꺼져 있을 때만 아래 SQL로 수동 승인할 수 있습니다.
+
+```sql
 update public.admin_members
 set role = 'admin', approved_at = now()
 where unid = '실제_UNID';
+```
 ```
 
 4. 승인된 회원이 다시 로그인하면 `/admin` 관리 메뉴와 사이트 편집 모드를 사용할 수 있습니다.

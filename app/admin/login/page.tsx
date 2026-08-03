@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -7,6 +8,7 @@ import { getBrowserSupabase } from "@/lib/supabase-browser";
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -42,6 +44,8 @@ export default function AdminLoginPage() {
       <p style={{ marginTop: 8, color: "var(--text-muted)", fontSize: 14 }}>
         등록한 학교 이메일과 비밀번호를 입력하세요.
       </p>
+      {searchParams.get("approval") === "success" ? <div className="form-msg">승인이 완료되었습니다. 로그인해 주세요.</div> : null}
+      {searchParams.get("approval") === "invalid" ? <div className="form-msg form-msg--err">승인 링크가 만료되었거나 이미 사용되었습니다.</div> : null}
       <form className="form" style={{ marginTop: 28 }} onSubmit={handleSubmit}>
         <div>
           <label htmlFor="admin-email">SCHOOL EMAIL</label>
