@@ -3,6 +3,7 @@ import "./globals.css";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 import EditModeProvider from "./components/EditModeProvider";
+import Editable from "./components/Editable";
 import EditModeToolbar from "./components/EditModeToolbar";
 import { getSiteSettings } from "@/lib/site-content";
 import { getAuthenticatedUser } from "@/lib/supabase-server";
@@ -57,7 +58,7 @@ export default async function RootLayout({
       <body>
         <EditModeProvider enabled={editMode}>
           <SiteHeader />
-          {settings.notice_banner ? <div className="site-notice" role="status">{settings.notice_banner}</div> : null}
+          {settings.notice_banner || editMode ? <div className="site-notice site-notice--editable" role="status"><Editable table="site_settings" contentKey="notice_banner" value={settings.notice_banner} maxLength={200}>{settings.notice_banner || "공지 배너: 클릭하여 안내 문구를 입력하세요."}</Editable></div> : null}
           <main>{children}</main>
           <SiteFooter />
           {editMode ? <EditModeToolbar /> : null}

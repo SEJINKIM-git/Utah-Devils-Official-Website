@@ -41,6 +41,8 @@ export default function Editable({
     setOpen(false);
   }
 
+  const canBeEmpty = table === "site_settings" && contentKey === "notice_banner";
+
   function save() {
     startTransition(async () => {
       const result = await saveEditableText({ table, key: contentKey, value: draft, maxLength, path: pathname });
@@ -66,7 +68,7 @@ export default function Editable({
             <input value={draft} maxLength={maxLength} autoFocus onChange={(event) => setDraft(event.target.value)} />
           )}
           <span className="editable__count">{draft.length} / {maxLength}</span>
-          <span className="editable__actions"><button type="button" onClick={cancel}>취소</button><button type="button" disabled={pending || !draft.trim()} onClick={save}>{pending ? "저장 중..." : "저장"}</button></span>
+          <span className="editable__actions"><button type="button" onClick={cancel}>취소</button><button type="button" disabled={pending || (!draft.trim() && !canBeEmpty)} onClick={save}>{pending ? "저장 중..." : "저장"}</button></span>
           {message ? <span className="editable__message" role="status">{message}</span> : null}
         </span>
       ) : null}

@@ -5,6 +5,7 @@ import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import { withHistoricalGames } from "@/lib/historical-games";
 import VisualBand from "@/app/components/VisualBand";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
+import Editable from "@/app/components/Editable";
 
 export const metadata: Metadata = { title: "Schedule" };
 export const revalidate = 300;
@@ -164,7 +165,7 @@ export default async function SchedulePage({
           >
             SCHE<span className="outline">DULE</span>
           </h1>
-          <p className="hero__tagline">{content.section_desc_schedule}</p>
+          <p className="hero__tagline"><Editable table="site_content" contentKey="section_desc_schedule" value={content.section_desc_schedule} fieldType="textarea" maxLength={200}>{content.section_desc_schedule}</Editable></p>
         </section>
       </div>
 

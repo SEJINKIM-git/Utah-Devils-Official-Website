@@ -4,6 +4,7 @@ import { getSupabase } from "@/lib/supabase";
 import VisualBand from "@/app/components/VisualBand";
 import TimelineJourney from "@/app/components/TimelineJourney";
 import { getSiteContent } from "@/lib/site-content";
+import Editable from "@/app/components/Editable";
 
 export const metadata: Metadata = { title: "Devils" };
 // force-dynamic으로 쿼리 정상 동작을 검증 완료(2026-07). ISR로 복귀하되
@@ -87,7 +88,7 @@ export default async function DevilsPage() {
           <h1 className="wordmark" style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}>
             WE ARE <span className="outline-red">DEVILS</span>
           </h1>
-          <p className="hero__tagline">{content.hero_tagline}</p>
+          <p className="hero__tagline"><Editable table="site_content" contentKey="hero_tagline" value={content.hero_tagline} fieldType="textarea" maxLength={160}>{content.hero_tagline}</Editable></p>
         </section>
       </div>
 
@@ -98,7 +99,7 @@ export default async function DevilsPage() {
           </h2>
         </div>
         <div className="about-copy">
-          {[content.about_p1, content.about_p2, content.about_p3, content.about_p4].map((text) => <p key={text}>{text}</p>)}
+          {(["about_p1", "about_p2", "about_p3", "about_p4"] as const).map((key) => <p key={key}><Editable table="site_content" contentKey={key} value={content[key]} fieldType="textarea" maxLength={400}>{content[key]}</Editable></p>)}
         </div>
         <div className="about-activity-list">
           <article>

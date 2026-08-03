@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import { HISTORICAL_GAMES, withHistoricalGames } from "@/lib/historical-games";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
+import Editable from "./components/Editable";
 import Reveal from "./components/Reveal";
 
 export const revalidate = 300;
@@ -123,9 +124,9 @@ export default async function HomePage() {
         <Image className="hero__photo" src="/images/home/team-celebration.png" alt="경기 후 함께 기념 사진을 남긴 Utah Devils 선수단" fill priority sizes="100vw" />
         <div className="hero__scrim" aria-hidden="true" />
         <div className="container">
-          <div className="hero__meta">{content.hero_title_sub}</div>
+          <div className="hero__meta"><Editable table="site_content" contentKey="hero_title_sub" value={content.hero_title_sub} maxLength={80}>{content.hero_title_sub}</Editable></div>
           <h1 className="wordmark hero__wordmark">UTAH<br /><span className="outline">DEVILS</span></h1>
-          <p className="hero__tagline">{content.hero_tagline}</p>
+          <p className="hero__tagline"><Editable table="site_content" contentKey="hero_tagline" value={content.hero_tagline} fieldType="textarea" maxLength={160}>{content.hero_tagline}</Editable></p>
           <Link href="/devils" className="hero__cta">EXPLORE THE DEVILS <span aria-hidden="true">→</span></Link>
           {next ? <p className="hero-teaser"><strong>NEXT GAME</strong> · {formatDate(next.date)} VS {next.opponent}</p> : null}
           <div className="hero-scroll" aria-hidden="true">SCROLL <span>⌄</span></div>
@@ -144,7 +145,7 @@ export default async function HomePage() {
           <div className="platform-stage__copy">
             <div className="journey-eyebrow">01 / CLUB IDENTITY</div>
             <h2 className="platform-stage__title">ONE TEAM.<br /><span className="outline">ONE DEVILS.</span></h2>
-            <div className="platform-facts"><span><b>{content.fact_founded}</b> ESTABLISHED</span><span><b>{content.fact_members}</b> MEMBERS</span><span><b>{content.fact_affiliation}</b> AFFILIATION</span><span><b>{content.fact_home}</b> HOME</span></div>
+            <div className="platform-facts"><span><b><Editable table="site_content" contentKey="fact_founded" value={content.fact_founded} maxLength={60}>{content.fact_founded}</Editable></b> ESTABLISHED</span><span><b><Editable table="site_content" contentKey="fact_members" value={content.fact_members} maxLength={60}>{content.fact_members}</Editable></b> MEMBERS</span><span><b><Editable table="site_content" contentKey="fact_affiliation" value={content.fact_affiliation} maxLength={60}>{content.fact_affiliation}</Editable></b> AFFILIATION</span><span><b><Editable table="site_content" contentKey="fact_home" value={content.fact_home} maxLength={60}>{content.fact_home}</Editable></b> HOME</span></div>
             <Link href="/devils" className="view-all">TEAM HISTORY <span aria-hidden="true">→</span></Link>
           </div>
           {data.milestones.length > 0 ? <ol className="platform-timeline" aria-label="주요 연혁">{data.milestones.map((milestone) => <li key={`${milestone.year}-${milestone.title}`}><b>{milestone.year}</b><span>{milestone.month ? `${pad2(milestone.month)} / ` : ""}{milestone.title}</span></li>)}</ol> : null}

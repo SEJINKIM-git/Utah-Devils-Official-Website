@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import VisualBand from "@/app/components/VisualBand";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
+import Editable from "@/app/components/Editable";
 
 export const metadata: Metadata = { title: "Player" };
 export const revalidate = 300;
@@ -126,7 +127,7 @@ export default async function PlayersPage({
           >
             <span className="outline">PLAY</span>ERS
           </h1>
-          {currentSeason ? <p className="hero__tagline">{content.section_desc_players}</p> : null}
+          {currentSeason ? <p className="hero__tagline"><Editable table="site_content" contentKey="section_desc_players" value={content.section_desc_players} fieldType="textarea" maxLength={200}>{content.section_desc_players}</Editable></p> : null}
         </section>
       </div>
 

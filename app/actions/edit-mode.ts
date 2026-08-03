@@ -44,7 +44,8 @@ export async function stopEditMode() {
 export async function saveEditableText(input: SaveTextInput) {
   await requireUser();
   const value = input.value.trim();
-  if (!value) return { ok: false, message: "내용을 입력해 주세요." };
+  const canBeEmpty = input.table === "site_settings" && input.key === "notice_banner";
+  if (!value && !canBeEmpty) return { ok: false, message: "내용을 입력해 주세요." };
   if (value.length > input.maxLength) {
     return { ok: false, message: `글자 수는 ${input.maxLength}자 이하로 입력해 주세요.` };
   }

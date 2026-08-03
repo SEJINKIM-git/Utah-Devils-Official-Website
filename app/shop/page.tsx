@@ -4,6 +4,7 @@ import { getSupabase } from "@/lib/supabase";
 import SurveyForm from "./SurveyForm";
 import VisualBand from "@/app/components/VisualBand";
 import { getSiteContent } from "@/lib/site-content";
+import Editable from "@/app/components/Editable";
 
 export const metadata: Metadata = { title: "Shop" };
 export const revalidate = 60;
@@ -97,7 +98,7 @@ export default async function ShopPage({
           >
             <span className="outline">DEVILS</span> SHOP
           </h1>
-          <p className="hero__tagline">{content.section_desc_shop}</p>
+          <p className="hero__tagline"><Editable table="site_content" contentKey="section_desc_shop" value={content.section_desc_shop} fieldType="textarea" maxLength={200}>{content.section_desc_shop}</Editable></p>
         </section>
       </div>
 

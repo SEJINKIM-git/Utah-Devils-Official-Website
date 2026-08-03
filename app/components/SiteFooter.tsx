@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { INSIGHT_AI_URL } from "@/lib/supabase";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
+import Editable from "./Editable";
 
 const SITE_LINKS = [
   { href: "/#devils", label: "Devils" },
@@ -26,7 +27,7 @@ export default async function SiteFooter() {
               UTAH <span className="outline-red">DEVILS</span>
             </div>
             <p style={{ marginTop: 10, maxWidth: 260 }}>
-              {content.footer_about}
+              <Editable table="site_content" contentKey="footer_about" value={content.footer_about} maxLength={100}>{content.footer_about}</Editable>
             </p>
           </div>
           <div className="site-footer__col">
