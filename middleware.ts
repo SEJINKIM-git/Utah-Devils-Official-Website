@@ -29,20 +29,11 @@ export async function middleware(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isPublicMemberPage = ["/admin/login", "/admin/signup", "/admin/pending"].includes(
-    req.nextUrl.pathname
-  );
-  if (!user && !isPublicMemberPage) {
+  const isLoginPage = req.nextUrl.pathname === "/admin/login";
+  if (!user && !isLoginPage) {
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
   if (!user) return res;
-
-  const isLoginOrSignup = ["/admin/login", "/admin/signup"].includes(
-    req.nextUrl.pathname
-  );
-  if (isLoginOrSignup) {
-    return NextResponse.redirect(new URL("/admin", req.url));
-  }
 
   const { data: membership } = await supabase
     .from("admin_members")
@@ -51,11 +42,12 @@ export async function middleware(req: NextRequest) {
     .maybeSingle();
   const approved = membership?.role === "admin" && membership.approved_at != null;
 
-  if (!approved && req.nextUrl.pathname !== "/admin/pending") {
-    return NextResponse.redirect(new URL("/admin/pending", req.url));
+  if (isLoginPage) {
+    if (approved) return NextResponse.redirect(new URL("/admin", req.url));
+    return res;
   }
-  if (approved && req.nextUrl.pathname === "/admin/pending") {
-    return NextResponse.redirect(new URL("/admin", req.url));
+  if (!approved) {
+    return NextResponse.redirect(new URL("/admin/login", req.url));
   }
   return res;
 }

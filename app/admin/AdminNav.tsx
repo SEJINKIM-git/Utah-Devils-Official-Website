@@ -9,13 +9,14 @@ const LINKS = [
   { href: "/admin/timeline", label: "연혁" },
   { href: "/admin/events", label: "행사" },
   { href: "/admin/survey", label: "수요조사" },
+  { href: "/admin/settings", label: "설정" },
 ];
 
 export default function AdminNav() {
   const pathname = usePathname();
   const router = useRouter();
 
-  if (["/admin/login", "/admin/signup", "/admin/pending"].includes(pathname)) return null;
+  if (pathname === "/admin/login") return null;
 
   async function handleLogout() {
     const supabase = getBrowserSupabase();

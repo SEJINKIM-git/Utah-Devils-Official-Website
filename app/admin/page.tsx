@@ -41,23 +41,6 @@ export default function AdminHomePage() {
         기존 테이블(games, players, batting_stats, pitching_stats)은 이
         콘솔에서 다루지 않습니다.
       </div>
-      <section className="notice" style={{ marginTop: 20, textAlign: "left" }}>
-        <strong>회원 승인 가이드</strong>
-        <ol style={{ margin: "12px 0 0", paddingLeft: 20, lineHeight: 1.7 }}>
-          <li>
-            회원은 상단의 ADMIN SIGN UP에서 영문 이름·UNID·학교 이메일로 가입합니다.
-          </li>
-          <li>
-            가입 직후에는 로그인만 가능하며, 콘텐츠 수정 권한은 없습니다.
-          </li>
-          <li>
-            승인 담당자는 SQL Editor에서 해당 UNID의 role을 <strong>admin</strong>으로 변경하고 approved_at을 기록합니다.
-          </li>
-        </ol>
-        <p style={{ margin: "12px 0 0", color: "var(--text-muted)" }}>
-          보안을 위해 최초 로그인 후 개인 비밀번호로 변경하도록 안내하세요.
-        </p>
-      </section>
       <form action={startEditMode} style={{ marginTop: 20 }}>
         <button type="submit" className="btn btn--primary">
           사이트 편집 모드 열기 →

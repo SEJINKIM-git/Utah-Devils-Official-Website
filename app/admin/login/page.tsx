@@ -1,22 +1,25 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getBrowserSupabase } from "@/lib/supabase-browser";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [cooldown, setCooldown] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (cooldown) {
+      setError("로그인 시도가 많습니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
     const supabase = getBrowserSupabase();
     if (!supabase) {
       setError("서버 설정 오류입니다. 운영진에게 문의해 주세요.");
@@ -29,7 +32,19 @@ export default function AdminLoginPage() {
     });
     setSubmitting(false);
     if (error) {
-      setError("로그인에 실패했습니다. 이메일과 비밀번호를 확인해 주세요.");
+      const nextAttempts = failedAttempts + 1;
+      if (nextAttempts >= 5) {
+        setCooldown(true);
+        setFailedAttempts(0);
+        setError("로그인 시도가 많습니다. 30초 후 다시 시도해 주세요.");
+        window.setTimeout(() => {
+          setCooldown(false);
+          setError(null);
+        }, 30_000);
+      } else {
+        setFailedAttempts(nextAttempts);
+        setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+      }
       return;
     }
     router.push("/admin");
@@ -41,11 +56,6 @@ export default function AdminLoginPage() {
       <h1 className="wordmark" style={{ fontSize: 36 }}>
         ADMIN <span className="outline">LOGIN</span>
       </h1>
-      <p style={{ marginTop: 8, color: "var(--text-muted)", fontSize: 14 }}>
-        등록한 학교 이메일과 비밀번호를 입력하세요.
-      </p>
-      {searchParams.get("approval") === "success" ? <div className="form-msg">승인이 완료되었습니다. 로그인해 주세요.</div> : null}
-      {searchParams.get("approval") === "invalid" ? <div className="form-msg form-msg--err">승인 링크가 만료되었거나 이미 사용되었습니다.</div> : null}
       <form className="form" style={{ marginTop: 28 }} onSubmit={handleSubmit}>
         <div>
           <label htmlFor="admin-email">SCHOOL EMAIL</label>
@@ -70,16 +80,10 @@ export default function AdminLoginPage() {
           />
         </div>
         {error ? <div className="form-msg form-msg--err">{error}</div> : null}
-        <button type="submit" className="btn btn--primary" disabled={submitting}>
-          {submitting ? "로그인 중..." : "로그인"}
+        <button type="submit" className="btn btn--primary" disabled={submitting || cooldown}>
+          {submitting ? "로그인 중..." : cooldown ? "잠시 후 다시 시도" : "로그인"}
         </button>
       </form>
-      <p style={{ marginTop: 20, color: "var(--text-muted)", fontSize: 14 }}>
-        아직 등록하지 않았나요?{" "}
-        <Link href="/admin/signup" style={{ color: "var(--red)" }}>
-          관리자 회원가입 →
-        </Link>
-      </p>
     </div>
   );
 }

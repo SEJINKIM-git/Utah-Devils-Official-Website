@@ -1,6 +1,6 @@
 -- ============================================================
--- 공개 회원가입 + 승인된 운영진 권한 분리
--- 회원은 가입·로그인만 가능하고, 콘텐츠·사진·운영 설정을 수정하려면
+-- Supabase에서 수동 생성한 계정 + 운영진 권한 분리
+-- 콘텐츠·사진·운영 설정을 수정하려면
 -- admin_members.role = 'admin' 및 approved_at 값이 모두 필요하다.
 -- 기존 authenticated 전체 쓰기 정책(01/04/06/07)을 이 파일이 교체한다.
 -- ============================================================
@@ -16,8 +16,9 @@ create table if not exists public.admin_members (
 
 alter table public.admin_members enable row level security;
 
+drop policy if exists "members read own membership" on public.admin_members;
 drop policy if exists "members read own approval" on public.admin_members;
-create policy "members read own approval"
+create policy "members read own membership"
   on public.admin_members for select
   to authenticated
   using (auth.uid() = user_id);
@@ -38,7 +39,7 @@ $$;
 revoke all on function public.is_approved_admin() from public;
 grant execute on function public.is_approved_admin() to anon, authenticated;
 
--- 가입 정보는 Auth 사용자 생성 시 profile 테이블에 자동 복사한다.
+-- Auth 사용자 생성 시 profile 테이블에 자동 복사한다.
 create or replace function public.create_member_profile()
 returns trigger
 language plpgsql
@@ -61,7 +62,7 @@ create trigger on_auth_user_created_member_profile
   after insert on auth.users
   for each row execute procedure public.create_member_profile();
 
--- 이 파일 실행 전에 이미 존재하던 계정도 승인 대기 회원으로 등록한다.
+-- 이 파일 실행 전에 이미 존재하던 계정도 기본 member로 등록한다.
 insert into public.admin_members (user_id, unid, display_name)
 select
   u.id,
@@ -111,7 +112,7 @@ create policy "admin replace official-site"
   using (bucket_id = 'official-site' and public.is_approved_admin())
   with check (bucket_id = 'official-site' and public.is_approved_admin());
 
--- 최초 운영진 승인 방법: 가입 완료 뒤 실제 UNID로 아래 쿼리를 한 번 실행한다.
+-- 운영진 권한 부여: Supabase에서 계정을 생성한 뒤 실제 UNID로 아래 쿼리를 한 번 실행한다.
 -- update public.admin_members
 -- set role = 'admin', approved_at = now()
 -- where unid = '실제_UNID';
