@@ -70,6 +70,9 @@ export default async function SiteFooter() {
         <div className="site-footer__bar">
           <span>
             © {new Date().getFullYear()} UTAH DEVILS BASEBALL CLUB · EST. 2022
+            <Link href="/admin" className="site-footer__admin-link">
+              Admin
+            </Link>
           </span>
           <span>SONGDO · INCHEON</span>
         </div>

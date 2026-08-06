@@ -275,19 +275,6 @@ button {
   color: var(--red);
 }
 
-.site-nav a.site-nav__admin {
-  margin-left: 8px;
-  border: 1px solid rgba(237, 38, 40, 0.56);
-  color: var(--text);
-}
-
-.site-nav a.site-nav__admin:hover,
-.site-nav a.site-nav__admin.active {
-  background: var(--red);
-  border-color: var(--red);
-  color: #fff;
-}
-
 .site-nav a .ext {
   font-size: 10px;
   vertical-align: super;
@@ -357,14 +344,6 @@ button {
   vertical-align: super;
 }
 
-.mobile-panel nav a.site-nav__admin {
-  margin: 16px 0 0;
-  padding-left: 14px;
-  border: 1px solid var(--red);
-  border-radius: 8px;
-  color: var(--red);
-}
-
 /* ---------- Footer ---------- */
 
 /* R4: 4컬럼 리치 푸터 */
@@ -418,6 +397,16 @@ button {
   flex-wrap: wrap;
   gap: 8px 24px;
   justify-content: space-between;
+}
+
+.site-footer__admin-link {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-left: 12px;
+}
+
+.site-footer__admin-link:hover {
+  color: var(--text);
 }
 
 /* ---------- Hero (메인) ---------- */
