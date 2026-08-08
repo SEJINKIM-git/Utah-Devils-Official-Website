@@ -17,6 +17,11 @@ const MENUS = [
     title: "수요조사 집계",
     desc: "굿즈 수요조사 응답을 사이즈×수량으로 집계하고 CSV로 내려받습니다.",
   },
+  {
+    href: "/admin/members",
+    title: "운영진 계정 관리",
+    desc: "운영진 계정을 만들고, 비밀번호를 재설정하거나 회수합니다.",
+  },
 ];
 
 export default function AdminHomePage() {

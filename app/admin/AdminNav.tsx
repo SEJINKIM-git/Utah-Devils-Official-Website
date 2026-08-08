@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/admin/timeline", label: "연혁" },
   { href: "/admin/events", label: "행사" },
   { href: "/admin/survey", label: "수요조사" },
+  { href: "/admin/members", label: "운영진" },
   { href: "/admin/settings", label: "설정" },
 ];
 
