@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import { withHistoricalGames } from "@/lib/historical-games";
@@ -7,6 +6,7 @@ import { getGameRecord, isCancelledGame } from "@/lib/game-stats";
 import VisualBand from "@/app/components/VisualBand";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 import Editable from "@/app/components/Editable";
+import TeamAvatar from "@/app/components/TeamAvatar";
 
 export const metadata: Metadata = { title: "Schedule" };
 export const revalidate = 300;
@@ -21,33 +21,6 @@ const MONTH_ABBR = [
   "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
 ];
-
-// 과거 시즌 PDF의 실제 경기 카드에서 추출한 상대팀 로고.
-// 2026의 분석 플랫폼 상대팀처럼 시안에 없는 이름은 이니셜 마크로 폴백한다.
-type OpponentLogo = { src: string; crop?: "top" | "bottom" };
-
-// 일부 원본은 로고가 세로 캔버스의 위/아래에 배치돼 있다. 카드의 원형 슬롯에서
-// 팀 마크만 균형 있게 보이도록 해당 원본만 기준점을 명시한다.
-const OPPONENT_LOGOS: Record<string, OpponentLogo> = {
-  TEAM송도: { src: "/images/opponents/team-songdo.png" },
-  육군사관학교: { src: "/images/opponents/kma.png" },
-  TEAM시흥: { src: "/images/opponents/team-siheung.png" },
-  TEAMIPA: { src: "/images/opponents/team-ipa.png" },
-  TEAM곤지암: { src: "/images/opponents/team-gonjiam.png" },
-  인하대JADE: { src: "/images/opponents/jade.png" },
-  매지션즈: { src: "/images/opponents/magicians.png", crop: "top" },
-  바이퍼즈: { src: "/images/opponents/vipers.png", crop: "top" },
-  에이포스: { src: "/images/opponents/aforce.png", crop: "bottom" },
-  TEAM선학: { src: "/images/opponents/team-seonhak.png" },
-  국민대윈드밀스: { src: "/images/opponents/windmills.png" },
-  충북대타우르스: { src: "/images/opponents/taurus.png" },
-  메이슨바이퍼스: { src: "/images/opponents/mason-vipers.png" },
-  서원대흑마: { src: "/images/opponents/seowon-black-horse.png" },
-  청주대나인파이터스: { src: "/images/opponents/nine-fighters.png" },
-  SKIPPERS: { src: "/images/opponents/skippers.png", crop: "bottom" },
-  THUNDERBOLT: { src: "/images/opponents/thunderbolt.png" },
-  다이아몬드에이스: { src: "/images/opponents/diamond-ace.png" },
-};
 
 type Game = {
   id: number;
@@ -103,23 +76,6 @@ function formatTime(time: string | null): string | null {
 
 function pad2(n: number): string {
   return String(n).padStart(2, "0");
-}
-
-function OpponentMark({ opponent }: { opponent: string }) {
-  const logo = OPPONENT_LOGOS[opponent];
-  if (logo) {
-    return (
-      <span className={`game-card__logo${logo.crop ? ` game-card__logo--crop-${logo.crop}` : ""}`} aria-label={`${opponent} 로고`}>
-        <Image src={logo.src} alt="" fill sizes="44px" style={{ objectFit: "cover" }} />
-      </span>
-    );
-  }
-
-  return (
-    <span className="game-card__logo game-card__logo--fallback" aria-label={`${opponent} 이니셜`}>
-      {opponent.slice(0, 2).toUpperCase()}
-    </span>
-  );
 }
 
 export default async function SchedulePage({
@@ -196,7 +152,7 @@ export default async function SchedulePage({
                 업로드되면 이곳에 공개됩니다.
               </div>
             ) : (
-              <div className="grid grid--2">
+              <div className="schedule-list">
                 {seasonGames.map((g, i) => {
                   const cancelled = isCancelledGame(g);
                   const upcoming = isUpcoming(g, today);
@@ -246,9 +202,8 @@ export default async function SchedulePage({
                         </div>
                       )}
 
-                      <div className="game-card__matchup">
-                        <OpponentMark opponent={g.opponent} />
-                        <div className="game-card__opponent">
+                      <TeamAvatar teamName={g.opponent} className="game-card__opponent-avatar" />
+                      <div className="game-card__opponent">
                           VS {g.opponent}
                           {g.is_home != null ? (
                             <span
@@ -258,11 +213,8 @@ export default async function SchedulePage({
                               {g.is_home ? "HOME" : "AWAY"}
                             </span>
                           ) : null}
-                        </div>
-                        <span className="game-card__logo game-card__logo--devils" aria-label="Utah Devils 로고">
-                          <Image src="/logos/emblem-64.png" alt="" fill sizes="44px" style={{ objectFit: "cover" }} />
-                        </span>
                       </div>
+                      <TeamAvatar teamName="Utah Devils" variant="devils" className="game-card__devils-avatar" />
 
                       <div className="game-card__meta">
                         <span>
@@ -289,12 +241,14 @@ export default async function SchedulePage({
                     >
                       TBA
                     </div>
+                    <TeamAvatar teamName="TBA" className="game-card__opponent-avatar" />
                     <div
                       className="game-card__opponent"
                       style={{ color: "var(--text-muted)" }}
                     >
                       VS TBA
                     </div>
+                    <TeamAvatar teamName="Utah Devils" variant="devils" className="game-card__devils-avatar" />
                     <div className="game-card__meta">
                       <span>TBA</span>
                     </div>

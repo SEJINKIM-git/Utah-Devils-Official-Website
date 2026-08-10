@@ -772,12 +772,62 @@ a.card:hover,
   gap: 6px;
 }
 
-/* ---------- Game card (/schedule) ---------- */
+/* ---------- Team avatars ---------- */
+
+.team-avatar {
+  --team-avatar-size: 48px;
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 var(--team-avatar-size);
+  width: var(--team-avatar-size);
+  height: var(--team-avatar-size);
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: var(--red);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+}
+
+.team-avatar__image {
+  position: relative;
+  display: block;
+  width: 72%;
+  height: 72%;
+}
+
+.team-avatar__image img {
+  object-fit: contain;
+}
+
+.team-avatar--fallback {
+  background: var(--surface);
+}
+
+.team-avatar--compact {
+  --team-avatar-size: 24px;
+  font-size: 9px;
+}
+
+/* ---------- Game rows (/schedule) ---------- */
+
+.schedule-list {
+  display: grid;
+  gap: 12px;
+}
 
 .game-card {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: minmax(126px, 0.9fr) minmax(96px, 0.75fr) 48px minmax(150px, 1.45fr) 48px minmax(165px, 1.2fr);
+  grid-template-areas: "index score opponent-avatar opponent devils-avatar meta";
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
 }
 
 .game-card--win {
@@ -785,8 +835,9 @@ a.card:hover,
 }
 
 .game-card__top {
+  grid-area: index;
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 }
@@ -800,87 +851,59 @@ a.card:hover,
 }
 
 .game-card__score {
+  grid-area: score;
+  min-width: 0;
   font-family: var(--font-mono);
-  font-size: 38px;
+  font-size: 32px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
   line-height: 1;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .game-card__score--cancelled {
   font-family: var(--font-body);
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text-muted);
 }
 
 .game-card__score .vs {
   color: var(--text-muted);
-  font-size: 24px;
-  margin: 0 6px;
+  font-size: 20px;
+  margin: 0 4px;
 }
+
+.game-card__opponent-avatar { grid-area: opponent-avatar; }
+.game-card__devils-avatar { grid-area: devils-avatar; }
 
 .game-card__opponent {
+  grid-area: opponent;
+  min-width: 0;
+  overflow: hidden;
   font-size: 15px;
   font-weight: 700;
-}
-
-.game-card__matchup {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.game-card__matchup .game-card__opponent {
-  flex: 1;
-  min-width: 0;
-}
-
-.game-card__logo {
-  position: relative;
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
-  overflow: hidden;
-  border-radius: 50%;
-  background: var(--bg);
-  clip-path: circle(50%);
-}
-
-/* 세로 스프라이트 형태의 원본도 원형 프레임에서 마크 하나만 일정하게 보이게 한다. */
-.game-card__logo--crop-top img,
-.game-card__logo--crop-bottom img {
-  transform: scale(2.1);
-}
-.game-card__logo--crop-top img { transform-origin: center top; }
-.game-card__logo--crop-bottom img { transform-origin: center bottom; }
-
-.game-card__logo--devils {
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.game-card__logo--fallback {
-  display: grid;
-  place-items: center;
-  padding: 4px;
-  border: 1px solid var(--hairline);
-  clip-path: none;
-  border-radius: 50%;
-  color: var(--red);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .game-card__meta {
+  grid-area: meta;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
   font-family: var(--font-mono);
   font-size: 12px;
+  line-height: 1.35;
   color: var(--text-muted);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 14px;
+}
+
+.game-card__meta span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ---------- Archive ---------- */
@@ -1993,9 +2016,28 @@ a.card:hover,
 
   .quick-links { grid-template-columns: repeat(2, 1fr); }
 
+  .game-card {
+    grid-template-columns: 40px minmax(0, 1fr) 40px minmax(92px, auto);
+    grid-template-areas:
+      "index score score score"
+      "opponent-avatar opponent devils-avatar meta";
+    gap: 12px 10px;
+    padding: 14px;
+  }
+
+  .team-avatar { --team-avatar-size: 40px; }
+  .team-avatar--compact { --team-avatar-size: 24px; }
+
   .game-card__score {
     font-size: 30px;
+    text-align: right;
   }
+
+  .game-card__score--cancelled { font-size: 18px; }
+
+  .game-card__opponent { font-size: 14px; }
+
+  .game-card__meta { font-size: 10px; text-align: right; }
 
   .hof-detail {
     flex-direction: column;
@@ -2074,7 +2116,7 @@ a.card:hover,
 }
 .scoreboard-ticker:hover .scoreboard-ticker__track { animation-play-state: paused; }
 .scoreboard-ticker__set { display: flex; flex: none; align-items: center; }
-.scoreboard-ticker__item { display: inline-flex; align-items: center; flex: none; padding: 16px 0 16px 24px; white-space: nowrap; }
+.scoreboard-ticker__item { display: inline-flex; align-items: center; flex: none; gap: 8px; padding: 12px 0 12px 24px; white-space: nowrap; }
 .scoreboard-ticker__item i { margin-left: 24px; color: var(--red); font-size: 10px; font-style: normal; }
 .scoreboard-ticker__result { font-weight: 700; }
 .scoreboard-ticker__result--w, .scoreboard-ticker__item--next b { color: var(--red); }
@@ -2327,7 +2369,8 @@ a.card:hover,
   .platform-score { background: rgba(20, 27, 61, .55); backdrop-filter: blur(12px); }
 }
 .platform-score__label { color: var(--red); font-family: var(--font-mono); font-size: 11px; letter-spacing: .16em; }
-.platform-score strong { margin: 8px 0; color: var(--text); font-family: var(--font-display); font-size: clamp(60px, 10vw, 132px); font-weight: 400; letter-spacing: .04em; line-height: 1; }
+.platform-score__teams { display: flex; align-items: center; gap: 14px; margin: 8px 0; }
+.platform-score strong { margin: 0; color: var(--text); font-family: var(--font-display); font-size: clamp(60px, 10vw, 132px); font-weight: 400; letter-spacing: .04em; line-height: 1; font-variant-numeric: tabular-nums; }
 .platform-score strong i { color: var(--red); font-style: normal; }
 .platform-score > span:last-child { color: #d6dee9; font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; line-height: 1.5; }
 

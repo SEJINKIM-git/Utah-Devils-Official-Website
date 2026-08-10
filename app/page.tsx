@@ -7,6 +7,7 @@ import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 import Editable from "./components/Editable";
 import Reveal from "./components/Reveal";
 import CountUp from "./components/CountUp";
+import TeamAvatar from "./components/TeamAvatar";
 
 // 경기 데이터는 전광판 티커를 포함해 10분마다 갱신한다.
 export const revalidate = 600;
@@ -146,10 +147,11 @@ export default async function HomePage() {
                   {tickerGames.map((game) => {
                     const outcome = game.score_us! > game.score_them! ? "W" : game.score_us! < game.score_them! ? "L" : "D";
                     return <span className="scoreboard-ticker__item" key={`${duplicate}-${game.id}`}>
-                      <span>{formatDate(game.date)} · </span><b className={`scoreboard-ticker__result scoreboard-ticker__result--${outcome.toLowerCase()}`}>{outcome}</b><span> {pad2(game.score_us!)}:{pad2(game.score_them!)} VS {game.opponent}</span><i aria-hidden="true">◆</i>
+                      <TeamAvatar teamName={game.opponent} size="compact" />
+                      <span>{formatDate(game.date)} · </span><b className={`scoreboard-ticker__result scoreboard-ticker__result--${outcome.toLowerCase()}`}>{outcome}</b><span> {pad2(game.score_us!)}:{pad2(game.score_them!)} VS {game.opponent}</span><TeamAvatar teamName="Utah Devils" variant="devils" size="compact" /><i aria-hidden="true">◆</i>
                     </span>;
                   })}
-                  {next ? <span className="scoreboard-ticker__item scoreboard-ticker__item--next"><b>NEXT</b> · {formatDate(next.date)} VS {next.opponent}<i aria-hidden="true">◆</i></span> : null}
+                  {next ? <span className="scoreboard-ticker__item scoreboard-ticker__item--next"><TeamAvatar teamName={next.opponent} size="compact" /><b>NEXT</b> · {formatDate(next.date)} VS {next.opponent}<TeamAvatar teamName="Utah Devils" variant="devils" size="compact" /><i aria-hidden="true">◆</i></span> : null}
                 </div>
               ))}
             </div>
@@ -218,7 +220,7 @@ export default async function HomePage() {
             {seasonGames.length > 0 ? <p className="platform-season-line"><b>{currentYear}</b> SEASON / {record.w}W {record.l}L{record.d > 0 ? ` ${record.d}D` : ""}</p> : null}
             <Link href="/schedule" className="view-all">ALL RESULTS &amp; SCHEDULE <span aria-hidden="true">→</span></Link>
           </div>
-          <div className="platform-score" aria-label="최근 경기"><span className="platform-score__label">{last ? "LAST GAME" : "NEXT GAME"}</span>{last ? <><strong>{last.score_us}<i>:</i>{last.score_them}</strong><span>VS {last.opponent} · {formatDate(last.date)}</span></> : next ? <><strong>–<i>:</i>–</strong><span>VS {next.opponent} · {formatDate(next.date)}</span></> : <span>SEASON RECORDS COMING SOON</span>}</div>
+          <div className="platform-score" aria-label="최근 경기"><span className="platform-score__label">{last ? "LAST GAME" : "NEXT GAME"}</span>{last ? <><div className="platform-score__teams"><TeamAvatar teamName={last.opponent} /><strong>{last.score_us}<i>:</i>{last.score_them}</strong><TeamAvatar teamName="Utah Devils" variant="devils" /></div><span>VS {last.opponent} · {formatDate(last.date)}</span></> : next ? <><div className="platform-score__teams"><TeamAvatar teamName={next.opponent} /><strong>–<i>:</i>–</strong><TeamAvatar teamName="Utah Devils" variant="devils" /></div><span>VS {next.opponent} · {formatDate(next.date)}</span></> : <span>SEASON RECORDS COMING SOON</span>}</div>
         </Reveal></div>
       </section>
 
