@@ -6,7 +6,8 @@ import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 import Editable from "./components/Editable";
 import Reveal from "./components/Reveal";
 
-export const revalidate = 300;
+// 경기 데이터는 전광판 티커를 포함해 10분마다 갱신한다.
+export const revalidate = 600;
 
 const MONTH_ABBR = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
@@ -109,6 +110,7 @@ export default async function HomePage() {
   const finished = data.games.filter((game) => game.score_us != null && game.score_them != null && game.date <= today);
   const last = finished.at(-1) ?? null;
   const next = data.games.find((game) => game.date > today && game.score_us == null) ?? null;
+  const tickerGames = [...finished].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
   const seasonGames = data.games.filter((game) => game.date.slice(0, 4) === currentYear);
   const record = {
     w: seasonGames.filter((game) => game.result === "W").length,
@@ -132,6 +134,26 @@ export default async function HomePage() {
           <div className="hero-scroll" aria-hidden="true">SCROLL <span>⌄</span></div>
         </div>
       </section>
+
+      {(tickerGames.length > 0 || next) ? (
+        <section className="scoreboard-ticker" aria-label="최근 경기 결과">
+          <div className="scoreboard-ticker__viewport">
+            <div className="scoreboard-ticker__track">
+              {[false, true].map((duplicate) => (
+                <div className="scoreboard-ticker__set" aria-hidden={duplicate || undefined} key={String(duplicate)}>
+                  {tickerGames.map((game) => {
+                    const outcome = game.score_us! > game.score_them! ? "W" : game.score_us! < game.score_them! ? "L" : "D";
+                    return <span className="scoreboard-ticker__item" key={`${duplicate}-${game.id}`}>
+                      <span>{formatDate(game.date)} · </span><b className={`scoreboard-ticker__result scoreboard-ticker__result--${outcome.toLowerCase()}`}>{outcome}</b><span> {pad2(game.score_us!)}:{pad2(game.score_them!)} VS {game.opponent}</span><i aria-hidden="true">◆</i>
+                    </span>;
+                  })}
+                  {next ? <span className="scoreboard-ticker__item scoreboard-ticker__item--next"><b>NEXT</b> · {formatDate(next.date)} VS {next.opponent}<i aria-hidden="true">◆</i></span> : null}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <nav className="platform-index" aria-label="Utah Devils 주요 기록">
         <div className="container">

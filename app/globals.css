@@ -2007,6 +2007,37 @@ a.card:hover,
   border-bottom: 1px solid var(--hairline);
 }
 
+/* ---------- Scoreboard ticker (home) ---------- */
+
+.scoreboard-ticker {
+  overflow: hidden;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  background: var(--surface);
+  color: var(--text-muted);
+  font: 12px/1 var(--font-mono);
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+
+.scoreboard-ticker__viewport { overflow: hidden; }
+.scoreboard-ticker__track {
+  display: flex;
+  width: max-content;
+  animation: scoreboard-marquee 52s linear infinite;
+  will-change: transform;
+}
+.scoreboard-ticker:hover .scoreboard-ticker__track { animation-play-state: paused; }
+.scoreboard-ticker__set { display: flex; flex: none; align-items: center; }
+.scoreboard-ticker__item { display: inline-flex; align-items: center; flex: none; padding: 16px 0 16px 24px; white-space: nowrap; }
+.scoreboard-ticker__item i { margin-left: 24px; color: var(--red); font-size: 10px; font-style: normal; }
+.scoreboard-ticker__result { font-weight: 700; }
+.scoreboard-ticker__result--w, .scoreboard-ticker__item--next b { color: var(--red); }
+.scoreboard-ticker__result--l { color: var(--text-muted); }
+.scoreboard-ticker__result--d { color: var(--text); }
+
+@keyframes scoreboard-marquee { to { transform: translateX(-50%); } }
+
 .platform-index .container {
   min-height: 74px;
   display: flex;
