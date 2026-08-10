@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import { withHistoricalGames } from "@/lib/historical-games";
+import { getGameRecord, isCancelledGame } from "@/lib/game-stats";
 import VisualBand from "@/app/components/VisualBand";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 import Editable from "@/app/components/Editable";
@@ -81,12 +82,6 @@ function seasonOf(g: Game): string {
   return g.date.slice(0, 4);
 }
 
-function isCancelled(g: Game): boolean {
-  if (!g.result) return false;
-  const r = g.result.toLowerCase();
-  return r.includes("취소") || r === "cancelled" || r === "canceled";
-}
-
 function isUpcoming(g: Game, today: string): boolean {
   return g.date > today && g.score_us == null && g.score_them == null;
 }
@@ -145,6 +140,7 @@ export default async function SchedulePage({
   const seasonGames = (games ?? []).filter(
     (g) => seasonOf(g) === currentSeason
   );
+  const seasonRecord = getGameRecord(seasonGames);
 
   const targetGames = Math.max(0, Number(settings.season_target_games) || TARGET_GAMES_PER_SEASON);
   // 진행 중 시즌: 목표 경기 수까지 TBA placeholder 슬롯을 채운다
@@ -187,6 +183,7 @@ export default async function SchedulePage({
               <h2 className="section-title" style={{ fontSize: 32 }}>
                 {currentSeason} <span className="outline">SEASON</span>
               </h2>
+              <p className="schedule-record">{seasonRecord.w}W {seasonRecord.l}L{seasonRecord.d ? ` ${seasonRecord.d}D` : ""} / {seasonRecord.games} GAMES</p>
             </div>
 
             {seasonGames.length === 0 && tbaCount === 0 ? (
@@ -197,7 +194,7 @@ export default async function SchedulePage({
             ) : (
               <div className="grid grid--2">
                 {seasonGames.map((g, i) => {
-                  const cancelled = isCancelled(g);
+                  const cancelled = isCancelledGame(g);
                   const upcoming = isUpcoming(g, today);
                   const hasScore = g.score_us != null && g.score_them != null;
                   const win = g.result === "W";

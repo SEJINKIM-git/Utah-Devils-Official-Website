@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import { HISTORICAL_GAMES, withHistoricalGames } from "@/lib/historical-games";
+import { getGameRecord, isCompletedGame } from "@/lib/game-stats";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 import Editable from "./components/Editable";
 import Reveal from "./components/Reveal";
@@ -107,16 +108,15 @@ export default async function HomePage() {
   const data = await fetchJourneyData(settings.current_season);
   const today = new Date().toISOString().slice(0, 10);
   const currentYear = settings.current_season;
-  const finished = data.games.filter((game) => game.score_us != null && game.score_them != null && game.date <= today);
+  const finished = data.games.filter((game) => isCompletedGame(game) && game.date <= today);
   const last = finished.at(-1) ?? null;
   const next = data.games.find((game) => game.date > today && game.score_us == null) ?? null;
   const tickerGames = [...finished].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
   const seasonGames = data.games.filter((game) => game.date.slice(0, 4) === currentYear);
-  const record = {
-    w: seasonGames.filter((game) => game.result === "W").length,
-    l: seasonGames.filter((game) => game.result === "L").length,
-    d: seasonGames.filter((game) => game.result === "D").length,
-  };
+  const record = getGameRecord(seasonGames);
+  const allTimeRecord = getGameRecord(data.games);
+  // 운영자 확정 전에는 공식 자료에 명시된 3개 입상 기록을 노출한다.
+  const podiums = 3;
   const featuredRoster = data.roster.slice(0, 5);
   const featuredAwards = data.awards.slice(0, 3);
 
@@ -155,6 +155,28 @@ export default async function HomePage() {
         </section>
       ) : null}
 
+      <section className="numbers-section" aria-labelledby="numbers-title">
+        <div className="container">
+          <div className="numbers-section__head">
+            <p>UTAH DEVILS / LIVE RECORD</p>
+            <h2 id="numbers-title" className="section-title">BY THE <span className="outline">NUMBERS</span></h2>
+          </div>
+          <div className="numbers-grid">
+            <article className="numbers-tile numbers-tile--record">
+              <p>ALL-TIME RECORD</p>
+              <strong><span>{allTimeRecord.w}</span>W <span>{allTimeRecord.l}</span>L <span>{allTimeRecord.d}</span>D</strong>
+              <small>{allTimeRecord.games} GAMES PLAYED</small>
+            </article>
+            <article className="numbers-tile numbers-tile--established"><p>EST.</p><strong>2022</strong><small>FOUNDED</small></article>
+            <article className="numbers-tile numbers-tile--members"><p>COMMUNITY</p><strong>{content.fact_members} MEMBERS</strong><small>PLAYING TOGETHER</small></article>
+            <article className="numbers-tile numbers-tile--season"><p>{currentYear} SEASON</p><strong>{record.w}W {record.l}L{record.d ? ` ${record.d}D` : ""}</strong><small>{record.games} COMPLETED GAMES</small></article>
+            <article className="numbers-tile"><p>TOURNAMENTS</p><strong>{podiums} PODIUMS</strong><small>TEAM HONORS</small></article>
+            <article className="numbers-tile numbers-tile--next"><p>NEXT GAME</p><strong>{next ? formatDate(next.date) : "SEASON BREAK"}</strong><small>{next ? `VS ${next.opponent}` : "SEE YOU SOON"}</small></article>
+            <article className="numbers-tile numbers-tile--mascot"><Image src="/logos/emblem.png" alt="Utah Devils 엠블럼" width={120} height={120} sizes="120px" /></article>
+          </div>
+        </div>
+      </section>
+
       <nav className="platform-index" aria-label="Utah Devils 주요 기록">
         <div className="container">
           <Link href="#devils">01 / DEVILS</Link><Link href="#player">02 / ROSTER</Link><Link href="#schedule">03 / SCHEDULE</Link><Link href="#archive">04 / ARCHIVE</Link><Link href="#stats">05 / STATS</Link>
@@ -167,7 +189,6 @@ export default async function HomePage() {
           <div className="platform-stage__copy">
             <div className="journey-eyebrow">01 / CLUB IDENTITY</div>
             <h2 className="platform-stage__title">ONE TEAM.<br /><span className="outline">ONE DEVILS.</span></h2>
-            <div className="platform-facts"><span><b><Editable table="site_content" contentKey="fact_founded" value={content.fact_founded} maxLength={60}>{content.fact_founded}</Editable></b> ESTABLISHED</span><span><b><Editable table="site_content" contentKey="fact_members" value={content.fact_members} maxLength={60}>{content.fact_members}</Editable></b> MEMBERS</span><span><b><Editable table="site_content" contentKey="fact_affiliation" value={content.fact_affiliation} maxLength={60}>{content.fact_affiliation}</Editable></b> AFFILIATION</span><span><b><Editable table="site_content" contentKey="fact_home" value={content.fact_home} maxLength={60}>{content.fact_home}</Editable></b> HOME</span></div>
             <Link href="/devils" className="view-all">TEAM HISTORY <span aria-hidden="true">→</span></Link>
           </div>
           {data.milestones.length > 0 ? <ol className="platform-timeline" aria-label="주요 연혁">{data.milestones.map((milestone) => <li key={`${milestone.year}-${milestone.title}`}><b>{milestone.year}</b><span>{milestone.month ? `${pad2(milestone.month)} / ` : ""}{milestone.title}</span></li>)}</ol> : null}

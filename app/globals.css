@@ -2038,6 +2038,34 @@ a.card:hover,
 
 @keyframes scoreboard-marquee { to { transform: translateX(-50%); } }
 
+/* ---------- Live numbers bento (home) ---------- */
+
+.numbers-section { padding: clamp(52px, 7vw, 88px) 0; background: #101832; }
+.numbers-section__head { margin-bottom: 24px; }
+.numbers-section__head p, .numbers-tile p, .numbers-tile small, .schedule-record { color: var(--text-muted); font: 11px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+.numbers-section__head p { margin-bottom: 6px; color: var(--red); }
+.numbers-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(168px, auto)); gap: 16px; }
+.numbers-tile { display: flex; position: relative; flex-direction: column; justify-content: space-between; min-width: 0; padding: 22px; overflow: hidden; border: 1px solid var(--hairline); border-radius: 16px; background: var(--surface); transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease; }
+.numbers-tile:hover { border-color: rgba(220, 38, 38, .8); transform: translateY(-6px); box-shadow: 0 12px 32px rgba(0, 0, 0, .35); }
+.numbers-tile strong { display: block; color: var(--text); font-family: var(--font-display); font-size: clamp(28px, 3.1vw, 44px); font-weight: 400; letter-spacing: .055em; line-height: 1.05; overflow-wrap: anywhere; }
+.numbers-tile small { margin-top: 10px; font-size: 10px; }
+.numbers-tile--record { grid-row: span 2; grid-column: span 2; background: linear-gradient(145deg, #1b2450, var(--surface)); }
+.numbers-tile--record strong { color: var(--red); font-size: clamp(48px, 6vw, 96px); white-space: nowrap; }
+.numbers-tile--record strong span { color: var(--red); }
+.numbers-tile--members, .numbers-tile--season { grid-column: span 2; }
+.numbers-tile--mascot { align-items: center; justify-content: center; padding: 12px; background: radial-gradient(circle, rgba(220, 38, 38, .18), transparent 65%), var(--surface); }
+.numbers-tile--mascot img { width: min(100%, 120px); height: auto; object-fit: contain; }
+.numbers-tile--next strong { font-size: clamp(21px, 2.4vw, 32px); }
+.schedule-record { color: var(--red); white-space: nowrap; }
+
+@media (max-width: 720px) {
+  .numbers-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; gap: 12px; }
+  .numbers-tile { min-height: 152px; padding: 18px; }
+  .numbers-tile--record, .numbers-tile--members, .numbers-tile--season { grid-column: span 2; }
+  .numbers-tile--record { grid-row: auto; min-height: 210px; }
+  .numbers-tile--record strong { font-size: clamp(46px, 14vw, 74px); }
+}
+
 .platform-index .container {
   min-height: 74px;
   display: flex;
