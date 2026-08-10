@@ -9,9 +9,11 @@ import { useEffect, useRef, useState } from "react";
 export default function Reveal({
   children,
   className = "",
+  as: Tag = "div",
 }: {
   children: React.ReactNode;
   className?: string;
+  as?: "div" | "article";
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -40,8 +42,8 @@ export default function Reveal({
   }, []);
 
   return (
-    <div ref={ref} className={`reveal${visible ? " is-visible" : ""} ${className}`.trim()}>
+    <Tag ref={ref} className={`reveal${visible ? " is-visible" : ""} ${className}`.trim()}>
       {children}
-    </div>
+    </Tag>
   );
 }

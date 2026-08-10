@@ -2057,6 +2057,19 @@ a.card:hover,
 .numbers-tile--mascot img { width: min(100%, 120px); height: auto; object-fit: contain; }
 .numbers-tile--next strong { font-size: clamp(21px, 2.4vw, 32px); }
 .schedule-record { color: var(--red); white-space: nowrap; }
+.count-up { display: inline-block; font-variant-numeric: tabular-nums; }
+.numbers-grid .reveal { opacity: 0; transform: translateY(18px); transition: opacity .5s ease, transform .5s ease; }
+.numbers-grid .reveal.is-visible { opacity: 1; transform: none; }
+.numbers-grid .reveal:nth-child(2) { transition-delay: 60ms; }
+.numbers-grid .reveal:nth-child(3) { transition-delay: 120ms; }
+.numbers-grid .reveal:nth-child(4) { transition-delay: 180ms; }
+.numbers-grid .reveal:nth-child(5) { transition-delay: 240ms; }
+.numbers-grid .reveal:nth-child(6) { transition-delay: 300ms; }
+.numbers-grid .reveal:nth-child(7) { transition-delay: 360ms; }
+
+@media (min-width: 721px) {
+  .timeline--journey .timeline__year { position: sticky; top: calc(var(--header-h) + 36px); }
+}
 
 @media (max-width: 720px) {
   .numbers-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; gap: 12px; }

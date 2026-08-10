@@ -6,6 +6,7 @@ import { getGameRecord, isCompletedGame } from "@/lib/game-stats";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 import Editable from "./components/Editable";
 import Reveal from "./components/Reveal";
+import CountUp from "./components/CountUp";
 
 // 경기 데이터는 전광판 티커를 포함해 10분마다 갱신한다.
 export const revalidate = 600;
@@ -162,17 +163,17 @@ export default async function HomePage() {
             <h2 id="numbers-title" className="section-title">BY THE <span className="outline">NUMBERS</span></h2>
           </div>
           <div className="numbers-grid">
-            <article className="numbers-tile numbers-tile--record">
+            <Reveal as="article" className="numbers-tile numbers-tile--record">
               <p>ALL-TIME RECORD</p>
-              <strong><span>{allTimeRecord.w}</span>W <span>{allTimeRecord.l}</span>L <span>{allTimeRecord.d}</span>D</strong>
-              <small>{allTimeRecord.games} GAMES PLAYED</small>
-            </article>
-            <article className="numbers-tile numbers-tile--established"><p>EST.</p><strong>2022</strong><small>FOUNDED</small></article>
-            <article className="numbers-tile numbers-tile--members"><p>COMMUNITY</p><strong>{content.fact_members} MEMBERS</strong><small>PLAYING TOGETHER</small></article>
-            <article className="numbers-tile numbers-tile--season"><p>{currentYear} SEASON</p><strong>{record.w}W {record.l}L{record.d ? ` ${record.d}D` : ""}</strong><small>{record.games} COMPLETED GAMES</small></article>
-            <article className="numbers-tile"><p>TOURNAMENTS</p><strong>{podiums} PODIUMS</strong><small>TEAM HONORS</small></article>
-            <article className="numbers-tile numbers-tile--next"><p>NEXT GAME</p><strong>{next ? formatDate(next.date) : "SEASON BREAK"}</strong><small>{next ? `VS ${next.opponent}` : "SEE YOU SOON"}</small></article>
-            <article className="numbers-tile numbers-tile--mascot"><Image src="/logos/emblem.png" alt="Utah Devils 엠블럼" width={120} height={120} sizes="120px" /></article>
+              <strong><CountUp value={allTimeRecord.w} />W <CountUp value={allTimeRecord.l} />L <CountUp value={allTimeRecord.d} />D</strong>
+              <small><CountUp value={allTimeRecord.games} /> GAMES PLAYED</small>
+            </Reveal>
+            <Reveal as="article" className="numbers-tile numbers-tile--established"><p>EST.</p><strong>2022</strong><small>FOUNDED</small></Reveal>
+            <Reveal as="article" className="numbers-tile numbers-tile--members"><p>COMMUNITY</p><strong><CountUp value={Number.parseInt(content.fact_members, 10) || 0} suffix={content.fact_members.replace(/^\d+/, "")} /> MEMBERS</strong><small>PLAYING TOGETHER</small></Reveal>
+            <Reveal as="article" className="numbers-tile numbers-tile--season"><p>{currentYear} SEASON</p><strong><CountUp value={record.w} />W <CountUp value={record.l} />L{record.d ? <> <CountUp value={record.d} />D</> : ""}</strong><small><CountUp value={record.games} /> COMPLETED GAMES</small></Reveal>
+            <Reveal as="article" className="numbers-tile"><p>TOURNAMENTS</p><strong><CountUp value={podiums} /> PODIUMS</strong><small>TEAM HONORS</small></Reveal>
+            <Reveal as="article" className="numbers-tile numbers-tile--next"><p>NEXT GAME</p><strong>{next ? formatDate(next.date) : "SEASON BREAK"}</strong><small>{next ? `VS ${next.opponent}` : "SEE YOU SOON"}</small></Reveal>
+            <Reveal as="article" className="numbers-tile numbers-tile--mascot"><Image src="/logos/emblem.png" alt="Utah Devils 엠블럼" width={120} height={120} sizes="120px" /></Reveal>
           </div>
         </div>
       </section>
