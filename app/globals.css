@@ -848,6 +848,14 @@ a.card:hover,
   clip-path: circle(50%);
 }
 
+/* 세로 스프라이트 형태의 원본도 원형 프레임에서 마크 하나만 일정하게 보이게 한다. */
+.game-card__logo--crop-top img,
+.game-card__logo--crop-bottom img {
+  transform: scale(2.1);
+}
+.game-card__logo--crop-top img { transform-origin: center top; }
+.game-card__logo--crop-bottom img { transform-origin: center bottom; }
+
 .game-card__logo--devils {
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
