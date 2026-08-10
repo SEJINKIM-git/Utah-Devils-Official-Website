@@ -32,6 +32,7 @@ type RosterMember = {
   number: number | null;
   is_captain: boolean;
   sort_order: number;
+  photo_url: string | null;
 };
 
 type Award = {
@@ -74,7 +75,7 @@ async function fetchJourneyData(currentSeason: string) {
 
   const [gamesRes, rosterRes, awardsRes, timelineRes] = await Promise.all([
     supabase.from("games").select("id, date, time, opponent, location, result, score_us, score_them").order("date", { ascending: true }).limit(100),
-    supabase.from("roster_members").select("id, season, name_ko, name_en, number, is_captain, sort_order").limit(60),
+    supabase.from("roster_members").select("id, season, name_ko, name_en, number, is_captain, sort_order, photo_url").limit(60),
     supabase.from("season_awards").select("id, season, award_type, player_name, player_number").in("award_type", ["MVP", "BEST_BATTER", "BEST_PITCHER"]).order("season", { ascending: false }).limit(30),
     supabase.from("timeline_events").select("year, season, month, title, sort_order").order("year", { ascending: true }).limit(200),
   ]);
@@ -202,7 +203,7 @@ export default async function HomePage() {
           <div className="platform-stage__copy platform-stage__copy--right">
             <div className="journey-eyebrow">02 / ROSTER</div>
             <h2 className="platform-stage__title">PLAYERS,<br /><span className="outline">IN FOCUS.</span></h2>
-            {featuredRoster.length > 0 ? <ol className="platform-roster" aria-label="주요 선수단">{featuredRoster.map((member) => <li key={member.id}><b>{String(member.number ?? 0).padStart(2, "0")}</b><span>{member.name_ko}</span><small>{member.is_captain ? "CAPTAIN" : member.season}</small></li>)}</ol> : null}
+            {featuredRoster.length > 0 ? <ol className="platform-roster" aria-label="주요 선수단">{featuredRoster.map((member) => <li key={member.id}>{member.photo_url ? <Image className="platform-roster__photo" src={member.photo_url} alt="" fill sizes="(max-width: 900px) 100vw, 500px" /> : null}<b>{String(member.number ?? 0).padStart(2, "0")}</b><span>{member.name_ko}</span><small>{member.is_captain ? "CAPTAIN" : member.season}</small></li>)}</ol> : null}
             <Link href="/players" className="view-all">VIEW FULL ROSTER <span aria-hidden="true">→</span></Link>
           </div>
         </Reveal></div>
