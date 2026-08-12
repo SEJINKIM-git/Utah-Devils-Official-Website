@@ -69,7 +69,7 @@ npm run dev
 ## 관리자 콘솔 (/admin)
 
 - 공개 헤더의 **ADMIN LOGIN**에서 이메일·비밀번호로 로그인한다. 미로그인 사용자는 `/admin`에 접근할 수 없다.
-- 운영진 계정은 Supabase 대시보드에서 수동으로 만들며, 기존 RLS 정책에 필요한 `admin_members.role = admin` 및 `approved_at`은 운영진이 함께 설정한다.
+- 운영진 계정 생성·비밀번호 재설정·회수는 `/admin/members`에서 처리한다. 신규 계정에는 `admin_members.role = admin`과 `approved_at`이 서버에서 자동 설정된다. Supabase 대시보드는 모든 운영진 계정을 잃었을 때의 비상 복구 경로로만 사용한다.
 - 비밀번호 변경은 로그인 후 `/admin/settings`에서 처리한다. 이메일 발송이나 회원가입 기능을 사용하지 않는다.
 - 자세한 운영 절차는 [운영 매뉴얼](docs/OPERATIONS_MANUAL.md)을 확인한다.
 - 기능: 연혁(timeline_events) CRUD · 행사(archive_events) 추가/수정 · 수요조사 사이즈×수량 집계 + CSV 다운로드

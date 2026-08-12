@@ -45,7 +45,7 @@
 
 ## 서버 키 관리
 
-`SUPABASE_SERVICE_ROLE_KEY`는 `/admin/members`의 서버 API에서만 사용합니다. Vercel 프로젝트의 **Environment Variables**에 Production과 Preview 환경으로 등록하며, `NEXT_PUBLIC_` 접두사를 붙이거나 코드·Git에 저장하지 않습니다.
+`SUPABASE_SERVICE_ROLE_KEY`는 이미 설정된 Vercel 서버 환경변수이며 `/admin/members`의 서버 API에서만 사용합니다. `NEXT_PUBLIC_` 접두사를 붙이거나 코드·Git에 저장하지 않습니다.
 
 유출이 의심되면 다음 순서로 처리합니다.
 
