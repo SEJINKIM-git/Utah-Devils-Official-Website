@@ -5,6 +5,7 @@ import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import VisualBand from "@/app/components/VisualBand";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 import Editable from "@/app/components/Editable";
+import EditableImage from "@/app/components/EditableImage";
 
 export const metadata: Metadata = { title: "Player" };
 export const revalidate = 300;
@@ -161,15 +162,9 @@ export default async function PlayersPage({
                 const inner = (
                   <>
                     {photo.src ? (
-                      <div className="player-card__photo">
-                        <Image
-                          src={photo.src}
-                          alt={m.name_ko}
-                          fill
-                          sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
-                          style={{ objectFit: "cover", objectPosition: photo.position }}
-                        />
-                      </div>
+                      <EditableImage table="roster_members" id={m.id} uploadPath={`roster/${m.number ?? m.id}.jpg`} mode="portrait">
+                        <div className="player-card__photo"><Image src={photo.src} alt={m.name_ko} fill sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" style={{ objectFit: "cover", objectPosition: photo.position }} /></div>
+                      </EditableImage>
                     ) : null}
                     <div className="player-card__badges">
                       {m.is_captain ? (
@@ -212,21 +207,9 @@ export default async function PlayersPage({
                     ) : null}
                   </>
                 );
-                return m.player_id != null ? (
-                  <a
-                    key={m.id}
-                    className="card player-card"
-                    href={`${INSIGHT_AI_URL}/players/${m.player_id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {inner}
-                  </a>
-                ) : (
-                  <div key={m.id} className="card player-card">
-                    {inner}
-                  </div>
-                );
+                // 카드 안의 사진 교체 버튼이 외부 링크 내부의 중첩 버튼이 되지 않도록
+                // 분석 플랫폼 상세 이동은 하단 CTA로 한 곳에 유지한다.
+                return <div key={m.id} className="card player-card">{inner}</div>;
               })}
             </div>
           </>
