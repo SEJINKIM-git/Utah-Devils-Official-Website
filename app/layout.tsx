@@ -6,7 +6,7 @@ import EditModeProvider from "./components/EditModeProvider";
 import Editable from "./components/Editable";
 import EditModeToolbar from "./components/EditModeToolbar";
 import { getSiteSettings } from "@/lib/site-content";
-import { getAuthenticatedUser } from "@/lib/supabase-server";
+import { getAuthenticatedUser, isApprovedAdmin } from "@/lib/supabase-server";
 import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
@@ -39,7 +39,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const [settings, user] = await Promise.all([getSiteSettings(), getAuthenticatedUser()]);
-  const editMode = Boolean(user && cookies().get("edit_mode")?.value === "1");
+  // 쿠키만으로 편집 UI를 노출하지 않는다. 매 렌더에서 승인 운영진 여부를 재확인한다.
+  const editMode = Boolean(
+    user &&
+      cookies().get("edit_mode")?.value === "1" &&
+      (await isApprovedAdmin(user.id))
+  );
   return (
     <html lang="ko">
       <head>

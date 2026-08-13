@@ -10,7 +10,12 @@ const MENUS = [
   {
     href: "/admin/events",
     title: "행사 관리",
-    desc: "/archive 행사 기록을 추가·수정합니다. 사진은 URL 배열로 입력합니다.",
+    desc: "/archive 행사 기록을 추가·수정·삭제하고 사진을 업로드합니다.",
+  },
+  {
+    href: "/admin/games",
+    title: "경기 데이터 상태",
+    desc: "홈페이지가 읽는 경기 기록을 확인합니다. 경기 입력은 분석 플랫폼에서 합니다.",
   },
   {
     href: "/admin/survey",
@@ -41,10 +46,8 @@ export default function AdminHomePage() {
         ))}
       </div>
       <div className="notice" style={{ marginTop: 28, textAlign: "left" }}>
-        쓰기는 승인된 운영진 계정만 통과하는 RLS 정책을 거칩니다. 정책이 아직
-        없다면 sql/08_member_registration_roles.sql을 Supabase SQL Editor에서 1회 실행하세요.
-        기존 테이블(games, players, batting_stats, pitching_stats)은 이
-        콘솔에서 다루지 않습니다.
+        저장한 내용은 즉시 공개 화면에 반영됩니다. 경기 기록은 이 화면에서 수정하지 않으며,
+        분석 플랫폼에서 입력한 값을 홈페이지가 읽어 표시합니다.
       </div>
       <form action={startEditMode} style={{ marginTop: 20 }}>
         <button type="submit" className="btn btn--primary">

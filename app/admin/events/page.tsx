@@ -49,6 +49,7 @@ export default function AdminEventsPage() {
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(
     null
   );
@@ -64,7 +65,7 @@ export default function AdminEventsPage() {
       .order("event_date", { ascending: false, nullsFirst: false })
       .order("title", { ascending: true });
     if (error) {
-      setMsg({ kind: "err", text: `목록 조회 실패: ${error.message}` });
+      setMsg({ kind: "err", text: "행사 목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요." });
       return;
     }
     setEvents(data as ArchiveEvent[]);
@@ -105,7 +106,7 @@ export default function AdminEventsPage() {
       .filter(Boolean);
     const invalid = urls.find((u) => !/^https?:\/\//.test(u));
     if (invalid) {
-      setMsg({ kind: "err", text: `URL 형식이 아닙니다: ${invalid}` });
+      setMsg({ kind: "err", text: "사진 주소 형식을 확인해 주세요." });
       return;
     }
     const row = {
@@ -125,7 +126,7 @@ export default function AdminEventsPage() {
     if (error) {
       setMsg({
         kind: "err",
-        text: `저장 실패: ${error.message} (RLS 정책 미실행이면 sql/04_admin_rls.sql 확인)`,
+        text: "행사를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.",
       });
       return;
     }
@@ -141,6 +142,18 @@ export default function AdminEventsPage() {
         ? `${current.photo_urls}\n${url}`
         : url,
     }));
+  }
+
+  async function deleteEvent(event: ArchiveEvent) {
+    if (!window.confirm(`'${event.title}' 삭제. 되돌릴 수 없습니다.`)) return;
+    const supabase = getBrowserSupabase();
+    if (!supabase) return;
+    setDeleting(event.id); setMsg(null);
+    const { error } = await supabase.from("archive_events").delete().eq("id", event.id);
+    setDeleting(null);
+    if (error) { setMsg({ kind: "err", text: "행사를 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요." }); return; }
+    if (editingId === event.id) resetForm();
+    setMsg({ kind: "ok", text: "행사를 삭제했습니다." }); load();
   }
 
   return (
@@ -307,6 +320,9 @@ export default function AdminEventsPage() {
                 {e.is_featured ? <span className="pill">FEATURED</span> : null}
                 <button type="button" className="tab" onClick={() => startEdit(e)}>
                   수정
+                </button>
+                <button type="button" className="tab" onClick={() => deleteEvent(e)} disabled={deleting === e.id}>
+                  {deleting === e.id ? "삭제 중..." : "삭제"}
                 </button>
               </div>
             ))}
