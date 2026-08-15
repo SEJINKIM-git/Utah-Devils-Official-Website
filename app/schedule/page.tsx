@@ -7,6 +7,8 @@ import VisualBand from "@/app/components/VisualBand";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 import Editable from "@/app/components/Editable";
 import TeamAvatar from "@/app/components/TeamAvatar";
+import ScoreDisplay from "@/app/components/ScoreDisplay";
+import { formatGameNumber } from "@/lib/score-format";
 
 export const metadata: Metadata = { title: "Schedule" };
 export const revalidate = 300;
@@ -72,10 +74,6 @@ function formatDate(date: string): string {
 // time 컬럼 "19:30:00" → "19:30"
 function formatTime(time: string | null): string | null {
   return time ? time.slice(0, 5) : null;
-}
-
-function pad2(n: number): string {
-  return String(n).padStart(2, "0");
 }
 
 export default async function SchedulePage({
@@ -165,7 +163,7 @@ export default async function SchedulePage({
                     >
                       <div className="game-card__top">
                         <span className="game-card__no">
-                          GAME {pad2(i + 1)}
+                          GAME {formatGameNumber(i + 1)}
                         </span>
                         {cancelled ? null : upcoming ? (
                           <span className="badge">UPCOMING</span>
@@ -189,16 +187,14 @@ export default async function SchedulePage({
                           className="game-card__score"
                           style={win ? { color: "var(--red)" } : undefined}
                         >
-                          {pad2(g.score_us!)}
-                          <span className="vs">:</span>
-                          {pad2(g.score_them!)}
+                          <ScoreDisplay scoreUs={g.score_us} scoreThem={g.score_them} />
                         </div>
                       ) : (
                         <div
                           className="game-card__score"
                           style={{ color: "var(--text-muted)" }}
                         >
-                          –<span className="vs">:</span>–
+                          <ScoreDisplay scoreUs={null} scoreThem={null} />
                         </div>
                       )}
 
@@ -231,7 +227,7 @@ export default async function SchedulePage({
                   <div key={`tba-${i}`} className="card game-card">
                     <div className="game-card__top">
                       <span className="game-card__no">
-                        GAME {pad2(seasonGames.length + i + 1)}
+                        GAME {formatGameNumber(seasonGames.length + i + 1)}
                       </span>
                       <span className="badge badge--muted">TBA</span>
                     </div>
