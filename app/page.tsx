@@ -199,7 +199,7 @@ export default async function HomePage() {
           <div className="platform-stage__copy platform-stage__copy--right">
             <div className="journey-eyebrow">02 / ROSTER</div>
             <h2 className="platform-stage__title">PLAYERS,<br /><span className="outline">IN FOCUS.</span></h2>
-            {featuredRoster.length > 0 ? <ol className="platform-roster" aria-label="주요 선수단">{featuredRoster.map((member) => <li key={member.id}>{member.photo_url ? <Image className="platform-roster__photo" src={member.photo_url} alt="" fill sizes="(max-width: 900px) 100vw, 500px" /> : null}<b>{String(member.number ?? 0).padStart(2, "0")}</b><span>{member.name_ko}</span><small>{member.is_captain ? "CAPTAIN" : member.season}</small></li>)}</ol> : null}
+            {featuredRoster.length > 0 ? <ol className="platform-roster" aria-label="주요 선수단">{featuredRoster.map((member) => <li key={member.id}>{member.photo_url ? <Image className="platform-roster__photo" src={member.photo_url} alt="" fill sizes="(max-width: 900px) 100vw, 500px" /> : null}<b>{member.number ?? "–"}</b><span>{member.name_ko}</span><small>{member.is_captain ? "CAPTAIN" : member.season}</small></li>)}</ol> : null}
             <Link href="/players" className="view-all">VIEW FULL ROSTER <span aria-hidden="true">→</span></Link>
           </div>
         </Reveal></div>
