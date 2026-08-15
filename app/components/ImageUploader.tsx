@@ -42,7 +42,7 @@ async function resizeToJpeg(file: File, maxWidth: number): Promise<Blob> {
     if (!context) throw new Error("canvas");
     context.drawImage(image, 0, 0, width, height);
     const output = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, "image/jpeg", 0.82)
+      canvas.toBlob(resolve, "image/jpeg", 0.9)
     );
     if (!output) throw new Error("canvas-output");
     return output;
@@ -103,7 +103,7 @@ export default function ImageUploader({
     setBusy(true);
     setMessage(null);
     try {
-      const output = await resizeToJpeg(file, mode === "portrait" ? 800 : 1400);
+      const output = await resizeToJpeg(file, mode === "portrait" ? 800 : 2000);
       const { error } = await supabase.storage.from("official-site").upload(path, output, {
         cacheControl: "3600",
         contentType: "image/jpeg",
@@ -153,7 +153,7 @@ export default function ImageUploader({
         )}
       </label>
       <div className="image-uploader__actions">
-        <span>JPG · PNG · WEBP / {mode === "portrait" ? "인물 최대 800px" : "행사 최대 1400px"}</span>
+        <span>JPG · PNG · WEBP / {mode === "portrait" ? "인물 최대 800px" : "행사 최대 2000px"}</span>
         <button type="button" className="btn" onClick={upload} disabled={!file || busy || disabled}>
           {busy ? "업로드 중..." : "업로드"}
         </button>

@@ -51,7 +51,8 @@ export default function EventLightbox({
           src={photos[0]}
           alt={title}
           fill
-          sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
+          quality={90}
+          sizes="(max-width: 560px) calc(100vw - 48px), (max-width: 900px) calc((100vw - 64px) / 2), (max-width: 1120px) calc((100vw - 80px) / 3), 345px"
           style={{ objectFit: "cover" }}
         />
         {photos.length > 1 ? (
@@ -82,7 +83,8 @@ export default function EventLightbox({
               src={photos[index]}
               alt={`${title} 사진 ${index + 1}`}
               fill
-              sizes="90vw"
+              quality={90}
+              sizes="100vw"
               style={{ objectFit: "contain" }}
             />
           </div>

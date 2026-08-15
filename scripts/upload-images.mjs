@@ -9,7 +9,8 @@
  * 규칙:
  * - 키는 셸 환경변수로만 받는다. .env 저장 금지, 코드/커밋 포함 금지.
  * - logos/ 는 원본 유지(PNG 그대로), roster/·hof/ 는 최대 폭 800px,
- *   events/·games/ 는 최대 폭 1400px, JPEG 품질 82. WebP 변환은 next/image 몫.
+ *   events/·games/ 는 최대 폭 2000px, 그 외 사진은 최대 폭 1400px,
+ *   JPEG 품질 90. WebP 변환은 next/image 몫.
  * - 업로드 경로는 로컬 구조 그대로 official-site 버킷에, upsert 모드.
  * - 결과 public URL 목록을 docs/uploaded_images.md 로 생성한다.
  */
@@ -93,7 +94,9 @@ function ruleFor(relPath) {
   if (top === "logos") return { resize: null, keepOriginal: true };
   if (top === "roster" || top === "hof" || top === "awards")
     return { resize: 800, keepOriginal: false }; // 인물 사진
-  return { resize: 1400, keepOriginal: false }; // events, games, main, timeline, 기타
+  if (top === "events" || top === "games")
+    return { resize: 2000, keepOriginal: false }; // 행사·경기 사진
+  return { resize: 1400, keepOriginal: false }; // main, timeline, 기타
 }
 
 async function optimize(absPath, relPath) {
@@ -106,7 +109,7 @@ async function optimize(absPath, relPath) {
   if (rule.resize && (meta.width ?? 0) > rule.resize) {
     image.resize({ width: rule.resize });
   }
-  const buffer = await image.jpeg({ quality: 82, mozjpeg: true }).toBuffer();
+  const buffer = await image.jpeg({ quality: 90, mozjpeg: true }).toBuffer();
   const outPath = relPath.replace(/\.(png|webp|jpeg)$/i, ".jpg");
   return { buffer, outPath, contentType: "image/jpeg" };
 }
