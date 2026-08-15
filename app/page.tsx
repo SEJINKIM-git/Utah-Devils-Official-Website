@@ -8,6 +8,7 @@ import Editable from "./components/Editable";
 import Reveal from "./components/Reveal";
 import CountUp from "./components/CountUp";
 import TeamAvatar from "./components/TeamAvatar";
+import ScoreDisplay from "./components/ScoreDisplay";
 
 // 경기 데이터는 전광판 티커를 포함해 10분마다 갱신한다.
 export const revalidate = 600;
@@ -58,7 +59,7 @@ const AWARD_LABELS: Record<string, string> = {
   BEST_PITCHER: "BEST PITCHER",
 };
 
-const pad2 = (value: number) => String(value).padStart(2, "0");
+const formatMonthNumber = (value: number) => String(value).padStart(2, "0");
 const formatDate = (date: string) => `${MONTH_ABBR[Number(date.slice(5, 7)) - 1] ?? ""} ${date.slice(8, 10)}`;
 
 async function fetchJourneyData(currentSeason: string) {
@@ -148,7 +149,7 @@ export default async function HomePage() {
                     const outcome = game.score_us! > game.score_them! ? "W" : game.score_us! < game.score_them! ? "L" : "D";
                     return <span className="scoreboard-ticker__item" key={`${duplicate}-${game.id}`}>
                       <TeamAvatar teamName={game.opponent} size="compact" />
-                      <span>{formatDate(game.date)} · </span><b className={`scoreboard-ticker__result scoreboard-ticker__result--${outcome.toLowerCase()}`}>{outcome}</b><span> {pad2(game.score_us!)}:{pad2(game.score_them!)} VS {game.opponent}</span><TeamAvatar teamName="Utah Devils" variant="devils" size="compact" /><i aria-hidden="true">◆</i>
+                      <span>{formatDate(game.date)} · </span><b className={`scoreboard-ticker__result scoreboard-ticker__result--${outcome.toLowerCase()}`}>{outcome}</b><ScoreDisplay scoreUs={game.score_us} scoreThem={game.score_them} /><span> VS {game.opponent}</span><TeamAvatar teamName="Utah Devils" variant="devils" size="compact" /><i aria-hidden="true">◆</i>
                     </span>;
                   })}
                   {next ? <span className="scoreboard-ticker__item scoreboard-ticker__item--next"><TeamAvatar teamName={next.opponent} size="compact" /><b>NEXT</b> · {formatDate(next.date)} VS {next.opponent}<TeamAvatar teamName="Utah Devils" variant="devils" size="compact" /><i aria-hidden="true">◆</i></span> : null}
@@ -166,17 +167,10 @@ export default async function HomePage() {
             <h2 id="numbers-title" className="section-title">BY THE <span className="outline">NUMBERS</span></h2>
           </div>
           <div className="numbers-grid">
-            <Reveal as="article" className="numbers-tile numbers-tile--record">
-              <p>ALL-TIME RECORD</p>
-              <strong><CountUp value={allTimeRecord.w} />W <CountUp value={allTimeRecord.l} />L <CountUp value={allTimeRecord.d} />D</strong>
-              <small><CountUp value={allTimeRecord.games} /> GAMES PLAYED</small>
-            </Reveal>
-            <Reveal as="article" className="numbers-tile numbers-tile--established"><p>EST.</p><strong>2022</strong><small>FOUNDED</small></Reveal>
-            <Reveal as="article" className="numbers-tile numbers-tile--members"><p>COMMUNITY</p><strong><CountUp value={Number.parseInt(content.fact_members, 10) || 0} suffix={content.fact_members.replace(/^\d+/, "")} /> MEMBERS</strong><small>PLAYING TOGETHER</small></Reveal>
-            <Reveal as="article" className="numbers-tile numbers-tile--season"><p>{currentYear} SEASON</p><strong><CountUp value={record.w} />W <CountUp value={record.l} />L{record.d ? <> <CountUp value={record.d} />D</> : ""}</strong><small><CountUp value={record.games} /> COMPLETED GAMES</small></Reveal>
-            <Reveal as="article" className="numbers-tile"><p>TOURNAMENTS</p><strong><CountUp value={podiums} /> PODIUMS</strong><small>TEAM HONORS</small></Reveal>
-            <Reveal as="article" className="numbers-tile numbers-tile--next"><p>NEXT GAME</p><strong>{next ? formatDate(next.date) : "SEASON BREAK"}</strong><small>{next ? `VS ${next.opponent}` : "SEE YOU SOON"}</small></Reveal>
-            <Reveal as="article" className="numbers-tile numbers-tile--mascot"><Image src="/logos/emblem.png" alt="Utah Devils 엠블럼" width={120} height={120} sizes="120px" /></Reveal>
+            <Reveal as="div" className="numbers-stat numbers-stat--record"><span>ALL-TIME</span><strong className="numbers-result"><b><CountUp value={allTimeRecord.w} /></b><i>W</i><b><CountUp value={allTimeRecord.l} /></b><i>L</i><b><CountUp value={allTimeRecord.d} /></b><i>D</i></strong></Reveal>
+            <Reveal as="div" className="numbers-stat"><span>{currentYear} SEASON</span><strong className="numbers-result"><b><CountUp value={record.w} /></b><i>W</i><b><CountUp value={record.l} /></b><i>L</i>{record.d ? <><b><CountUp value={record.d} /></b><i>D</i></> : null}</strong></Reveal>
+            <Reveal as="div" className="numbers-stat"><span>MEMBERS</span><strong><CountUp value={Number.parseInt(content.fact_members, 10) || 0} suffix={content.fact_members.replace(/^\d+/, "")} /></strong></Reveal>
+            <Reveal as="div" className="numbers-stat"><span>EST.</span><strong>2022</strong></Reveal>
           </div>
         </div>
       </section>
@@ -195,7 +189,7 @@ export default async function HomePage() {
             <h2 className="platform-stage__title">ONE TEAM.<br /><span className="outline">ONE DEVILS.</span></h2>
             <Link href="/devils" className="view-all">TEAM HISTORY <span aria-hidden="true">→</span></Link>
           </div>
-          {data.milestones.length > 0 ? <ol className="platform-timeline" aria-label="주요 연혁">{data.milestones.map((milestone) => <li key={`${milestone.year}-${milestone.title}`}><b>{milestone.year}</b><span>{milestone.month ? `${pad2(milestone.month)} / ` : ""}{milestone.title}</span></li>)}</ol> : null}
+          {data.milestones.length > 0 ? <ol className="platform-timeline" aria-label="주요 연혁">{data.milestones.map((milestone) => <li key={`${milestone.year}-${milestone.title}`}><b>{milestone.year}</b><span>{milestone.month ? `${formatMonthNumber(milestone.month)} / ` : ""}{milestone.title}</span></li>)}</ol> : null}
         </Reveal></div>
       </section>
 
@@ -220,7 +214,7 @@ export default async function HomePage() {
             {seasonGames.length > 0 ? <p className="platform-season-line"><b>{currentYear}</b> SEASON / {record.w}W {record.l}L{record.d > 0 ? ` ${record.d}D` : ""}</p> : null}
             <Link href="/schedule" className="view-all">ALL RESULTS &amp; SCHEDULE <span aria-hidden="true">→</span></Link>
           </div>
-          <div className="platform-score" aria-label="최근 경기"><span className="platform-score__label">{last ? "LAST GAME" : "NEXT GAME"}</span>{last ? <><div className="platform-score__teams"><TeamAvatar teamName={last.opponent} /><strong>{last.score_us}<i>:</i>{last.score_them}</strong><TeamAvatar teamName="Utah Devils" variant="devils" /></div><span>VS {last.opponent} · {formatDate(last.date)}</span></> : next ? <><div className="platform-score__teams"><TeamAvatar teamName={next.opponent} /><strong>–<i>:</i>–</strong><TeamAvatar teamName="Utah Devils" variant="devils" /></div><span>VS {next.opponent} · {formatDate(next.date)}</span></> : <span>SEASON RECORDS COMING SOON</span>}</div>
+          <div className="platform-score" aria-label="최근 경기"><span className="platform-score__label">{last ? "LAST GAME" : "NEXT GAME"}</span>{last ? <><div className="platform-score__teams"><TeamAvatar teamName={last.opponent} /><strong><ScoreDisplay scoreUs={last.score_us} scoreThem={last.score_them} /></strong><TeamAvatar teamName="Utah Devils" variant="devils" /></div><span>VS {last.opponent} · {formatDate(last.date)}</span></> : next ? <><div className="platform-score__teams"><TeamAvatar teamName={next.opponent} /><strong><ScoreDisplay scoreUs={null} scoreThem={null} /></strong><TeamAvatar teamName="Utah Devils" variant="devils" /></div><span>VS {next.opponent} · {formatDate(next.date)}</span></> : <span>SEASON RECORDS COMING SOON</span>}</div>
         </Reveal></div>
       </section>
 
