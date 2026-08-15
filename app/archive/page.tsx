@@ -6,6 +6,10 @@ import EventLightbox from "../components/EventLightbox";
 import VisualBand from "@/app/components/VisualBand";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 import Editable from "@/app/components/Editable";
+import EditableField from "@/app/components/EditableField";
+import EditableImage from "@/app/components/EditableImage";
+import EditableEventPhotos from "@/app/components/EditableEventPhotos";
+import EditAddLink from "@/app/components/EditAddLink";
 
 export const metadata: Metadata = { title: "Archive" };
 export const revalidate = 300;
@@ -375,34 +379,37 @@ export default async function ArchivePage({
                           );
                           return (
                             <div key={t.key} className="card card--hover">
-                              {winner?.photo_url ? (
-                                <div className="award-card__photo">
-                                  {/* 원본의 얼굴·상체와 전체 구도를 보존하기 위해 크롭하지 않는다. */}
-                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img
-                                    src={winner.photo_url}
-                                    alt={winner.player_name}
-                                    loading="lazy"
-                                  />
-                                </div>
+                              {winner ? (
+                                <EditableImage table="season_awards" id={winner.id} uploadPath={`awards/${season}-${t.key.toLowerCase()}.jpg`} mode="portrait">
+                                  {winner.photo_url ? (
+                                    <div className="award-card__photo">
+                                      {/* 원본의 얼굴·상체와 전체 구도를 보존하기 위해 크롭하지 않는다. */}
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img
+                                        src={winner.photo_url}
+                                        alt={winner.player_name}
+                                        loading="lazy"
+                                      />
+                                    </div>
+                                  ) : null}
+                                </EditableImage>
                               ) : null}
                               <div className="award-card__type">{t.label}</div>
                               {winner ? (
                                 <>
                                   <div className="award-card__number">
-                                    {winner.player_number != null
-                                      ? String(winner.player_number).padStart(
-                                          2,
-                                          "0"
-                                        )
-                                      : "—"}
+                                    <EditableField table="season_awards" id={winner.id} column="player_number" value={winner.player_number != null ? String(winner.player_number) : ""} maxLength={3} allowEmpty emptyLabel="—">
+                                      {winner.player_number != null
+                                        ? winner.player_number
+                                        : "—"}
+                                    </EditableField>
                                   </div>
                                   <div className="award-card__player">
-                                    {winner.player_name}
+                                    <EditableField table="season_awards" id={winner.id} column="player_name" value={winner.player_name} maxLength={40}>{winner.player_name}</EditableField>
                                   </div>
                                   {winner.player_name_en ? (
                                     <div className="award-card__sub">
-                                      {winner.player_name_en}
+                                      <EditableField table="season_awards" id={winner.id} column="player_name_en" value={winner.player_name_en} maxLength={60} allowEmpty>{winner.player_name_en}</EditableField>
                                     </div>
                                   ) : null}
                                 </>
@@ -424,6 +431,7 @@ export default async function ArchivePage({
                     </section>
                   ))
                 )}
+                <EditAddLink href="/admin" label="어워즈 등록 (admin에서)" />
               </>
             )
           ) : view === "hof" ? (
@@ -470,31 +478,32 @@ export default async function ArchivePage({
                           </div>
                           <div className="hof-detail__body">
                             <div className="hof-detail__idline">
-                              {[
-                                m.name_ko,
-                                m.name_en,
-                                formatBirth(m.birth_date),
-                              ]
-                                .filter(Boolean)
-                                .join(" | ")}
+                              <EditableField table="hall_of_fame" id={m.id} column="name_ko" value={m.name_ko} maxLength={40}>{m.name_ko}</EditableField>
+                              {" | "}
+                              <EditableField table="hall_of_fame" id={m.id} column="name_en" value={m.name_en} maxLength={60}>{m.name_en}</EditableField>
+                              {formatBirth(m.birth_date) ? ` | ${formatBirth(m.birth_date)}` : ""}
                             </div>
                             {m.active_period ? (
                               <div className="hof-detail__period">
-                                {m.active_period}
+                                <EditableField table="hall_of_fame" id={m.id} column="active_period" value={m.active_period} maxLength={80} allowEmpty>{m.active_period}</EditableField>
                               </div>
                             ) : null}
                             {m.roles?.length ? (
                               <div className="hof-detail__lines">
-                                {m.roles.map((r, i) => (
-                                  <div key={i}>{r}</div>
-                                ))}
+                                <EditableField table="hall_of_fame" id={m.id} column="roles" value={m.roles.join("\n")} fieldType="lines" maxLength={400} allowEmpty>
+                                  {m.roles.map((r, i) => (
+                                    <div key={i}>{r}</div>
+                                  ))}
+                                </EditableField>
                               </div>
                             ) : null}
                             {m.achievements?.length ? (
                               <div className="hof-detail__lines">
-                                {m.achievements.map((a, i) => (
-                                  <div key={i}>{a}</div>
-                                ))}
+                                <EditableField table="hall_of_fame" id={m.id} column="achievements" value={m.achievements.join("\n")} fieldType="lines" maxLength={400} allowEmpty>
+                                  {m.achievements.map((a, i) => (
+                                    <div key={i}>{a}</div>
+                                  ))}
+                                </EditableField>
                               </div>
                             ) : null}
                             {m.hof_points != null ? (
@@ -528,25 +537,27 @@ export default async function ArchivePage({
                     <div className="grid grid--2">
                       {hofFaculty.map((m) => (
                         <div key={m.id} className="card card--hover hof-card">
-                          {m.photo_url ? (
-                            <div className="hof-card__photo--next">
-                              <Image
-                                src={m.photo_url}
-                                alt={m.name_ko}
-                                fill
-                                sizes="96px"
-                                style={{ objectFit: "cover", objectPosition: "top" }}
-                              />
-                            </div>
-                          ) : null}
+                          <EditableImage table="hall_of_fame" id={m.id} uploadPath={`hof/${m.id}.jpg`} mode="portrait">
+                            {m.photo_url ? (
+                              <div className="hof-card__photo--next">
+                                <Image
+                                  src={m.photo_url}
+                                  alt={m.name_ko}
+                                  fill
+                                  sizes="96px"
+                                  style={{ objectFit: "cover", objectPosition: "top" }}
+                                />
+                              </div>
+                            ) : null}
+                          </EditableImage>
                           <div>
-                          <div className="hof-card__name">{m.name_ko}</div>
+                          <div className="hof-card__name"><EditableField table="hall_of_fame" id={m.id} column="name_ko" value={m.name_ko} maxLength={40}>{m.name_ko}</EditableField></div>
                           {m.roles?.length ? (
                             <div
                               className="award-card__sub"
                               style={{ marginTop: 6 }}
                             >
-                              {m.roles.join(" · ")}
+                              <EditableField table="hall_of_fame" id={m.id} column="roles" value={m.roles.join("\n")} fieldType="lines" maxLength={400} allowEmpty>{m.roles.join(" · ")}</EditableField>
                             </div>
                           ) : null}
                           <div
@@ -561,6 +572,7 @@ export default async function ArchivePage({
                     </div>
                   </section>
                 ) : null}
+                <EditAddLink href="/admin" label="헌액자 등록 (admin에서)" />
               </>
             )
           ) : (
@@ -599,8 +611,9 @@ export default async function ArchivePage({
                         {e.photo_urls?.length ? (
                           <EventLightbox title={e.title} photos={e.photo_urls} />
                         ) : null}
+                        <EditableEventPhotos id={e.id} title={e.title} photos={e.photo_urls ?? []} />
                         <div className="event-card__date">
-                          {e.event_date ?? ""}{" "}
+                          <EditableField table="archive_events" id={e.id} column="event_date" value={e.event_date ?? ""} maxLength={10} allowEmpty emptyLabel="날짜 입력">{e.event_date ?? ""}</EditableField>{" "}
                           <span className="pill pill--muted">{label}</span>
                           {e.is_featured ? (
                             <span className="pill" style={{ marginLeft: 6 }}>
@@ -608,10 +621,12 @@ export default async function ArchivePage({
                             </span>
                           ) : null}
                         </div>
-                        <div className="event-card__title">{e.title}</div>
-                        {e.description ? (
-                          <p className="event-card__desc">{e.description}</p>
-                        ) : null}
+                        <div className="event-card__title"><EditableField table="archive_events" id={e.id} column="title" value={e.title} maxLength={80}>{e.title}</EditableField></div>
+                        <EditableField table="archive_events" id={e.id} column="description" value={e.description ?? ""} fieldType="textarea" maxLength={400} allowEmpty emptyLabel="설명 입력">
+                          {e.description ? (
+                            <p className="event-card__desc">{e.description}</p>
+                          ) : null}
+                        </EditableField>
                         {e.external_link ? (
                           <a
                             href={e.external_link}
@@ -628,6 +643,7 @@ export default async function ArchivePage({
                   })}
                 </div>
               )}
+              <EditAddLink href="/admin/events" label="행사 추가" />
             </>
           )}
         </>

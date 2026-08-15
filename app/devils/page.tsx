@@ -5,6 +5,8 @@ import VisualBand from "@/app/components/VisualBand";
 import TimelineJourney from "@/app/components/TimelineJourney";
 import { getSiteContent } from "@/lib/site-content";
 import Editable from "@/app/components/Editable";
+import EditableField from "@/app/components/EditableField";
+import EditAddLink from "@/app/components/EditAddLink";
 
 export const metadata: Metadata = { title: "Devils" };
 // force-dynamic으로 쿼리 정상 동작을 검증 완료(2026-07). ISR로 복귀하되
@@ -147,7 +149,7 @@ export default async function DevilsPage() {
                       <span className="timeline__month">
                         {e.month ? String(e.month).padStart(2, "0") : "--"}
                       </span>
-                      <span>{e.title}</span>
+                      <span><EditableField table="timeline_events" id={e.id} column="title" value={e.title} maxLength={80}>{e.title}</EditableField></span>
                       {e.season ? (
                         <span className="pill pill--muted">{e.season}</span>
                       ) : null}
@@ -181,6 +183,7 @@ export default async function DevilsPage() {
               </div>
             </div>
             </div>
+            <EditAddLink href="/admin/timeline" label="연혁 추가" />
           </>
         )}
       </section>

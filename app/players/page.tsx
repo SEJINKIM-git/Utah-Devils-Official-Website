@@ -5,7 +5,9 @@ import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import VisualBand from "@/app/components/VisualBand";
 import { getSiteContent, getSiteSettings } from "@/lib/site-content";
 import Editable from "@/app/components/Editable";
+import EditableField from "@/app/components/EditableField";
 import EditableImage from "@/app/components/EditableImage";
+import EditAddLink from "@/app/components/EditAddLink";
 
 export const metadata: Metadata = { title: "Player" };
 export const revalidate = 300;
@@ -79,8 +81,9 @@ const OFFICIAL_PROFILE_PHOTOS_2026: Record<
 };
 
 function displayJoined(member: RosterMember): string | null {
+  // DB 값이 있으면 그 값을 우선한다 — 인라인 편집 결과가 정적 폴백에 가려지지 않아야 한다.
   if (member.season === "2026" && member.number != null) {
-    return OFFICIAL_JOINED_2026[member.number] ?? member.joined;
+    return member.joined ?? OFFICIAL_JOINED_2026[member.number] ?? null;
   }
   return member.joined;
 }
@@ -175,26 +178,28 @@ export default async function PlayersPage({
                           className="badge badge--muted"
                           style={{ textTransform: "none" }}
                         >
-                          {joined}
+                          <EditableField table="roster_members" id={m.id} column="joined" value={m.joined ?? ""} maxLength={20} allowEmpty emptyLabel={joined}>{joined}</EditableField>
                         </span>
                       ) : null}
                     </div>
                     <div className="player-card__number">
                       {m.number != null ? m.number : "–"}
                     </div>
-                    <div className="player-card__name-ko">{m.name_ko}</div>
+                    <div className="player-card__name-ko"><EditableField table="roster_members" id={m.id} column="name_ko" value={m.name_ko} maxLength={40}>{m.name_ko}</EditableField></div>
                     {m.name_en ? (
                       // 디자인 표기: First/Last 2줄 (예: "Sawyer" / "Ott")
                       <div className="player-card__name-en">
-                        {m.name_en.includes(" ") ? (
-                          <>
-                            {m.name_en.slice(0, m.name_en.lastIndexOf(" "))}
-                            <br />
-                            {m.name_en.slice(m.name_en.lastIndexOf(" ") + 1)}
-                          </>
-                        ) : (
-                          m.name_en
-                        )}
+                        <EditableField table="roster_members" id={m.id} column="name_en" value={m.name_en} maxLength={60} allowEmpty>
+                          {m.name_en.includes(" ") ? (
+                            <>
+                              {m.name_en.slice(0, m.name_en.lastIndexOf(" "))}
+                              <br />
+                              {m.name_en.slice(m.name_en.lastIndexOf(" ") + 1)}
+                            </>
+                          ) : (
+                            m.name_en
+                          )}
+                        </EditableField>
                       </div>
                     ) : null}
                     {m.birth_date ? (
@@ -212,6 +217,7 @@ export default async function PlayersPage({
                 return <div key={m.id} className="card player-card">{inner}</div>;
               })}
             </div>
+            <EditAddLink href="/admin" label="선수 추가 (admin에서)" />
           </>
         )}
       </section>

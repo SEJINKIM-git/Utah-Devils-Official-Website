@@ -5,6 +5,9 @@ import SurveyForm from "./SurveyForm";
 import VisualBand from "@/app/components/VisualBand";
 import { getSiteContent } from "@/lib/site-content";
 import Editable from "@/app/components/Editable";
+import EditableField from "@/app/components/EditableField";
+import EditableImage from "@/app/components/EditableImage";
+import EditAddLink from "@/app/components/EditAddLink";
 
 export const metadata: Metadata = { title: "Shop" };
 export const revalidate = 60;
@@ -21,6 +24,8 @@ const STATUS_LABELS: Record<string, string> = {
   distributing: "배포중",
   closed: "종료",
 };
+
+const STATUS_OPTIONS = Object.entries(STATUS_LABELS).map(([value, label]) => ({ value, label }));
 
 type Product = {
   id: string;
@@ -139,26 +144,30 @@ export default async function ShopPage({
                           />
                         ) : null}
                         <div className="product-card__name" style={{ marginTop: 12 }}>
-                          {p.name}
+                          <EditableField table="products" id={p.id} column="name" value={p.name} maxLength={60}>{p.name}</EditableField>
                         </div>
                         <div className="product-card__meta">
                           <span>{TYPE_LABELS[p.type] ?? p.type}</span>
                           {p.season ? <span>{p.season}</span> : null}
-                          {p.price_estimate != null ? (
-                            <span>예상가 {p.price_estimate.toLocaleString()}원</span>
-                          ) : null}
+                          <EditableField table="products" id={p.id} column="price_estimate" value={p.price_estimate != null ? String(p.price_estimate) : ""} maxLength={7} allowEmpty emptyLabel="예상가 입력">
+                            {p.price_estimate != null ? (
+                              <span>예상가 {p.price_estimate.toLocaleString()}원</span>
+                            ) : null}
+                          </EditableField>
                         </div>
-                        {p.description ? (
-                          <p
-                            style={{
-                              marginTop: 12,
-                              fontSize: 14,
-                              color: "var(--text-muted)",
-                            }}
-                          >
-                            {p.description}
-                          </p>
-                        ) : null}
+                        <EditableField table="products" id={p.id} column="description" value={p.description ?? ""} fieldType="textarea" maxLength={400} allowEmpty emptyLabel="설명 입력">
+                          {p.description ? (
+                            <p
+                              style={{
+                                marginTop: 12,
+                                fontSize: 14,
+                                color: "var(--text-muted)",
+                              }}
+                            >
+                              {p.description}
+                            </p>
+                          ) : null}
+                        </EditableField>
                         {survey?.notes ? (
                           <p
                             style={{
@@ -227,37 +236,44 @@ export default async function ShopPage({
               <div className="grid grid--3">
                 {galleryProducts.map((p) => (
                   <div key={p.id} className="card card--hover">
-                    {p.photo_urls?.[0] ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        className="product-card__photo"
-                        src={p.photo_urls[0]}
-                        alt={p.name}
-                      />
-                    ) : null}
-                    <div className="product-card__name">{p.name}</div>
+                    <EditableImage table="products" id={p.id} uploadPath={`products/${p.id}/${Date.now()}.jpg`} mode="event">
+                      {p.photo_urls?.[0] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          className="product-card__photo"
+                          src={p.photo_urls[0]}
+                          alt={p.name}
+                        />
+                      ) : null}
+                    </EditableImage>
+                    <div className="product-card__name"><EditableField table="products" id={p.id} column="name" value={p.name} maxLength={60}>{p.name}</EditableField></div>
                     <div className="product-card__meta">
                       <span>{TYPE_LABELS[p.type] ?? p.type}</span>
                       {p.season ? <span>{p.season}</span> : null}
                       <span className="pill pill--muted">
-                        {STATUS_LABELS[p.status] ?? p.status}
+                        <EditableField table="products" id={p.id} column="status" value={p.status} fieldType="select" options={STATUS_OPTIONS} maxLength={20}>
+                          {STATUS_LABELS[p.status] ?? p.status}
+                        </EditableField>
                       </span>
                     </div>
-                    {p.description ? (
-                      <p
-                        style={{
-                          marginTop: 10,
-                          fontSize: 13,
-                          color: "var(--text-muted)",
-                        }}
-                      >
-                        {p.description}
-                      </p>
-                    ) : null}
+                    <EditableField table="products" id={p.id} column="description" value={p.description ?? ""} fieldType="textarea" maxLength={400} allowEmpty emptyLabel="설명 입력">
+                      {p.description ? (
+                        <p
+                          style={{
+                            marginTop: 10,
+                            fontSize: 13,
+                            color: "var(--text-muted)",
+                          }}
+                        >
+                          {p.description}
+                        </p>
+                      ) : null}
+                    </EditableField>
                   </div>
                 ))}
               </div>
             )}
+            <EditAddLink href="/admin" label="굿즈 등록 (admin에서)" />
           </section>
         </>
       )}

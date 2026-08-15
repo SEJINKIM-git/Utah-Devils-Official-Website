@@ -111,9 +111,141 @@ export async function saveEditableImage(input: {
   }
   const supabase = getServerSupabase();
   if (!supabase) return { ok: false, message: "저장 설정을 확인할 수 없습니다. 운영진에게 문의해 주세요." };
-  const { error } = await supabase.from(input.table).update({ photo_url: input.url }).eq("id", input.id);
+  let error: { message: string } | null;
+  if (input.table === "products") {
+    // products는 photo_urls 배열을 쓰며 첫 사진이 대표다. 대표만 교체하고 나머지는 유지한다.
+    const read = await supabase.from("products").select("photo_urls").eq("id", input.id).maybeSingle();
+    if (read.error || !read.data) {
+      console.error("[editable-image] products 조회 실패:", read.error?.message);
+      return { ok: false, message: "사진을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+    }
+    const rest = ((read.data.photo_urls ?? []) as string[]).slice(1);
+    ({ error } = await supabase.from("products").update({ photo_urls: [input.url, ...rest] }).eq("id", input.id));
+  } else {
+    ({ error } = await supabase.from(input.table).update({ photo_url: input.url }).eq("id", input.id));
+  }
   if (error) {
     console.error("[editable-image] 저장 실패:", error.message);
+    return { ok: false, message: "사진을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+  }
+  revalidatePath(validPath(input.path));
+  revalidatePath("/", "layout");
+  return { ok: true, message: "사진이 반영되었습니다." };
+}
+
+/**
+ * 인라인 편집이 허용된 행 단위 필드의 화이트리스트.
+ * 여기 없는 테이블·컬럼은 서버가 거부한다 — games 등 분석 플랫폼 테이블은 절대 추가하지 않는다.
+ */
+type FieldRule =
+  | { kind: "text"; max: number; nullable?: boolean }
+  | { kind: "int"; max: number; nullable?: boolean }
+  | { kind: "date"; nullable?: boolean }
+  | { kind: "lines"; max: number; nullable?: boolean }
+  | { kind: "enum"; values: readonly string[] };
+
+const ROW_FIELDS: Record<string, Record<string, FieldRule>> = {
+  roster_members: {
+    name_ko: { kind: "text", max: 40 },
+    name_en: { kind: "text", max: 60, nullable: true },
+    joined: { kind: "text", max: 20, nullable: true },
+  },
+  timeline_events: {
+    title: { kind: "text", max: 80 },
+  },
+  season_awards: {
+    player_name: { kind: "text", max: 40 },
+    player_name_en: { kind: "text", max: 60, nullable: true },
+    player_number: { kind: "int", max: 999, nullable: true },
+  },
+  hall_of_fame: {
+    name_ko: { kind: "text", max: 40 },
+    name_en: { kind: "text", max: 60 },
+    active_period: { kind: "text", max: 80, nullable: true },
+    roles: { kind: "lines", max: 400, nullable: true },
+    achievements: { kind: "lines", max: 400, nullable: true },
+  },
+  archive_events: {
+    title: { kind: "text", max: 80 },
+    event_date: { kind: "date", nullable: true },
+    description: { kind: "text", max: 400, nullable: true },
+  },
+  products: {
+    name: { kind: "text", max: 60 },
+    description: { kind: "text", max: 400, nullable: true },
+    price_estimate: { kind: "int", max: 9999999, nullable: true },
+    status: { kind: "enum", values: ["planning", "survey", "ordered", "distributing", "closed"] },
+  },
+};
+
+export async function saveEditableField(input: {
+  table: string;
+  id: string;
+  column: string;
+  value: string;
+  path: string;
+}) {
+  await requireUser();
+  const rule = ROW_FIELDS[input.table]?.[input.column];
+  if (!rule || !input.id) return { ok: false, message: "수정할 수 없는 항목입니다." };
+
+  const raw = input.value.trim();
+  let value: string | number | string[] | null;
+  if (!raw) {
+    if (!("nullable" in rule && rule.nullable)) return { ok: false, message: "내용을 입력해 주세요." };
+    value = null;
+  } else if (rule.kind === "text") {
+    if (raw.length > rule.max) return { ok: false, message: `글자 수는 ${rule.max}자 이하로 입력해 주세요.` };
+    value = raw;
+  } else if (rule.kind === "int") {
+    if (!/^\d+$/.test(raw) || Number(raw) > rule.max) {
+      return { ok: false, message: "숫자만 입력할 수 있습니다." };
+    }
+    value = Number(raw);
+  } else if (rule.kind === "date") {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(raw) || Number.isNaN(Date.parse(raw))) {
+      return { ok: false, message: "날짜는 YYYY-MM-DD 형식으로 입력해 주세요." };
+    }
+    value = raw;
+  } else if (rule.kind === "lines") {
+    if (raw.length > rule.max) return { ok: false, message: `글자 수는 ${rule.max}자 이하로 입력해 주세요.` };
+    value = raw.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  } else {
+    if (!rule.values.includes(raw)) return { ok: false, message: "선택할 수 없는 값입니다." };
+    value = raw;
+  }
+
+  const supabase = getServerSupabase();
+  if (!supabase) return { ok: false, message: "저장 설정을 확인할 수 없습니다. 운영진에게 문의해 주세요." };
+  const { error } = await supabase.from(input.table).update({ [input.column]: value }).eq("id", input.id);
+  if (error) {
+    console.error("[editable-field] 저장 실패:", error.message);
+    if (error.code === "23505") {
+      return { ok: false, message: "이미 같은 항목이 있습니다. 같은 시즌·부문에 중복 등록되어 있지 않은지 확인해 주세요." };
+    }
+    return { ok: false, message: "저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+  }
+  revalidatePath(validPath(input.path));
+  revalidatePath("/", "layout");
+  return { ok: true, message: "저장되었습니다." };
+}
+
+/** 행사 사진 목록 저장 — 추가/삭제/대표 지정이 전부 이 하나로 처리된다. */
+export async function saveEventPhotos(input: { id: string; urls: string[]; path: string }) {
+  await requireUser();
+  const storagePrefix = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/official-site/`;
+  const valid =
+    input.id &&
+    Array.isArray(input.urls) &&
+    input.urls.length <= 30 &&
+    input.urls.every((url) => url.startsWith(storagePrefix) || url.startsWith("/images/"));
+  if (!valid) return { ok: false, message: "사진 정보를 확인해 주세요. (최대 30장)" };
+
+  const supabase = getServerSupabase();
+  if (!supabase) return { ok: false, message: "저장 설정을 확인할 수 없습니다. 운영진에게 문의해 주세요." };
+  const { error } = await supabase.from("archive_events").update({ photo_urls: input.urls }).eq("id", input.id);
+  if (error) {
+    console.error("[event-photos] 저장 실패:", error.message);
     return { ok: false, message: "사진을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
   }
   revalidatePath(validPath(input.path));
