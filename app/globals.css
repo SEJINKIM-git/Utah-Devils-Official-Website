@@ -1616,6 +1616,35 @@ a.card:hover,
 
 .page-hero__content.hero::after { display: none; }
 
+/* ---------- Devils 소개 상단 홍보 영상 히어로 ---------- */
+/* 텍스트를 영상 위에 겹치지 않고 아래로 분리해, 유튜브 컨트롤을 가리지 않는다. */
+.devils-hero {
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.devils-hero__video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  margin-top: 20px;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  background: #000;
+}
+
+.devils-hero__video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.devils-hero__intro {
+  padding: clamp(40px, 5vw, 64px) 0 clamp(36px, 4.5vw, 56px);
+}
+
 /* Devils 소개 — 원본 2번 페이지의 소개글과 활동 축을 웹용으로 재구성 */
 .about-copy {
   max-width: 760px;

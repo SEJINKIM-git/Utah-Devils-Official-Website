@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getSupabase } from "@/lib/supabase";
-import VisualBand from "@/app/components/VisualBand";
 import TimelineJourney from "@/app/components/TimelineJourney";
 import { getSiteContent } from "@/lib/site-content";
 import Editable from "@/app/components/Editable";
@@ -83,9 +82,19 @@ export default async function DevilsPage() {
 
   return (
     <div className="container">
-      <div className="page-hero">
-        <VisualBand image="/images/home/team-huddle.png" alt="" label="" />
-        <section className="hero page-hero__content">
+      <div className="devils-hero">
+        {/* 홍보 영상은 유튜브 플레이어 컨트롤(재생/일시정지/음량/전체화면)을 그대로 쓴다.
+            자동 재생은 브라우저 정책상 음소거로 시작하며, 플레이어 음량 버튼으로 켤 수 있다. */}
+        <div className="devils-hero__video">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/q15uB3d8jaY?autoplay=1&mute=1&loop=1&playlist=q15uB3d8jaY&playsinline=1&rel=0"
+            title="Utah Devils 홍보 영상"
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        </div>
+        <section className="hero devils-hero__intro">
           <div className="hero__meta">ABOUT US</div>
           <h1 className="wordmark" style={{ fontSize: "clamp(40px, 7vw, 60px)", marginTop: 12 }}>
             WE ARE <span className="outline-red">DEVILS</span>
