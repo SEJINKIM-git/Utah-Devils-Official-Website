@@ -312,6 +312,26 @@ button {
   height: 56px;
 }
 
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-header__admin {
+  flex: 0 0 auto;
+  border: 1px solid rgba(220, 38, 38, .78);
+  border-radius: 7px;
+  padding: 7px 10px;
+  color: var(--text);
+  background: rgba(220, 38, 38, .12);
+  font: 12px/1 var(--font-mono);
+  letter-spacing: .09em;
+  transition: background .15s ease, border-color .15s ease;
+}
+
+.site-header__admin:hover { background: var(--red); border-color: var(--red); }
+
 .site-header__logo {
   font-family: var(--font-display);
   font-size: 20px;
@@ -2032,6 +2052,8 @@ a.card:hover,
   .nav-toggle {
     display: block;
   }
+
+  .site-header__actions { margin-left: auto; }
 
   .mobile-panel {
     display: grid;
