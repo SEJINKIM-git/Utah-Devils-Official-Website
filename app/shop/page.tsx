@@ -27,6 +27,16 @@ const STATUS_LABELS: Record<string, string> = {
 
 const STATUS_OPTIONS = Object.entries(STATUS_LABELS).map(([value, label]) => ({ value, label }));
 
+function EditableStatus({ id, status }: { id: string; status: string }) {
+  return (
+    <span className="pill pill--muted">
+      <EditableField table="products" id={id} column="status" value={status} fieldType="select" options={STATUS_OPTIONS} maxLength={20}>
+        {STATUS_LABELS[status] ?? status}
+      </EditableField>
+    </span>
+  );
+}
+
 type Product = {
   id: string;
   name: string;
@@ -131,25 +141,27 @@ export default async function ShopPage({
                   <div key={p.id} className="card" style={{ marginBottom: 16 }}>
                     <div className="grid grid--2" style={{ alignItems: "start" }}>
                       <div>
-                        {p.photo_urls?.[0] ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={p.photo_urls[0]}
-                            alt={p.name}
-                            style={{
-                              width: "100%",
-                              borderRadius: 10,
-                              border: "1px solid var(--hairline)",
-                            }}
-                          />
-                        ) : null}
+                        <EditableImage table="products" id={p.id} uploadPath={`products/${p.id}.jpg`} mode="event">
+                          {p.photo_urls?.[0] ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={p.photo_urls[0]}
+                              alt={p.name}
+                              style={{
+                                width: "100%",
+                                borderRadius: 10,
+                                border: "1px solid var(--hairline)",
+                              }}
+                            />
+                          ) : null}
+                        </EditableImage>
                         <div className="product-card__name" style={{ marginTop: 12 }}>
                           <EditableField table="products" id={p.id} column="name" value={p.name} maxLength={60}>{p.name}</EditableField>
                         </div>
                         <div className="product-card__meta">
                           <span>{TYPE_LABELS[p.type] ?? p.type}</span>
                           {p.season ? <span>{p.season}</span> : null}
-                          <EditableField table="products" id={p.id} column="price_estimate" value={p.price_estimate != null ? String(p.price_estimate) : ""} maxLength={7} allowEmpty emptyLabel="예상가 입력">
+                          <EditableField table="products" id={p.id} column="price_estimate" value={p.price_estimate != null ? String(p.price_estimate) : ""} fieldType="number" maxLength={7} allowEmpty emptyLabel="예상가 입력">
                             {p.price_estimate != null ? (
                               <span>예상가 {p.price_estimate.toLocaleString()}원</span>
                             ) : null}
@@ -236,7 +248,7 @@ export default async function ShopPage({
               <div className="grid grid--3">
                 {galleryProducts.map((p) => (
                   <div key={p.id} className="card card--hover">
-                    <EditableImage table="products" id={p.id} uploadPath={`products/${p.id}/${Date.now()}.jpg`} mode="event">
+                    <EditableImage table="products" id={p.id} uploadPath={`products/${p.id}.jpg`} mode="event">
                       {p.photo_urls?.[0] ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -250,11 +262,7 @@ export default async function ShopPage({
                     <div className="product-card__meta">
                       <span>{TYPE_LABELS[p.type] ?? p.type}</span>
                       {p.season ? <span>{p.season}</span> : null}
-                      <span className="pill pill--muted">
-                        <EditableField table="products" id={p.id} column="status" value={p.status} fieldType="select" options={STATUS_OPTIONS} maxLength={20}>
-                          {STATUS_LABELS[p.status] ?? p.status}
-                        </EditableField>
-                      </span>
+                      <EditableStatus id={p.id} status={p.status} />
                     </div>
                     <EditableField table="products" id={p.id} column="description" value={p.description ?? ""} fieldType="textarea" maxLength={400} allowEmpty emptyLabel="설명 입력">
                       {p.description ? (
