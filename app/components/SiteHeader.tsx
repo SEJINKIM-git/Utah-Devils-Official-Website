@@ -180,21 +180,15 @@ export default function SiteHeader() {
         >
           {open ? "CLOSE" : "MENU"}
         </button>
-        <div className="site-header__actions">
-          <nav id="site-nav" className="site-nav">
-            {navLinks(() => setOpen(false))}
-          </nav>
-          <Link href="/admin" className="site-header__admin" onClick={() => setOpen(false)}>
-            ADMIN
-          </Link>
-        </div>
+        <nav id="site-nav" className="site-nav">
+          {navLinks(() => setOpen(false))}
+        </nav>
       </div>
       {/* R2: 모바일 슬라이드다운 패널 — 큰 Anton 타이포 세로 나열 */}
       <div id="mobile-panel" className={`mobile-panel${open ? " open" : ""}`}>
         <div className="mobile-panel__inner">
           <nav aria-label="모바일 메뉴">
             {navLinks(() => setOpen(false))}
-            <Link href="/admin" onClick={() => setOpen(false)}>ADMIN</Link>
           </nav>
         </div>
       </div>
