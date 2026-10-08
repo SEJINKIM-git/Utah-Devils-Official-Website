@@ -83,6 +83,7 @@ export default function EditableEventPhotosClient({ id, title, photos }: Editabl
             mode="event"
             label="행사 사진"
             disabled={pending}
+            successMessage="업로드 완료. 공개 화면에 반영하는 중입니다..."
             onUploaded={({ url }) => commit([...photos, url], () => setUploadStamp(Date.now()))}
           />
           <button type="button" className="event-photos__close" onClick={() => setOpen(false)} disabled={pending}>

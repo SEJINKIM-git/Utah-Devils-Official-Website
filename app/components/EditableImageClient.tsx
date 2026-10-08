@@ -34,7 +34,7 @@ export default function EditableImageClient({ table, id, uploadPath, mode, child
       <button type="button" className="editable-image__trigger" onClick={() => { setMessage(null); setOpen(true); }}>사진 교체</button>
       {open ? (
         <span className="editable-image__popover" role="dialog" aria-label="사진 교체">
-          <ImageUploader path={stampedPath} mode={mode} disabled={pending} onUploaded={({ url }) => startTransition(async () => {
+          <ImageUploader path={stampedPath} mode={mode} disabled={pending} successMessage="업로드 완료. 공개 화면에 반영하는 중입니다..." onUploaded={({ url }) => startTransition(async () => {
             const result = await saveEditableImage({ table, id, url, path: pathname });
             setMessage(result.message);
             setStamp(Date.now());

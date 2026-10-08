@@ -11,6 +11,7 @@ type Props = {
   mode: UploadMode;
   label?: string;
   disabled?: boolean;
+  successMessage?: string;
   onUploaded: (result: { url: string; path: string }) => void;
 };
 
@@ -56,6 +57,7 @@ export default function ImageUploader({
   mode,
   label = "사진 업로드",
   disabled = false,
+  successMessage = "사진이 업로드되었습니다. 저장 버튼을 눌러 반영해 주세요.",
   onUploaded,
 }: Props) {
   const inputId = useId();
@@ -115,7 +117,7 @@ export default function ImageUploader({
       setFile(null);
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
-      setMessage("사진이 업로드되었습니다. 저장 버튼을 눌러 반영해 주세요.");
+      setMessage(successMessage);
     } catch {
       setMessage("업로드에 실패했습니다. 네트워크와 사진 형식을 확인한 뒤 다시 시도해 주세요.");
     } finally {

@@ -592,7 +592,7 @@ export default async function ArchivePage({
                         ) : null}
                         <EditableEventPhotos id={e.id} title={e.title} photos={e.photo_urls ?? []} />
                         <div className="event-card__date">
-                          <EditableField table="archive_events" id={e.id} column="event_date" value={e.event_date ?? ""} maxLength={10} allowEmpty emptyLabel="날짜 입력">{e.event_date ?? ""}</EditableField>{" "}
+                          <EditableField table="archive_events" id={e.id} column="event_date" value={e.event_date ?? ""} fieldType="date" maxLength={10} allowEmpty emptyLabel="날짜 입력">{e.event_date ?? ""}</EditableField>{" "}
                           <span className="pill pill--muted">{label}</span>
                           {e.is_featured ? (
                             <span className="pill" style={{ marginLeft: 6 }}>
