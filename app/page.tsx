@@ -3,7 +3,7 @@ import Image from "next/image";
 import { getSupabase, INSIGHT_AI_URL } from "@/lib/supabase";
 import { HISTORICAL_GAMES, withHistoricalGames } from "@/lib/historical-games";
 import { getGameRecord, isCompletedGame } from "@/lib/game-stats";
-import { getSiteContent, getSiteSettings } from "@/lib/site-content";
+import { FACT_MAX, HOME_TITLE_MAX, getSiteContent, getSiteSettings, type SiteContentKey } from "@/lib/site-content";
 import Editable from "./components/Editable";
 import Reveal from "./components/Reveal";
 import CountUp from "./components/CountUp";
@@ -61,6 +61,20 @@ const AWARD_LABELS: Record<string, string> = {
 
 const formatMonthNumber = (value: number) => String(value).padStart(2, "0");
 const formatDate = (date: string) => `${MONTH_ABBR[Number(date.slice(5, 7)) - 1] ?? ""} ${date.slice(8, 10)}`;
+
+type StageSection = "devils" | "roster" | "schedule" | "archive" | "stats";
+
+function StageTitle({ content, section }: { content: Record<SiteContentKey, string>; section: StageSection }) {
+  const first = `home_${section}_title_1` as const;
+  const second = `home_${section}_title_2` as const;
+  return (
+    <>
+      <Editable table="site_content" contentKey={first} value={content[first]} maxLength={HOME_TITLE_MAX}>{content[first]}</Editable>
+      <br />
+      <span className="outline"><Editable table="site_content" contentKey={second} value={content[second]} maxLength={HOME_TITLE_MAX}>{content[second]}</Editable></span>
+    </>
+  );
+}
 
 async function fetchJourneyData(currentSeason: string) {
   const empty = {
@@ -169,8 +183,8 @@ export default async function HomePage() {
           <div className="numbers-grid">
             <Reveal as="div" className="numbers-stat numbers-stat--record"><span>ALL-TIME</span><strong className="numbers-result"><b><CountUp value={allTimeRecord.w} /></b><i>W</i><b><CountUp value={allTimeRecord.l} /></b><i>L</i><b><CountUp value={allTimeRecord.d} /></b><i>D</i></strong></Reveal>
             <Reveal as="div" className="numbers-stat"><span>{currentYear} SEASON</span><strong className="numbers-result"><b><CountUp value={record.w} /></b><i>W</i><b><CountUp value={record.l} /></b><i>L</i>{record.d ? <><b><CountUp value={record.d} /></b><i>D</i></> : null}</strong></Reveal>
-            <Reveal as="div" className="numbers-stat"><span>MEMBERS</span><strong><CountUp value={Number.parseInt(content.fact_members, 10) || 0} suffix={content.fact_members.replace(/^\d+/, "")} /></strong></Reveal>
-            <Reveal as="div" className="numbers-stat"><span>EST.</span><strong>2022</strong></Reveal>
+            <Reveal as="div" className="numbers-stat"><span>MEMBERS</span><strong><Editable table="site_content" contentKey="fact_members" value={content.fact_members} maxLength={FACT_MAX}>{/^\d/.test(content.fact_members) ? <CountUp value={Number.parseInt(content.fact_members, 10)} suffix={content.fact_members.replace(/^\d+/, "")} /> : content.fact_members}</Editable></strong></Reveal>
+            <Reveal as="div" className="numbers-stat"><span>EST.</span><strong><Editable table="site_content" contentKey="fact_founded" value={content.fact_founded} maxLength={FACT_MAX}>{content.fact_founded}</Editable></strong></Reveal>
           </div>
         </div>
       </section>
@@ -186,7 +200,7 @@ export default async function HomePage() {
         <div className="container"><Reveal>
           <div className="platform-stage__copy">
             <div className="journey-eyebrow">01 / CLUB IDENTITY</div>
-            <h2 className="platform-stage__title">ONE TEAM.<br /><span className="outline">ONE DEVILS.</span></h2>
+            <h2 className="platform-stage__title"><StageTitle content={content} section="devils" /></h2>
             <Link href="/devils" className="view-all">TEAM HISTORY <span aria-hidden="true">→</span></Link>
           </div>
           {data.milestones.length > 0 ? <ol className="platform-timeline" aria-label="주요 연혁">{data.milestones.map((milestone) => <li key={`${milestone.year}-${milestone.title}`}><b>{milestone.year}</b><span>{milestone.month ? `${formatMonthNumber(milestone.month)} / ` : ""}{milestone.title}</span></li>)}</ol> : null}
@@ -198,7 +212,7 @@ export default async function HomePage() {
         <div className="container"><Reveal>
           <div className="platform-stage__copy platform-stage__copy--right">
             <div className="journey-eyebrow">02 / ROSTER</div>
-            <h2 className="platform-stage__title">PLAYERS,<br /><span className="outline">IN FOCUS.</span></h2>
+            <h2 className="platform-stage__title"><StageTitle content={content} section="roster" /></h2>
             {featuredRoster.length > 0 ? <ol className="platform-roster" aria-label="주요 선수단">{featuredRoster.map((member) => <li key={member.id}>{member.photo_url ? <Image className="platform-roster__photo" src={member.photo_url} alt="" fill sizes="(max-width: 900px) 100vw, 500px" /> : null}<b>{member.number ?? "–"}</b><span>{member.name_ko}</span><small>{member.is_captain ? "CAPTAIN" : member.season}</small></li>)}</ol> : null}
             <Link href="/players" className="view-all">VIEW FULL ROSTER <span aria-hidden="true">→</span></Link>
           </div>
@@ -210,7 +224,7 @@ export default async function HomePage() {
         <div className="container"><Reveal>
           <div className="platform-stage__copy">
             <div className="journey-eyebrow">03 / GAME DAY</div>
-            <h2 className="platform-stage__title">EVERY GAME.<br /><span className="outline">ON RECORD.</span></h2>
+            <h2 className="platform-stage__title"><StageTitle content={content} section="schedule" /></h2>
             {seasonGames.length > 0 ? <p className="platform-season-line"><b>{currentYear}</b> SEASON / {record.w}W {record.l}L{record.d > 0 ? ` ${record.d}D` : ""}</p> : null}
             <Link href="/schedule" className="view-all">ALL RESULTS &amp; SCHEDULE <span aria-hidden="true">→</span></Link>
           </div>
@@ -223,7 +237,7 @@ export default async function HomePage() {
         <div className="container"><Reveal>
           <div className="platform-stage__copy platform-stage__copy--right">
             <div className="journey-eyebrow">04 / HISTORY &amp; RECORDS</div>
-            <h2 className="platform-stage__title">KEEP THE<br /><span className="outline">MOMENT.</span></h2>
+            <h2 className="platform-stage__title"><StageTitle content={content} section="archive" /></h2>
             {featuredAwards.length > 0 ? <div className="platform-awards" aria-label="주요 수상">{featuredAwards.map((award) => <p key={award.id}><span>{AWARD_LABELS[award.award_type] ?? award.award_type}</span><b>{award.player_name}</b><em>{award.player_number != null ? `#${award.player_number}` : ""}</em></p>)}</div> : null}
             <Link href="/archive" className="view-all">OPEN THE ARCHIVE <span aria-hidden="true">→</span></Link>
           </div>
@@ -234,7 +248,7 @@ export default async function HomePage() {
         <div className="container"><Reveal>
           <div className="platform-stage__copy">
             <div className="journey-eyebrow">05 / DATA PLATFORM</div>
-            <h2 className="platform-stage__title">SEE THE<br /><span className="outline">GAME DEEPER.</span></h2>
+            <h2 className="platform-stage__title"><StageTitle content={content} section="stats" /></h2>
             <a href={INSIGHT_AI_URL} target="_blank" rel="noopener noreferrer" className="hero__cta">OPEN DEVILS INSIGHT AI <span aria-hidden="true">↗</span></a>
           </div>
           <div className="platform-statements" aria-label="데이터 범위"><span>PLAYER<br /><b>STATS</b></span><span>GAME<br /><b>LOGS</b></span><span>TEAM<br /><b>INSIGHT</b></span></div>

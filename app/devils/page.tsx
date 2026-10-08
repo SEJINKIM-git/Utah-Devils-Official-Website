@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { getSupabase } from "@/lib/supabase";
 import TimelineJourney from "@/app/components/TimelineJourney";
-import { getSiteContent } from "@/lib/site-content";
+import { FACT_MAX, getSiteContent } from "@/lib/site-content";
 import Editable from "@/app/components/Editable";
 import EditableField from "@/app/components/EditableField";
 import EditAddLink from "@/app/components/EditAddLink";
@@ -123,7 +123,7 @@ export default async function DevilsPage() {
           {FACTS.map(({ key, label }) => (
             <div key={key} className="fact">
               <dt className="fact__label">{label}</dt>
-              <dd className="fact__value"><Editable table="site_content" contentKey={key} value={content[key]} maxLength={60}>{content[key]}</Editable></dd>
+              <dd className="fact__value"><Editable table="site_content" contentKey={key} value={content[key]} maxLength={FACT_MAX}>{content[key]}</Editable></dd>
             </div>
           ))}
         </dl>

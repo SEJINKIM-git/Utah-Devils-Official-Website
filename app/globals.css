@@ -244,6 +244,17 @@ button {
 .editable-image__trigger { position: absolute; right: 12px; bottom: 12px; width: auto; border-radius: 999px; padding: 7px 10px; background: rgba(14, 20, 40, 0.92); }
 .editable-image__popover { left: 12px; right: 12px; width: auto; }
 
+/* 대형 제목(외곽선·nowrap·자간) 안에 들어가도 편집 UI는 본문 타이포로 보이게 한다. */
+.editable__popover, .editable-image__popover {
+  color: var(--text);
+  font: 400 13px/1.4 var(--font-body);
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  white-space: normal;
+  -webkit-text-stroke: 0;
+}
+.editable__trigger { -webkit-text-stroke: 0; letter-spacing: 0; vertical-align: middle; }
 .editable-image > .editable-image__trigger:first-child { position: static; margin: 0 0 10px; }
 .editable-image--open { z-index: 21; }
 .card--hover:has(.editable--open, .editable-image--open, .event-photos__panel) { transform: none; }

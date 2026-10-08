@@ -25,6 +25,16 @@ export const DEFAULT_CONTENT = {
   section_desc_shop: "Utah Devils 굿즈 수요조사와 지금까지 만든 굿즈를 확인하세요.",
   footer_about: "유타대학교 아시아캠퍼스 야구동아리",
   recruit_message: "새로운 데빌스를 기다립니다.",
+  home_devils_title_1: "ONE TEAM.",
+  home_devils_title_2: "ONE DEVILS.",
+  home_roster_title_1: "PLAYERS,",
+  home_roster_title_2: "IN FOCUS.",
+  home_schedule_title_1: "EVERY GAME.",
+  home_schedule_title_2: "ON RECORD.",
+  home_archive_title_1: "KEEP THE",
+  home_archive_title_2: "MOMENT.",
+  home_stats_title_1: "SEE THE",
+  home_stats_title_2: "GAME DEEPER.",
 } as const;
 
 export type SiteContentKey = keyof typeof DEFAULT_CONTENT;
@@ -34,6 +44,11 @@ export type SiteSettingKey = keyof typeof DEFAULT_SETTINGS;
  * 서버가 저장 시 강제하는 글자 수 상한과, 행이 없을 때 새로 만들 라벨.
  * site_content.max_length 시드 값과 같게 유지한다 — 넘치면 레이아웃이 깨진다.
  */
+/** 메인 섹션 제목은 대형 Anton 한 줄이라 길면 줄바꿈 없이 넘친다. */
+export const HOME_TITLE_MAX = 14;
+/** 팩트 값은 대형 숫자 타이포(nowrap)로 표시된다. */
+export const FACT_MAX = 16;
+
 export const CONTENT_META: Record<SiteContentKey, { label: string; max: number }> = {
   hero_title_sub: { label: "메인 히어로 부제", max: 80 },
   hero_tagline: { label: "메인 히어로 소개", max: 160 },
@@ -41,16 +56,26 @@ export const CONTENT_META: Record<SiteContentKey, { label: string; max: number }
   about_p2: { label: "데빌스 소개 2", max: 400 },
   about_p3: { label: "데빌스 소개 3", max: 400 },
   about_p4: { label: "데빌스 소개 4", max: 400 },
-  fact_founded: { label: "창단 연도", max: 60 },
-  fact_affiliation: { label: "소속", max: 60 },
-  fact_home: { label: "활동 지역", max: 60 },
-  fact_members: { label: "누적 회원", max: 60 },
+  fact_founded: { label: "창단 연도", max: FACT_MAX },
+  fact_affiliation: { label: "소속", max: FACT_MAX },
+  fact_home: { label: "활동 지역", max: FACT_MAX },
+  fact_members: { label: "누적 회원", max: FACT_MAX },
   section_desc_players: { label: "선수 페이지 설명", max: 200 },
   section_desc_schedule: { label: "일정 페이지 설명", max: 200 },
   section_desc_archive: { label: "아카이브 설명", max: 200 },
   section_desc_shop: { label: "굿즈 페이지 설명", max: 200 },
   footer_about: { label: "푸터 소개", max: 100 },
   recruit_message: { label: "모집 안내", max: 300 },
+  home_devils_title_1: { label: "메인 01 DEVILS 제목 1줄", max: HOME_TITLE_MAX },
+  home_devils_title_2: { label: "메인 01 DEVILS 제목 2줄(외곽선)", max: HOME_TITLE_MAX },
+  home_roster_title_1: { label: "메인 02 ROSTER 제목 1줄", max: HOME_TITLE_MAX },
+  home_roster_title_2: { label: "메인 02 ROSTER 제목 2줄(외곽선)", max: HOME_TITLE_MAX },
+  home_schedule_title_1: { label: "메인 03 GAME DAY 제목 1줄", max: HOME_TITLE_MAX },
+  home_schedule_title_2: { label: "메인 03 GAME DAY 제목 2줄(외곽선)", max: HOME_TITLE_MAX },
+  home_archive_title_1: { label: "메인 04 ARCHIVE 제목 1줄", max: HOME_TITLE_MAX },
+  home_archive_title_2: { label: "메인 04 ARCHIVE 제목 2줄(외곽선)", max: HOME_TITLE_MAX },
+  home_stats_title_1: { label: "메인 05 DATA 제목 1줄", max: HOME_TITLE_MAX },
+  home_stats_title_2: { label: "메인 05 DATA 제목 2줄(외곽선)", max: HOME_TITLE_MAX },
 };
 
 export const SETTING_MAX_LENGTH = 200;
