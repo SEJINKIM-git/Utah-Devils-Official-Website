@@ -186,7 +186,10 @@ const ROW_FIELDS: Record<string, Record<string, FieldRule>> = {
   hall_of_fame: {
     name_ko: { kind: "text", max: 40 },
     name_en: { kind: "text", max: 60 },
+    number: { kind: "int", max: 999, nullable: true },
+    birth_date: { kind: "date", nullable: true },
     active_period: { kind: "text", max: 80, nullable: true },
+    hof_points: { kind: "int", max: 9999, nullable: true },
     roles: { kind: "lines", max: 400, nullable: true },
     achievements: { kind: "lines", max: 400, nullable: true },
   },

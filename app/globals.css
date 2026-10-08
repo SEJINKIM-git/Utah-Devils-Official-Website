@@ -1151,6 +1151,8 @@ a.card:hover,
   color: var(--text-muted);
 }
 
+.hof-card__roles { margin-top: 6px; }
+
 .hof-card {
   display: flex;
   gap: 20px;

@@ -457,7 +457,9 @@ export default async function ArchivePage({
                           <div key={m.id} className="card hof-detail">
                           <div className="hof-detail__side">
                             <div className="hof-detail__number">
-                              {m.number != null ? m.number : "UD"}
+                              <EditableField table="hall_of_fame" id={m.id} column="number" value={m.number != null ? String(m.number) : ""} fieldType="number" maxLength={3} allowEmpty emptyLabel="UD">
+                                {m.number != null ? m.number : "UD"}
+                              </EditableField>
                             </div>
                             {profilePhoto ? (
                               // eslint-disable-next-line @next/next/no-img-element
@@ -477,37 +479,25 @@ export default async function ArchivePage({
                               <EditableField table="hall_of_fame" id={m.id} column="name_ko" value={m.name_ko} maxLength={40}>{m.name_ko}</EditableField>
                               {" | "}
                               <EditableField table="hall_of_fame" id={m.id} column="name_en" value={m.name_en} maxLength={60}>{m.name_en}</EditableField>
-                              {formatBirth(m.birth_date) ? ` | ${formatBirth(m.birth_date)}` : ""}
+                              <EditableField table="hall_of_fame" id={m.id} column="birth_date" value={m.birth_date ?? ""} fieldType="date" maxLength={10} allowEmpty emptyLabel="생년월일 입력">
+                                {formatBirth(m.birth_date) ? ` | ${formatBirth(m.birth_date)}` : ""}
+                              </EditableField>
                             </div>
-                            {m.active_period ? (
-                              <div className="hof-detail__period">
-                                <EditableField table="hall_of_fame" id={m.id} column="active_period" value={m.active_period} maxLength={80} allowEmpty>{m.active_period}</EditableField>
-                              </div>
-                            ) : null}
-                            {m.roles?.length ? (
-                              <div className="hof-detail__lines">
-                                <EditableField table="hall_of_fame" id={m.id} column="roles" value={m.roles.join("\n")} fieldType="lines" maxLength={400} allowEmpty>
-                                  {m.roles.map((r, i) => (
-                                    <div key={i}>{r}</div>
-                                  ))}
-                                </EditableField>
-                              </div>
-                            ) : null}
-                            {m.achievements?.length ? (
-                              <div className="hof-detail__lines">
-                                <EditableField table="hall_of_fame" id={m.id} column="achievements" value={m.achievements.join("\n")} fieldType="lines" maxLength={400} allowEmpty>
-                                  {m.achievements.map((a, i) => (
-                                    <div key={i}>{a}</div>
-                                  ))}
-                                </EditableField>
-                              </div>
-                            ) : null}
-                            {m.hof_points != null ? (
-                              <div className="hof-detail__points">
-                                Hall of Fame Points | {m.hof_points}
-                                {m.hof_category ? ` (${m.hof_category})` : ""}
-                              </div>
-                            ) : null}
+                            <EditableField table="hall_of_fame" id={m.id} column="active_period" value={m.active_period ?? ""} maxLength={80} allowEmpty emptyLabel="활동 기간 입력" wrapperClassName="hof-detail__period">{m.active_period}</EditableField>
+                            <EditableField table="hall_of_fame" id={m.id} column="roles" value={(m.roles ?? []).join("\n")} fieldType="lines" maxLength={400} allowEmpty emptyLabel="역할 입력 (한 줄에 하나)" wrapperClassName="hof-detail__lines">
+                              {(m.roles ?? []).map((r, i) => (
+                                <div key={i}>{r}</div>
+                              ))}
+                            </EditableField>
+                            <EditableField table="hall_of_fame" id={m.id} column="achievements" value={(m.achievements ?? []).join("\n")} fieldType="lines" maxLength={400} allowEmpty emptyLabel="업적 입력 (한 줄에 하나)" wrapperClassName="hof-detail__lines">
+                              {(m.achievements ?? []).map((a, i) => (
+                                <div key={i}>{a}</div>
+                              ))}
+                            </EditableField>
+                            <EditableField table="hall_of_fame" id={m.id} column="hof_points" value={m.hof_points != null ? String(m.hof_points) : ""} fieldType="number" maxLength={4} allowEmpty emptyLabel="Hall of Fame Points 입력" wrapperClassName="hof-detail__points">
+                              Hall of Fame Points | {m.hof_points}
+                              {m.hof_category ? ` (${m.hof_category})` : ""}
+                            </EditableField>
                             <div className="hof-detail__inducted">
                               Inducted into the Hall of Fame in {m.inducted_year}
                             </div>
@@ -548,14 +538,7 @@ export default async function ArchivePage({
                           </EditableImage>
                           <div>
                           <div className="hof-card__name"><EditableField table="hall_of_fame" id={m.id} column="name_ko" value={m.name_ko} maxLength={40}>{m.name_ko}</EditableField></div>
-                          {m.roles?.length ? (
-                            <div
-                              className="award-card__sub"
-                              style={{ marginTop: 6 }}
-                            >
-                              <EditableField table="hall_of_fame" id={m.id} column="roles" value={m.roles.join("\n")} fieldType="lines" maxLength={400} allowEmpty>{m.roles.join(" · ")}</EditableField>
-                            </div>
-                          ) : null}
+                          <EditableField table="hall_of_fame" id={m.id} column="roles" value={(m.roles ?? []).join("\n")} fieldType="lines" maxLength={400} allowEmpty emptyLabel="역할 입력 (한 줄에 하나)" wrapperClassName="award-card__sub hof-card__roles">{(m.roles ?? []).join(" · ")}</EditableField>
                           <div
                             className="hof-detail__inducted"
                             style={{ marginTop: 10 }}
