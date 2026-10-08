@@ -36,6 +36,13 @@ const TIMELINE_SNAPS: Record<number, string[]> = {
   ],
 };
 
+const FACTS = [
+  { key: "fact_founded", label: "ESTABLISHED" },
+  { key: "fact_affiliation", label: "AFFILIATION" },
+  { key: "fact_home", label: "HOME" },
+  { key: "fact_members", label: "MEMBERS" },
+] as const;
+
 type TimelineEvent = {
   id: string;
   year: number;
@@ -112,6 +119,14 @@ export default async function DevilsPage() {
         <div className="about-copy">
           {(["about_p1", "about_p2", "about_p3", "about_p4"] as const).map((key) => <p key={key}><Editable table="site_content" contentKey={key} value={content[key]} fieldType="textarea" maxLength={400}>{content[key]}</Editable></p>)}
         </div>
+        <dl className="fact-grid" aria-label="Utah Devils 기본 정보">
+          {FACTS.map(({ key, label }) => (
+            <div key={key} className="fact">
+              <dt className="fact__label">{label}</dt>
+              <dd className="fact__value"><Editable table="site_content" contentKey={key} value={content[key]} maxLength={60}>{content[key]}</Editable></dd>
+            </div>
+          ))}
+        </dl>
         <div className="about-activity-list">
           <article>
             <div className="card__eyebrow">ON THE FIELD</div>

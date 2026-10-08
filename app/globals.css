@@ -1674,6 +1674,8 @@ a.card:hover,
 .about-activity-list .card__eyebrow { margin-bottom: 12px; }
 .about-activity-list .card__title { margin: 0; }
 .about-activity-list .card__body { margin-top: 16px; line-height: 1.65; }
+.about-section .fact-grid { max-width: 920px; margin: 40px 0 0; }
+.fact-grid dd { margin-left: 0; overflow-wrap: anywhere; }
 
 .timeline--gallery {
   gap: 72px;
