@@ -171,7 +171,9 @@ export default async function DevilsPage() {
                   {list.map((e) => (
                     <div key={e.id} className="timeline__event">
                       <span className="timeline__month">
-                        {e.month ? String(e.month).padStart(2, "0") : "--"}
+                        <EditableField table="timeline_events" id={e.id} column="month" value={e.month ? String(e.month) : ""} fieldType="number" maxLength={2} allowEmpty emptyLabel="--">
+                          {e.month ? String(e.month).padStart(2, "0") : "--"}
+                        </EditableField>
                       </span>
                       <span><EditableField table="timeline_events" id={e.id} column="title" value={e.title} maxLength={80}>{e.title}</EditableField></span>
                       {e.season ? (

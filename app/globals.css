@@ -794,6 +794,8 @@ a.card:hover,
   min-width: 28px;
 }
 
+.timeline__month .editable { white-space: nowrap; }
+
 /* ---------- Player card (/players) ---------- */
 
 .player-card {

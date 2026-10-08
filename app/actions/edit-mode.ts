@@ -175,6 +175,7 @@ const ROW_FIELDS: Record<string, Record<string, FieldRule>> = {
     joined: { kind: "text", max: 20, nullable: true },
   },
   timeline_events: {
+    month: { kind: "int", min: 1, max: 12, nullable: true },
     title: { kind: "text", max: 80 },
   },
   season_awards: {
