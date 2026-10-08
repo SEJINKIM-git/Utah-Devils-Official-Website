@@ -3,14 +3,20 @@
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { DEFAULT_CONTENT, DEFAULT_SETTINGS, type SiteContentKey, type SiteSettingKey } from "@/lib/site-content";
+import {
+  CONTENT_META,
+  DEFAULT_CONTENT,
+  DEFAULT_SETTINGS,
+  SETTING_MAX_LENGTH,
+  type SiteContentKey,
+  type SiteSettingKey,
+} from "@/lib/site-content";
 import { getAuthenticatedUser, getServerSupabase, isApprovedAdmin } from "@/lib/supabase-server";
 
 type SaveTextInput = {
   table: "site_content" | "site_settings";
   key: string;
   value: string;
-  maxLength: number;
   path: string;
 };
 
@@ -46,21 +52,32 @@ export async function stopEditMode() {
 
 export async function saveEditableText(input: SaveTextInput) {
   await requireUser();
-  const value = input.value.trim();
+  const isContent = input.table === "site_content";
+  const allowed = isContent
+    ? Object.hasOwn(DEFAULT_CONTENT, input.key)
+    : Object.hasOwn(DEFAULT_SETTINGS, input.key);
+  if (!allowed) return { ok: false, message: "수정할 수 없는 항목입니다." };
+
+  const value = String(input.value ?? "").trim();
   const canBeEmpty = input.table === "site_settings" && input.key === "notice_banner";
   if (!value && !canBeEmpty) return { ok: false, message: "내용을 입력해 주세요." };
-  if (value.length > input.maxLength) {
-    return { ok: false, message: `글자 수는 ${input.maxLength}자 이하로 입력해 주세요.` };
+  const maxLength = isContent ? CONTENT_META[input.key as SiteContentKey].max : SETTING_MAX_LENGTH;
+  if (value.length > maxLength) {
+    return { ok: false, message: `글자 수는 ${maxLength}자 이하로 입력해 주세요.` };
   }
-
-  const allowed = input.table === "site_content"
-    ? Object.keys(DEFAULT_CONTENT).includes(input.key as SiteContentKey)
-    : Object.keys(DEFAULT_SETTINGS).includes(input.key as SiteSettingKey);
-  if (!allowed) return { ok: false, message: "수정할 수 없는 항목입니다." };
 
   const supabase = getServerSupabase();
   if (!supabase) return { ok: false, message: "저장 설정을 확인할 수 없습니다. 운영진에게 문의해 주세요." };
-  const { error } = await supabase.from(input.table).update({ value }).eq("key", input.key);
+  const updated = await supabase.from(input.table).update({ value }).eq("key", input.key).select("key");
+  let error = updated.error;
+  if (!error && (updated.data ?? []).length === 0) {
+    // 시드에 없는 키는 update가 0행으로 끝나 저장된 것처럼 보인다. 이 경우에만 행을 새로 만든다.
+    const label = isContent ? CONTENT_META[input.key as SiteContentKey].label : input.key;
+    const row: Record<string, string | number | boolean> = isContent
+      ? { key: input.key, value, label, max_length: maxLength, multiline: maxLength > 100 }
+      : { key: input.key, value, label };
+    ({ error } = await supabase.from(input.table).insert(row));
+  }
   if (error) {
     console.error("[editable] 저장 실패:", error.message);
     return { ok: false, message: "저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
@@ -96,6 +113,12 @@ export async function saveSiteSettings(values: Partial<Record<SiteSettingKey, st
   return { ok: true, message: "설정이 즉시 반영되었습니다." };
 }
 
+const NOT_SAVED_MESSAGE = "저장하지 못했습니다. 권한이 없거나 항목이 삭제되었을 수 있습니다. 새로고침 후 다시 시도해 주세요.";
+
+function storagePublicPrefix() {
+  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/official-site/`;
+}
+
 const IMAGE_TABLES = ["roster_members", "season_awards", "hall_of_fame", "products"] as const;
 type ImageTable = (typeof IMAGE_TABLES)[number];
 
@@ -106,12 +129,12 @@ export async function saveEditableImage(input: {
   path: string;
 }) {
   await requireUser();
-  if (!IMAGE_TABLES.includes(input.table) || !input.id || !input.url.startsWith("http")) {
+  if (!IMAGE_TABLES.includes(input.table) || !input.id || !String(input.url).startsWith(storagePublicPrefix())) {
     return { ok: false, message: "사진 정보를 확인해 주세요." };
   }
   const supabase = getServerSupabase();
   if (!supabase) return { ok: false, message: "저장 설정을 확인할 수 없습니다. 운영진에게 문의해 주세요." };
-  let error: { message: string } | null;
+  let result: { error: { message: string } | null; data: unknown[] | null };
   if (input.table === "products") {
     // products는 photo_urls 배열을 쓰며 첫 사진이 대표다. 대표만 교체하고 나머지는 유지한다.
     const read = await supabase.from("products").select("photo_urls").eq("id", input.id).maybeSingle();
@@ -120,14 +143,15 @@ export async function saveEditableImage(input: {
       return { ok: false, message: "사진을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
     }
     const rest = ((read.data.photo_urls ?? []) as string[]).slice(1);
-    ({ error } = await supabase.from("products").update({ photo_urls: [input.url, ...rest] }).eq("id", input.id));
+    result = await supabase.from("products").update({ photo_urls: [input.url, ...rest] }).eq("id", input.id).select("id");
   } else {
-    ({ error } = await supabase.from(input.table).update({ photo_url: input.url }).eq("id", input.id));
+    result = await supabase.from(input.table).update({ photo_url: input.url }).eq("id", input.id).select("id");
   }
-  if (error) {
-    console.error("[editable-image] 저장 실패:", error.message);
+  if (result.error) {
+    console.error("[editable-image] 저장 실패:", result.error.message);
     return { ok: false, message: "사진을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
   }
+  if (!result.data?.length) return { ok: false, message: NOT_SAVED_MESSAGE };
   revalidatePath(validPath(input.path));
   revalidatePath("/", "layout");
   return { ok: true, message: "사진이 반영되었습니다." };
@@ -139,7 +163,7 @@ export async function saveEditableImage(input: {
  */
 type FieldRule =
   | { kind: "text"; max: number; nullable?: boolean }
-  | { kind: "int"; max: number; nullable?: boolean }
+  | { kind: "int"; min?: number; max: number; nullable?: boolean }
   | { kind: "date"; nullable?: boolean }
   | { kind: "lines"; max: number; nullable?: boolean }
   | { kind: "enum"; values: readonly string[] };
@@ -178,6 +202,10 @@ const ROW_FIELDS: Record<string, Record<string, FieldRule>> = {
   },
 };
 
+const DUPLICATE_MESSAGES: Record<string, string> = {
+  season_awards: "같은 시즌·부문의 수상자가 이미 등록되어 있습니다. 시즌과 부문을 확인해 주세요.",
+};
+
 export async function saveEditableField(input: {
   table: string;
   id: string;
@@ -186,10 +214,12 @@ export async function saveEditableField(input: {
   path: string;
 }) {
   await requireUser();
-  const rule = ROW_FIELDS[input.table]?.[input.column];
+  const rule = Object.hasOwn(ROW_FIELDS, input.table) && Object.hasOwn(ROW_FIELDS[input.table], input.column)
+    ? ROW_FIELDS[input.table][input.column]
+    : null;
   if (!rule || !input.id) return { ok: false, message: "수정할 수 없는 항목입니다." };
 
-  const raw = input.value.trim();
+  const raw = String(input.value ?? "").trim();
   let value: string | number | string[] | null;
   if (!raw) {
     if (!("nullable" in rule && rule.nullable)) return { ok: false, message: "내용을 입력해 주세요." };
@@ -198,8 +228,9 @@ export async function saveEditableField(input: {
     if (raw.length > rule.max) return { ok: false, message: `글자 수는 ${rule.max}자 이하로 입력해 주세요.` };
     value = raw;
   } else if (rule.kind === "int") {
-    if (!/^\d+$/.test(raw) || Number(raw) > rule.max) {
-      return { ok: false, message: "숫자만 입력할 수 있습니다." };
+    const min = rule.min ?? 0;
+    if (!/^\d+$/.test(raw) || Number(raw) < min || Number(raw) > rule.max) {
+      return { ok: false, message: `${min}~${rule.max} 사이의 숫자만 입력할 수 있습니다.` };
     }
     value = Number(raw);
   } else if (rule.kind === "date") {
@@ -217,14 +248,19 @@ export async function saveEditableField(input: {
 
   const supabase = getServerSupabase();
   if (!supabase) return { ok: false, message: "저장 설정을 확인할 수 없습니다. 운영진에게 문의해 주세요." };
-  const { error } = await supabase.from(input.table).update({ [input.column]: value }).eq("id", input.id);
+  const { data, error } = await supabase
+    .from(input.table)
+    .update({ [input.column]: value })
+    .eq("id", input.id)
+    .select("id");
   if (error) {
     console.error("[editable-field] 저장 실패:", error.message);
     if (error.code === "23505") {
-      return { ok: false, message: "이미 같은 항목이 있습니다. 같은 시즌·부문에 중복 등록되어 있지 않은지 확인해 주세요." };
+      return { ok: false, message: DUPLICATE_MESSAGES[input.table] ?? "이미 같은 값이 등록되어 있습니다. 중복되지 않는 값으로 입력해 주세요." };
     }
     return { ok: false, message: "저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
   }
+  if (!data?.length) return { ok: false, message: NOT_SAVED_MESSAGE };
   revalidatePath(validPath(input.path));
   revalidatePath("/", "layout");
   return { ok: true, message: "저장되었습니다." };
@@ -233,21 +269,26 @@ export async function saveEditableField(input: {
 /** 행사 사진 목록 저장 — 추가/삭제/대표 지정이 전부 이 하나로 처리된다. */
 export async function saveEventPhotos(input: { id: string; urls: string[]; path: string }) {
   await requireUser();
-  const storagePrefix = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/official-site/`;
+  const storagePrefix = storagePublicPrefix();
   const valid =
     input.id &&
     Array.isArray(input.urls) &&
     input.urls.length <= 30 &&
-    input.urls.every((url) => url.startsWith(storagePrefix) || url.startsWith("/images/"));
+    input.urls.every((url) => typeof url === "string" && (url.startsWith(storagePrefix) || url.startsWith("/images/")));
   if (!valid) return { ok: false, message: "사진 정보를 확인해 주세요. (최대 30장)" };
 
   const supabase = getServerSupabase();
   if (!supabase) return { ok: false, message: "저장 설정을 확인할 수 없습니다. 운영진에게 문의해 주세요." };
-  const { error } = await supabase.from("archive_events").update({ photo_urls: input.urls }).eq("id", input.id);
+  const { data, error } = await supabase
+    .from("archive_events")
+    .update({ photo_urls: input.urls })
+    .eq("id", input.id)
+    .select("id");
   if (error) {
     console.error("[event-photos] 저장 실패:", error.message);
     return { ok: false, message: "사진을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
   }
+  if (!data?.length) return { ok: false, message: NOT_SAVED_MESSAGE };
   revalidatePath(validPath(input.path));
   revalidatePath("/", "layout");
   return { ok: true, message: "사진이 반영되었습니다." };

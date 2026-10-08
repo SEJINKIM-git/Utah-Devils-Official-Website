@@ -30,6 +30,31 @@ export const DEFAULT_CONTENT = {
 export type SiteContentKey = keyof typeof DEFAULT_CONTENT;
 export type SiteSettingKey = keyof typeof DEFAULT_SETTINGS;
 
+/**
+ * 서버가 저장 시 강제하는 글자 수 상한과, 행이 없을 때 새로 만들 라벨.
+ * site_content.max_length 시드 값과 같게 유지한다 — 넘치면 레이아웃이 깨진다.
+ */
+export const CONTENT_META: Record<SiteContentKey, { label: string; max: number }> = {
+  hero_title_sub: { label: "메인 히어로 부제", max: 80 },
+  hero_tagline: { label: "메인 히어로 소개", max: 160 },
+  about_p1: { label: "데빌스 소개 1", max: 400 },
+  about_p2: { label: "데빌스 소개 2", max: 400 },
+  about_p3: { label: "데빌스 소개 3", max: 400 },
+  about_p4: { label: "데빌스 소개 4", max: 400 },
+  fact_founded: { label: "창단 연도", max: 60 },
+  fact_affiliation: { label: "소속", max: 60 },
+  fact_home: { label: "활동 지역", max: 60 },
+  fact_members: { label: "누적 회원", max: 60 },
+  section_desc_players: { label: "선수 페이지 설명", max: 200 },
+  section_desc_schedule: { label: "일정 페이지 설명", max: 200 },
+  section_desc_archive: { label: "아카이브 설명", max: 200 },
+  section_desc_shop: { label: "굿즈 페이지 설명", max: 200 },
+  footer_about: { label: "푸터 소개", max: 100 },
+  recruit_message: { label: "모집 안내", max: 300 },
+};
+
+export const SETTING_MAX_LENGTH = 200;
+
 export async function getSiteContent(): Promise<Record<SiteContentKey, string>> {
   const values: Record<SiteContentKey, string> = { ...DEFAULT_CONTENT };
   const supabase = getSupabase();

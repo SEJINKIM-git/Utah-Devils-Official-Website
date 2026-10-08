@@ -6,8 +6,7 @@ import EditModeProvider from "./components/EditModeProvider";
 import Editable from "./components/Editable";
 import EditModeToolbar from "./components/EditModeToolbar";
 import { getSiteSettings } from "@/lib/site-content";
-import { getAuthenticatedUser, isApprovedAdmin } from "@/lib/supabase-server";
-import { cookies } from "next/headers";
+import { isEditModeActive } from "@/lib/edit-mode.server";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://utah-devils-official-website.vercel.app"),
@@ -38,13 +37,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [settings, user] = await Promise.all([getSiteSettings(), getAuthenticatedUser()]);
-  // 쿠키만으로 편집 UI를 노출하지 않는다. 매 렌더에서 승인 운영진 여부를 재확인한다.
-  const editMode = Boolean(
-    user &&
-      cookies().get("edit_mode")?.value === "1" &&
-      (await isApprovedAdmin(user.id))
-  );
+  const [settings, editMode] = await Promise.all([getSiteSettings(), isEditModeActive()]);
   return (
     <html lang="ko">
       <head>
