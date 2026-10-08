@@ -27,11 +27,15 @@ export default function EditableEventPhotosClient({ id, title, photos }: Editabl
 
   function commit(next: string[], afterSave?: () => void) {
     startTransition(async () => {
-      const result = await saveEventPhotos({ id, urls: next, path: pathname });
-      setMessage(result.message);
-      if (result.ok) {
-        afterSave?.();
-        router.refresh();
+      try {
+        const result = await saveEventPhotos({ id, urls: next, path: pathname });
+        setMessage(result.message);
+        if (result.ok) {
+          afterSave?.();
+          router.refresh();
+        }
+      } catch {
+        setMessage("서버에 연결하지 못했습니다. 네트워크를 확인한 뒤 다시 시도해 주세요.");
       }
     });
   }

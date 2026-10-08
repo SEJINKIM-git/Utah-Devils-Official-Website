@@ -61,11 +61,15 @@ export default function EditableClient({
 
   function save() {
     startTransition(async () => {
-      const result = await saveEditableText({ table, key: contentKey, value: draft, path: pathname });
-      setMessage(result.message);
-      if (result.ok) {
-        setOpen(false);
-        router.refresh();
+      try {
+        const result = await saveEditableText({ table, key: contentKey, value: draft, path: pathname });
+        setMessage(result.message);
+        if (result.ok) {
+          setOpen(false);
+          router.refresh();
+        }
+      } catch {
+        setMessage("서버에 연결하지 못했습니다. 네트워크를 확인한 뒤 다시 시도해 주세요.");
       }
     });
   }

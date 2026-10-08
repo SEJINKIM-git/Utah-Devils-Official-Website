@@ -35,12 +35,16 @@ export default function EditableImageClient({ table, id, uploadPath, mode, child
       {open ? (
         <span className="editable-image__popover" role="dialog" aria-label="사진 교체">
           <ImageUploader path={stampedPath} mode={mode} disabled={pending} successMessage="업로드 완료. 공개 화면에 반영하는 중입니다..." onUploaded={({ url }) => startTransition(async () => {
-            const result = await saveEditableImage({ table, id, url, path: pathname });
-            setMessage(result.message);
             setStamp(Date.now());
-            if (result.ok) {
-              setOpen(false);
-              router.refresh();
+            try {
+              const result = await saveEditableImage({ table, id, url, path: pathname });
+              setMessage(result.message);
+              if (result.ok) {
+                setOpen(false);
+                router.refresh();
+              }
+            } catch {
+              setMessage("서버에 연결하지 못했습니다. 네트워크를 확인한 뒤 다시 시도해 주세요.");
             }
           })} />
           <button type="button" onClick={() => setOpen(false)} disabled={pending}>닫기</button>

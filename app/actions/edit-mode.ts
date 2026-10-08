@@ -33,6 +33,17 @@ async function requireUser() {
   return user;
 }
 
+/** 저장 액션용 requireUser. 세션 만료·권한 없음은 예외 대신 팝오버에 보여줄 한국어 결과로 돌려준다. */
+async function denyUnlessAdmin(): Promise<{ ok: false; message: string } | null> {
+  try {
+    await requireUser();
+    return null;
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : "권한을 확인할 수 없습니다.";
+    return { ok: false, message: `${reason} 다시 로그인한 뒤 시도해 주세요.` };
+  }
+}
+
 export async function startEditMode() {
   await requireUser();
   cookies().set("edit_mode", "1", {
@@ -51,7 +62,8 @@ export async function stopEditMode() {
 }
 
 export async function saveEditableText(input: SaveTextInput) {
-  await requireUser();
+  const denied = await denyUnlessAdmin();
+  if (denied) return denied;
   const isContent = input.table === "site_content";
   const allowed = isContent
     ? Object.hasOwn(DEFAULT_CONTENT, input.key)
@@ -89,7 +101,8 @@ export async function saveEditableText(input: SaveTextInput) {
 
 /** 설정 화면의 일괄 저장. 허용된 키만 서버에서 갱신하고 관련 ISR을 즉시 무효화한다. */
 export async function saveSiteSettings(values: Partial<Record<SiteSettingKey, string>>) {
-  await requireUser();
+  const denied = await denyUnlessAdmin();
+  if (denied) return denied;
   const supabase = getServerSupabase();
   if (!supabase) return { ok: false, message: "저장 설정을 확인할 수 없습니다. 운영진에게 문의해 주세요." };
   const entries = Object.entries(values).filter(([key]) => key in DEFAULT_SETTINGS) as [SiteSettingKey, string][];
@@ -128,7 +141,8 @@ export async function saveEditableImage(input: {
   url: string;
   path: string;
 }) {
-  await requireUser();
+  const denied = await denyUnlessAdmin();
+  if (denied) return denied;
   if (!IMAGE_TABLES.includes(input.table) || !input.id || !String(input.url).startsWith(storagePublicPrefix())) {
     return { ok: false, message: "사진 정보를 확인해 주세요." };
   }
@@ -217,7 +231,8 @@ export async function saveEditableField(input: {
   value: string;
   path: string;
 }) {
-  await requireUser();
+  const denied = await denyUnlessAdmin();
+  if (denied) return denied;
   const rule = Object.hasOwn(ROW_FIELDS, input.table) && Object.hasOwn(ROW_FIELDS[input.table], input.column)
     ? ROW_FIELDS[input.table][input.column]
     : null;
@@ -272,7 +287,8 @@ export async function saveEditableField(input: {
 
 /** 행사 사진 목록 저장 — 추가/삭제/대표 지정이 전부 이 하나로 처리된다. */
 export async function saveEventPhotos(input: { id: string; urls: string[]; path: string }) {
-  await requireUser();
+  const denied = await denyUnlessAdmin();
+  if (denied) return denied;
   const storagePrefix = storagePublicPrefix();
   const valid =
     input.id &&
