@@ -398,7 +398,7 @@ export default async function ArchivePage({
                               {winner ? (
                                 <>
                                   <div className="award-card__number">
-                                    <EditableField table="season_awards" id={winner.id} column="player_number" value={winner.player_number != null ? String(winner.player_number) : ""} maxLength={3} allowEmpty emptyLabel="—">
+                                    <EditableField table="season_awards" id={winner.id} column="player_number" value={winner.player_number != null ? String(winner.player_number) : ""} fieldType="number" maxLength={3} allowEmpty emptyLabel="—">
                                       {winner.player_number != null
                                         ? winner.player_number
                                         : "—"}
@@ -407,11 +407,7 @@ export default async function ArchivePage({
                                   <div className="award-card__player">
                                     <EditableField table="season_awards" id={winner.id} column="player_name" value={winner.player_name} maxLength={40}>{winner.player_name}</EditableField>
                                   </div>
-                                  {winner.player_name_en ? (
-                                    <div className="award-card__sub">
-                                      <EditableField table="season_awards" id={winner.id} column="player_name_en" value={winner.player_name_en} maxLength={60} allowEmpty>{winner.player_name_en}</EditableField>
-                                    </div>
-                                  ) : null}
+                                  <EditableField table="season_awards" id={winner.id} column="player_name_en" value={winner.player_name_en ?? ""} maxLength={60} allowEmpty emptyLabel="영문 이름 입력" wrapperClassName="award-card__sub">{winner.player_name_en}</EditableField>
                                 </>
                               ) : (
                                 <div
