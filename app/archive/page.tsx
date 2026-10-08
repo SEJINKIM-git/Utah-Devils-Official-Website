@@ -346,7 +346,7 @@ export default async function ArchivePage({
                       {AWARD_TYPES.map((t) => (
                         <div key={t.key} className="card award-card--placeholder">
                           <div className="award-card__type">{t.label}</div>
-                          <div className="award-card__number">00</div>
+                          <div className="award-card__number">–</div>
                           <div
                             className="award-card__player"
                             style={{ color: "var(--text-muted)" }}
